@@ -1,6 +1,6 @@
-import { toArray } from "@vueuse/core";
 import { defineStore } from "pinia";
-import { computed, reactive, toValue } from "vue";
+import { computed, reactive } from "vue";
+import { BuildingType } from "./building.store";
 
 export interface Resource {
 	type: ResourceType;
@@ -16,7 +16,9 @@ export const resourceTypes = [
 	'iron',
 	'wheat',
 	'gold',
-	'brick'
+	'brick',
+	'wood',
+	'wool',
 ] as const;
 
 export const resourceTriggers = [1, 2, 3, 4, 5, 6] as const;
@@ -35,9 +37,15 @@ const testResources = [
 ] as Resource[]
 
 export const useResourceStore = defineStore('resources', () => {
-	const resources = reactive<Resource[]>(testResources);
+	const resources = reactive<Resource[]>([]);
 
-	function consume(type: ResourceType, amount: number): boolean {
+	function consume(cost: Record<ResourceType, number>): void {
+		return Object
+			.entries(cost)
+			.forEach(cost => consumeResource(...cost))
+
+	}
+	function consumeResource(type: ResourceType, amount: number): boolean {
 		if (availability.value[type] < amount) {return false;}
 		if (amount === 0) {return true;}
 
@@ -67,6 +75,12 @@ export const useResourceStore = defineStore('resources', () => {
 		throw new Error(`not enough ${type} resources but we failed to check for it.`)
 	}
 
+	function canConsume(cost: Record<ResourceType, number>): boolean {
+		return Object
+			.entries(cost)
+			.every(([resourceType, amount]) => availability.value[resourceType as ResourceType] >= amount)
+	}
+
 	function harvest(trigger: ResourceTrigger): void {
 		resources
 			.values()
@@ -91,7 +105,7 @@ export const useResourceStore = defineStore('resources', () => {
 						.filter(resource => resource.type === type)
 						.reduce((acc, {amount}) => acc + amount as number, 0)
 				] as const)
-			);
+			) as Record<ResourceType, number>;
 		}
 	)
 
@@ -99,6 +113,7 @@ export const useResourceStore = defineStore('resources', () => {
 		resources,
 		availability,
 		consume,
+		canConsume,
 		harvest,
 		add
 	}

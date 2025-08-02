@@ -1,11 +1,24 @@
-<script setup>
+<script setup lang="ts">
+import BuildingTile from "./components/building-tile.vue";
 import ResourceTile from "./components/resource-tile.vue";
 import AddResourceForm from "./components/add-resource-form.vue";
 import {useResourceStore} from "./resource.store.js";
 import HarvestResources from "./components/harvest-resources.vue";
 import ConsumeResource from "./components/consume-resource.vue";
+import AddBuilding from "./components/add-building.vue";
+import { BuildingType, useBuildingStore } from "./building.store.js";
 
 const resourceStore = useResourceStore();
+const buildingStore = useBuildingStore();
+
+const town = {
+	cost: {
+		brick: 3,
+		wood: 2
+	},
+	name: 'town',
+	icon: '🏘️'
+} satisfies BuildingType;
 
 </script>
 
@@ -14,39 +27,32 @@ const resourceStore = useResourceStore();
 	<harvest-resources/>
 	<consume-resource/>
   <main>
-		<resource-tile
-				v-for="resource in resourceStore.resources"
-				:key="resource.id"
-				:resource
-		></resource-tile>
+		<add-building :building-type="town"></add-building>
+
+		<div class="resources grid">
+			<resource-tile
+					v-for="resource in resourceStore.resources"
+					:key="resource.id"
+					:resource
+			></resource-tile>
+		</div>
+
+		<div class="buildings grid">
+			<building-tile
+					v-for="building in buildingStore.buildings"
+					:key="building.id"
+					:building
+			></building-tile>
+		</div>
   </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(15ch, 30ch));
 }
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+main {
+	width: 100%;
 }
 </style>

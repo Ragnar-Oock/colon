@@ -12,7 +12,9 @@ const typeIcons = {
 	brick: '🧱',
 	gold: '🪙',
 	iron: '🔩',
-	wheat: '🌾'
+	wheat: '🌾',
+	wood: '🌳',
+	wool: '🐑'
 } satisfies Record<ResourceType, string>
 
 const icon = computed(() => typeIcons[resource.type])
@@ -20,7 +22,7 @@ const icon = computed(() => typeIcons[resource.type])
 
 <template>
 <div class="tile resource">
-	<label :for="id">{{ resource.type }}</label>
+	<label :for="id">{{icon}} {{ resource.type }}</label>
 	<meter :id min="0" max="3" :value="resource.amount">{{resource.amount}}/{{RESOURCE_MAX}}</meter> <span>{{resource.amount}}/{{RESOURCE_MAX}}</span> <span class="trigger" title="triggered by">{{resource.trigger}}</span>
 </div>
 </template>
