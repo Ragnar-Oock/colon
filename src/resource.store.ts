@@ -1,19 +1,19 @@
 import { defineStore } from "pinia";
 import { computed, reactive } from "vue";
-import { BuildingType } from "./building.store";
 
 export interface Resource {
 	type: ResourceType;
 	amount: ResourceAmount;
 	trigger: ResourceTrigger;
 	id: number;
+	multiplier: ResourceMultiplier;
 }
 export type ResourceAmount = typeof resourceAmounts[number];
 export type ResourceTrigger = typeof resourceTriggers[number];
 export type ResourceType = typeof resourceTypes[number];
 
 export const resourceTypes = [
-	'iron',
+	'rock',
 	'wheat',
 	'gold',
 	'brick',
@@ -26,15 +26,6 @@ export const resourceAmounts = [0, 1, 2, 3] as const;
 
 export const RESOURCE_MAX = 3;
 let ids = 0;
-
-const testResources = [
-	{"amount": 3, "trigger": 1, "type": "iron", "id": 0},
-	{"amount": 3, "trigger": 2, "type": "iron", "id": 1},
-	{"amount": 3, "trigger": 3, "type": "iron", "id": 2},
-	{"amount": 3, "trigger": 4, "type": "iron", "id": 3},
-	{"amount": 3, "trigger": 5, "type": "iron", "id": 4},
-	{"amount": 3, "trigger": 6, "type": "iron", "id": 5}
-] as Resource[]
 
 export const useResourceStore = defineStore('resources', () => {
 	const resources = reactive<Resource[]>([]);
@@ -94,6 +85,7 @@ export const useResourceStore = defineStore('resources', () => {
 			trigger,
 			type,
 			id: ids++,
+			multiplier: 1
 		})
 	}
 

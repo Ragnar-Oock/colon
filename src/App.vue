@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import BuildingTile from "./components/building-tile.vue";
-import ResourceTile from "./components/resource-tile.vue";
+import BuildingTile from "./components/tiles/building-tile.vue";
+import ResourceTile from "./components/tiles/resource-tile.vue";
 import AddResourceForm from "./components/add-resource-form.vue";
 import {useResourceStore} from "./resource.store.js";
 import HarvestResources from "./components/harvest-resources.vue";
@@ -20,6 +20,15 @@ const town = {
 	icon: '🏘️'
 } satisfies BuildingType;
 
+const road = {
+	cost: {
+		rock: 2,
+		wood: 1
+	},
+	name: 'road',
+	icon: '🛣️'
+} satisfies BuildingType;
+
 </script>
 
 <template>
@@ -28,6 +37,7 @@ const town = {
 	<consume-resource/>
   <main>
 		<add-building :building-type="town"></add-building>
+		<add-building :building-type="road"></add-building>
 
 		<div class="resources grid">
 			<resource-tile
@@ -51,6 +61,8 @@ const town = {
 .grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(15ch, 30ch));
+	gap: 1rem;
+	padding: 1rem;
 }
 main {
 	width: 100%;
