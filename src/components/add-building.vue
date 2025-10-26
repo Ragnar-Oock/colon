@@ -20,14 +20,25 @@ function build() {
 	buildingStore.build(buildingType);
 }
 
+
 </script>
 
 <template>
-<button
-		type="button"
-		:aria-disabled="!canBuild"
-		@click="build"
->build {{buildingType.name}}</button>
+<div>
+	<button
+			type="button"
+			:aria-disabled="!canBuild"
+			@click="build"
+	>build {{buildingType.name}}</button>
+	<div class="requirements">
+		<span
+				class="requirement"
+				v-for="(amount, type) in buildingType.cost"
+				:key="type"
+				:title="`${amount} ${type}`"
+		>{{getResourceIcon(type)}} {{amount}} / {{resourceStore.availability[type]}}</span>
+	</div>
+</div>
 </template>
 
 <style scoped>
