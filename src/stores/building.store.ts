@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { reactive } from "vue";
-import { ResourceType, useResourceStore } from "./resource.store";
+import { Cost, ResourceType, useResourceStore } from "./resource.store";
 
 
 export type BuildingName = string;
 
 export interface BuildingType {
 	name: BuildingName;
-	cost: Partial<Record<ResourceType, number>>;
+	cost: Cost[];
 	icon: string;
 }
 export interface BuildingSlot {

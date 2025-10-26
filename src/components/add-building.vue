@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { BuildingType, useBuildingStore } from "../stores/building.store";
 import { getResourceIcon, useResourceStore } from "../stores/resource.store";
+import CostDisplay from "./cost-display.vue";
 
 const buildingStore = useBuildingStore();
 const resourceStore = useResourceStore();
@@ -30,14 +31,7 @@ function build() {
 			:aria-disabled="!canBuild"
 			@click="build"
 	>build {{buildingType.name}}</button>
-	<div class="requirements">
-		<span
-				class="requirement"
-				v-for="(amount, type) in buildingType.cost"
-				:key="type"
-				:title="`${amount} ${type}`"
-		>{{getResourceIcon(type)}} {{amount}} / {{resourceStore.availability[type]}}</span>
-	</div>
+	<CostDisplay :cost="buildingType.cost"/>
 </div>
 </template>
 

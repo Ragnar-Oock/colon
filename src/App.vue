@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import HandDisplay from "./components/hand-display.vue";
 import BuildingTile from "./components/tiles/building-tile.vue";
 import ResourceTile from "./components/tiles/resource-tile.vue";
 import AddResourceForm from "./components/add-resource-form.vue";
+import { useDeckStore } from "./stores/deck.store";
 import {useResourceStore} from "./stores/resource.store";
 import HarvestResources from "./components/harvest-resources.vue";
 import ConsumeResource from "./components/consume-resource.vue";
@@ -12,22 +14,48 @@ const resourceStore = useResourceStore();
 const buildingStore = useBuildingStore();
 
 const town = {
-	cost: {
-		brick: 3,
-		wood: 2
-	},
+	cost: [
+		{type: "brick", amount: 3},
+		{type: 'wood', amount: 2}
+	],
 	name: 'town',
 	icon: '🏘️'
 } satisfies BuildingType;
 
 const road = {
-	cost: {
-		rock: 2,
-		wood: 1
-	},
+	cost: [
+		{type: 'brick', amount: 2},
+		{type: 'wood', amount: 1},
+	],
 	name: 'road',
 	icon: '🛣️'
 } satisfies BuildingType;
+
+const deckStore = useDeckStore();
+deckStore.register({
+	ponderation: 1,
+	create: () => ({
+		cost: [
+			{type: "brick", amount: 3},
+			{type: 'wood', amount: 2}
+		],
+		name: 'town',
+		icon: '🏘️',
+		id: crypto.randomUUID(),
+	}),
+})
+deckStore.register({
+	ponderation: 1,
+	create: () => ({
+		cost: [
+			{type: 'brick', amount: 2},
+			{type: 'wood', amount: 1},
+		],
+		name: 'road',
+		icon: '🛣️',
+		id: crypto.randomUUID(),
+	}),
+})
 
 </script>
 
@@ -36,9 +64,6 @@ const road = {
 	<harvest-resources/>
 	<consume-resource/>
   <main>
-		<add-building :building-type="town"></add-building>
-		<add-building :building-type="road"></add-building>
-
 		<div class="resources grid">
 			<resource-tile
 					v-for="resource in resourceStore.resources"
@@ -54,6 +79,8 @@ const road = {
 					:building
 			></building-tile>
 		</div>
+
+		<hand-display/>
   </main>
 </template>
 

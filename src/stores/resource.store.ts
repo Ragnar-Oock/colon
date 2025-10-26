@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { computed, reactive } from "vue";
 
+export interface ResourceMultiplier {
+	// ????
+}
+
 export interface Resource {
 	type: ResourceType;
 	amount: ResourceAmount;
@@ -11,6 +15,11 @@ export interface Resource {
 export type ResourceAmount = typeof resourceAmounts[number];
 export type ResourceTrigger = typeof resourceTriggers[number];
 export type ResourceType = typeof resourceTypes[number];
+
+export type Cost = {
+	type: ResourceType;
+	amount: number;
+}
 
 export const resourceTypes = [
 	'rock',
@@ -30,12 +39,11 @@ let ids = 0;
 export const useResourceStore = defineStore('resources', () => {
 	const resources = reactive<Resource[]>([]);
 
-	function consume(cost: Record<ResourceType, number>): void {
-		return (Object
-			.entries(cost) as [ResourceType, number][])
-			.forEach(cost => consumeResource(...cost))
-
+	function consume(cost: Cost[]): void {
+		return cost
+			.forEach(({type, amount}) => consumeResource(type, amount))
 	}
+
 	function consumeResource(type: ResourceType, amount: number): boolean {
 		if (availability.value[type] < amount) {return false;}
 		if (amount === 0) {return true;}
@@ -66,10 +74,9 @@ export const useResourceStore = defineStore('resources', () => {
 		throw new Error(`not enough ${type} resources but we failed to check for it.`)
 	}
 
-	function canConsume(cost: Record<ResourceType, number>): boolean {
-		return Object
-			.entries(cost)
-			.every(([resourceType, amount]) => availability.value[resourceType as ResourceType] >= amount)
+	function canConsume(cost: Cost[]): boolean {
+		return cost
+			.every(({type, amount}) => availability.value[type] >= amount)
 	}
 
 	function harvest(trigger: ResourceTrigger): void {
@@ -123,4 +130,8 @@ export const typeIcons = {
 
 export function getResourceIcon(type: ResourceType): string {
 	return typeIcons[type];
+}
+
+export function getPonderatedCost(cost: Cost[]): number {
+	return cost.reduce((acc, {amount}) => acc + amount, 0)
 }
