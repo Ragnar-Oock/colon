@@ -2,7 +2,7 @@
 import { watchDebounced } from "@vueuse/core";
 import { ref } from "vue";
 import { pick } from "../math.helper";
-import { ResourceTrigger, resourceTriggers, useResourceStore } from "../resource.store";
+import { ResourceTrigger, resourceTriggers, useResourceStore } from "../stores/resource.store";
 
 const resourceStore = useResourceStore();
 

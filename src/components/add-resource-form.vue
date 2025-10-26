@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { pick } from "../math.helper";
-import { ResourceTrigger, resourceTriggers, ResourceType, resourceTypes, useResourceStore } from "../resource.store";
+import { ResourceTrigger, resourceTriggers, ResourceType, resourceTypes, useResourceStore } from "../stores/resource.store";
 import { ref, useId } from "vue";
 
 const typeId = useId();

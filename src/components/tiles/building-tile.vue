@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { Building } from "../../building.store";
+import { Building } from "../../stores/building.store";
 
 const {building} = defineProps<{
 	building: Building

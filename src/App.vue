@@ -2,11 +2,11 @@
 import BuildingTile from "./components/tiles/building-tile.vue";
 import ResourceTile from "./components/tiles/resource-tile.vue";
 import AddResourceForm from "./components/add-resource-form.vue";
-import {useResourceStore} from "./resource.store.js";
+import {useResourceStore} from "./stores/resource.store";
 import HarvestResources from "./components/harvest-resources.vue";
 import ConsumeResource from "./components/consume-resource.vue";
 import AddBuilding from "./components/add-building.vue";
-import { BuildingType, useBuildingStore } from "./building.store.js";
+import { BuildingType, useBuildingStore } from "./stores/building.store";
 
 const resourceStore = useResourceStore();
 const buildingStore = useBuildingStore();

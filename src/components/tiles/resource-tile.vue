@@ -1,21 +1,12 @@
 <script setup lang="ts">
 
 import { computed, useId } from "vue";
-import { Resource, RESOURCE_MAX, ResourceAmount, ResourceType } from "../../resource.store";
+import { Resource, RESOURCE_MAX, typeIcons } from "../../stores/resource.store";
 
 const id = useId();
 const {resource} = defineProps<{
 	resource: Resource;
 }>()
-
-const typeIcons = {
-	brick: '🧱',
-	gold: '🪙',
-	rock: '🪨',
-	wheat: '🌾',
-	wood: '🌳',
-	wool: '🐑'
-} satisfies Record<ResourceType, string>
 
 const icon = computed(() => typeIcons[resource.type])
 </script>

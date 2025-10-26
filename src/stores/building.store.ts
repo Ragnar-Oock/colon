@@ -7,7 +7,7 @@ export type BuildingName = string;
 
 export interface BuildingType {
 	name: BuildingName;
-	cost: Record<ResourceType, number>;
+	cost: Partial<Record<ResourceType, number>>;
 	icon: string;
 }
 export interface BuildingSlot {

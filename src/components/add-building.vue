@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { BuildingType, useBuildingStore } from "../building.store";
-import { useResourceStore } from "../resource.store";
+import { BuildingType, useBuildingStore } from "../stores/building.store";
+import { getResourceIcon, useResourceStore } from "../stores/resource.store";
 
 const buildingStore = useBuildingStore();
 const resourceStore = useResourceStore();

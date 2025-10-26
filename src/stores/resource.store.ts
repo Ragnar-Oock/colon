@@ -31,8 +31,8 @@ export const useResourceStore = defineStore('resources', () => {
 	const resources = reactive<Resource[]>([]);
 
 	function consume(cost: Record<ResourceType, number>): void {
-		return Object
-			.entries(cost)
+		return (Object
+			.entries(cost) as [ResourceType, number][])
 			.forEach(cost => consumeResource(...cost))
 
 	}
@@ -111,3 +111,16 @@ export const useResourceStore = defineStore('resources', () => {
 	}
 })
 
+export const typeIcons = {
+	brick: '🧱',
+	gold: '🪙',
+	rock: '🪨',
+	wheat: '🌾',
+	wood: '🌳',
+	wool: '🐑'
+} satisfies Record<ResourceType, string>
+
+
+export function getResourceIcon(type: ResourceType): string {
+	return typeIcons[type];
+}

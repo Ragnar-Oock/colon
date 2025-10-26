@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { computed, ref, useId, watch, watchEffect } from "vue";
-import { ResourceType, resourceTypes, useResourceStore } from "../resource.store";
+import { ResourceType, resourceTypes, useResourceStore } from "../stores/resource.store";
 
 const resourceStore = useResourceStore();
 
