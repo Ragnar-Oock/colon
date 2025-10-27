@@ -33,6 +33,10 @@ export const useDeckStore = defineStore('deck',() => {
 
 
 	function draw(): void {
+		hand.push(pick().create())
+	}
+
+	function pick() {
 		const drawIndex = Math.random() * totalPonderation.value;
 
 		console.log(`drawing ${drawIndex}`)
@@ -42,16 +46,15 @@ export const useDeckStore = defineStore('deck',() => {
 		let deckIndex = 0;
 		let pick: CardDescriptor | undefined;
 		do {
-				pick = deck.at(deckIndex);
-				visitedPonderation += pick!.ponderation;
-				deckIndex++;
+			pick = deck.at(deckIndex);
+			visitedPonderation += pick!.ponderation;
+			deckIndex++;
 		} while (visitedPonderation < drawIndex)
 
 		if (pick === undefined) {
 			throw new Error('No card available to draw.');
 		}
-
-		hand.push(pick.create())
+		return pick
 	}
 
 	function register(descriptor: CardDescriptor): void {
@@ -64,6 +67,7 @@ export const useDeckStore = defineStore('deck',() => {
 		deck,
 		hand,
 		draw,
-		register
+		register,
+		pick
 	}
 })

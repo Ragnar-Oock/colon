@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import GridDisplay from "./components/grid-display.vue";
 import HandDisplay from "./components/hand-display.vue";
 import BuildingTile from "./components/tiles/building-tile.vue";
 import ResourceTile from "./components/tiles/resource-tile.vue";
@@ -7,29 +8,10 @@ import { useDeckStore } from "./stores/deck.store";
 import {useResourceStore} from "./stores/resource.store";
 import HarvestResources from "./components/harvest-resources.vue";
 import ConsumeResource from "./components/consume-resource.vue";
-import AddBuilding from "./components/add-building.vue";
-import { BuildingType, useBuildingStore } from "./stores/building.store";
+import { useBuildingStore } from "./stores/building.store";
 
 const resourceStore = useResourceStore();
 const buildingStore = useBuildingStore();
-
-const town = {
-	cost: [
-		{type: "brick", amount: 3},
-		{type: 'wood', amount: 2}
-	],
-	name: 'town',
-	icon: '🏘️'
-} satisfies BuildingType;
-
-const road = {
-	cost: [
-		{type: 'brick', amount: 2},
-		{type: 'wood', amount: 1},
-	],
-	name: 'road',
-	icon: '🛣️'
-} satisfies BuildingType;
 
 const deckStore = useDeckStore();
 deckStore.register({
@@ -82,6 +64,8 @@ deckStore.register({
 
 		<hand-display/>
   </main>
+
+	<grid-display/>
 </template>
 
 <style scoped>
