@@ -38,6 +38,18 @@ deckStore.register({
 		id: crypto.randomUUID(),
 	}),
 })
+deckStore.register({
+	ponderation: .5,
+	create: () => ({
+		cost: [
+			{type: 'rock', amount: 2},
+			{type: 'wood', amount: 1},
+		],
+		name: 'Field',
+		icon: '🌽',
+		id: crypto.randomUUID(),
+	}),
+})
 
 </script>
 

@@ -18,6 +18,10 @@ export interface Cell {
 	position: Vector2
 }
 
+export interface FilledCell extends Cell {
+	card: CardInstance;
+}
+
 export const useGridStore = defineStore('grid', () => {
 	const cells = reactive<Cell[]>([])
 

@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { useMouse } from "@vueuse/core";
+import { useElementBounding, useMouse } from "@vueuse/core";
 import { computed, useTemplateRef, watchEffect } from "vue";
 import { useDeckStore } from "../stores/deck.store";
-import { useGridStore } from "../stores/grid.store";
+import { FilledCell, useGridStore } from "../stores/grid.store";
+import GridCell from "./grid-cell.vue";
+
 
 const gridStore = useGridStore();
 const deckStore = useDeckStore();
 
 const grid = useTemplateRef<HTMLDivElement>('grid');
+const {top, left} = useElementBounding(grid);
 const {x, y} = useMouse({
 	type: event => event instanceof MouseEvent
-			? [event.offsetX, event.offsetY]
+			? [event.clientX - left.value, event.clientY - top.value]
 			: null,
 	target: grid
 })
@@ -31,12 +34,13 @@ function interactCell() {
 	}
 	gridStore.setCell(cell);
 }
+const visibleFilledCells = computed(() => gridStore.cells as FilledCell[]);
 </script>
 
 <template>
 <div class="map" ref="grid" @click="interactCell">
-
 	<div class="hovered"></div>
+	<GridCell v-for="cell in visibleFilledCells" :key="cell.id" :cell></GridCell>
 </div>
 </template>
 
@@ -51,7 +55,15 @@ function interactCell() {
 
 .hovered {
 	grid-area: v-bind('hoveredCell.y') / v-bind('hoveredCell.x');
-	background-color: lime;
 	pointer-events: none;
+	outline: solid 2px rgba(90, 230, 90, 0.17);
+	outline-offset: 1px;
+	animation: --pulse ease-in-out 500ms infinite;
+
+}
+@keyframes --pulse {
+	50% {
+		scale: 1.05;
+	}
 }
 </style>
