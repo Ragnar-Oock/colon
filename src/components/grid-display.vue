@@ -29,9 +29,12 @@ const hoveredCell = computed(() => ({
 
 function interactCell() {
 	const cell = gridStore.getCellAt(hoveredCell.value);
-	if (cell.card === undefined) {
-		cell.card = deckStore.pick().create();
+	if (!(cell.card === undefined && deckStore.active !== null)) {
+		return;
 	}
+	
+	cell.card = deckStore.active;
+	deckStore.remove(cell.card);
 	gridStore.setCell(cell);
 }
 const visibleFilledCells = computed(() => gridStore.cells as FilledCell[]);

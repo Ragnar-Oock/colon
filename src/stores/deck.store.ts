@@ -24,7 +24,8 @@ export interface CardDescriptor {
 }
 
 export const useDeckStore = defineStore('deck',() => {
-	const hand = reactive<CardInstance[]>([]);
+	const hand = ref<CardInstance[]>([]);
+	const active = ref<CardInstance | null>(null);
 
 	/**
 	 * All possible cards that can be drawn into a deck
@@ -32,10 +33,16 @@ export const useDeckStore = defineStore('deck',() => {
 	const deck = reactive<CardDescriptor[]>([]);
 
 
+	/**
+	 * create a new card and put it in the hand
+	 */
 	function draw(): void {
-		hand.push(pick().create())
+		hand.value.push(pick().create())
 	}
 
+	/**
+	 * pick a card from all the available cards taking the ponderation into account.
+	 */
 	function pick() {
 		const drawIndex = Math.random() * totalPonderation.value;
 
@@ -57,6 +64,22 @@ export const useDeckStore = defineStore('deck',() => {
 		return pick
 	}
 
+	/**
+	 * Remove a card from the hand (to be used, discarded or anything else)
+	 * If the card is active it will be unmarked as such.
+	 * @param card
+	 */
+	function remove(card: CardInstance): void {
+		if (!hand.value.includes(card)) {
+			throw new Error("I don't know that card sir");
+		}
+
+		hand.value = hand.value.filter(cardInHand => cardInHand !== card);
+		if (active.value === card) {
+			active.value = null;
+		}
+	}
+
 	function register(descriptor: CardDescriptor): void {
 		deck.push(descriptor);
 	}
@@ -66,8 +89,10 @@ export const useDeckStore = defineStore('deck',() => {
 	return {
 		deck,
 		hand,
+		active,
 		draw,
 		register,
-		pick
+		pick,
+		remove
 	}
 })

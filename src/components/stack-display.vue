@@ -10,9 +10,9 @@ defineProps<{
 <template>
 	<div class="stack">
 		<HandCard
-				v-for="card in stack"
-				:key="card.id"
-				:card
+			v-for="card in stack"
+			:key="card.id"
+			:card
 		/>
 	</div>
 </template>
@@ -20,5 +20,6 @@ defineProps<{
 <style scoped>
 	.stack {
 		display: grid;
+		align-content: start;
 	}
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { registerAllCards } from "./cards.data";
 import GridDisplay from "./components/grid-display.vue";
 import HandDisplay from "./components/hand-display.vue";
 import BuildingTile from "./components/tiles/building-tile.vue";
@@ -14,42 +15,7 @@ const resourceStore = useResourceStore();
 const buildingStore = useBuildingStore();
 
 const deckStore = useDeckStore();
-deckStore.register({
-	ponderation: 1,
-	create: () => ({
-		cost: [
-			{type: "brick", amount: 3},
-			{type: 'wood', amount: 2}
-		],
-		name: 'town',
-		icon: '🏘️',
-		id: crypto.randomUUID(),
-	}),
-})
-deckStore.register({
-	ponderation: 1,
-	create: () => ({
-		cost: [
-			{type: 'brick', amount: 2},
-			{type: 'wood', amount: 1},
-		],
-		name: 'road',
-		icon: '🛣️',
-		id: crypto.randomUUID(),
-	}),
-})
-deckStore.register({
-	ponderation: .5,
-	create: () => ({
-		cost: [
-			{type: 'rock', amount: 2},
-			{type: 'wood', amount: 1},
-		],
-		name: 'Field',
-		icon: '🌽',
-		id: crypto.randomUUID(),
-	}),
-})
+registerAllCards(deckStore.register);
 
 </script>
 
