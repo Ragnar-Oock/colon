@@ -66,16 +66,17 @@ const minWidth = computed(() => {
 
 	min-height: v-bind(minHeight);
 	min-width: v-bind(minWidth);
+
+	&:hover > .hovered {
+		grid-area: v-bind('hoveredCell.y') / v-bind('hoveredCell.x');
+		pointer-events: none;
+		outline: solid 2px rgba(90, 230, 90, 0.17);
+		outline-offset: 1px;
+		animation: --pulse ease-in-out 500ms infinite;
+
+	}
 }
 
-.hovered {
-	grid-area: v-bind('hoveredCell.y') / v-bind('hoveredCell.x');
-	pointer-events: none;
-	outline: solid 2px rgba(90, 230, 90, 0.17);
-	outline-offset: 1px;
-	animation: --pulse ease-in-out 500ms infinite;
-
-}
 @keyframes --pulse {
 	50% {
 		scale: 1.05;
