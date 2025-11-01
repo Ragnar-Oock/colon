@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
-import { Cost } from "./resource.store";
+import { Cost, ResourceTrigger } from "./resource.store";
 
 export interface CardInstance {
 	name: string;
 	icon: string;
 	cost: Cost[];
 	id: string;
+	trigger?: ResourceTrigger
 }
 
 export interface CardDescriptor {

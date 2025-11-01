@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, reactive } from "vue";
+import { computed, ComputedRef, reactive, ref } from "vue";
 import { CardInstance } from "./deck.store";
 
 interface Vector2 {
@@ -13,8 +13,8 @@ interface Vector2 {
 	y: number;
 }
 
-export interface Cell {
-	card: CardInstance | undefined;
+export interface Cell<card extends (CardInstance | undefined) = (CardInstance | undefined)> {
+	card: card;
 	position: Vector2
 }
 
@@ -23,7 +23,7 @@ export interface FilledCell extends Cell {
 }
 
 export const useGridStore = defineStore('grid', () => {
-	const cells = reactive<Cell[]>([])
+	const cells = ref<Cell[]>([])
 
 	function cell(position: Vector2): Cell {
 		return {
@@ -33,18 +33,18 @@ export const useGridStore = defineStore('grid', () => {
 	}
 
 	function getCellAt(position: Vector2): Cell {
-		return cells.find(({position: {x, y}}) => position.x === x && position.y === y) ?? cell(position);
+		return cells.value.find(({position: {x, y}}) => position.x === x && position.y === y) ?? cell(position);
 	}
 
 	function setCell(cell: Cell): Cell {
-		if (!cells.includes(cell)) {
-			cells.push(cell);
+		if (!cells.value.includes(cell)) {
+			cells.value.push(cell);
 		}
 
 		return cell
 	}
 
-	const bounds = computed(() => cells.reduce(({bottom, left, right, top}, {position: {x, y}}) => {
+	const bounds = computed(() => cells.value.reduce(({bottom, left, right, top}, {position: {x, y}}) => {
 		return {
 			left: left < x ? left : x,
 			top: top < y ? top : y,
@@ -56,12 +56,17 @@ export const useGridStore = defineStore('grid', () => {
 		top: 0,
 		right: 0,
 		bottom: 0,
-	}))
+	}));
+
+	function filterCells<target extends Cell>(predicate: (cell: Cell, index: number, array: Cell[]) => cell is target): ComputedRef<target[]> {
+		return computed(() => cells.value.filter(predicate))
+	}
 
 	return {
 		cells,
 		getCellAt,
 		bounds,
-		setCell
+		setCell,
+		filterCells
 	}
 })

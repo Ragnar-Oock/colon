@@ -1,17 +1,14 @@
 import { defineStore } from "pinia";
-import { computed, reactive } from "vue";
+import { reactive } from "vue";
+import { CardInstance } from "./deck.store";
+import { Cell, useGridStore } from "./grid.store";
 
-export interface ResourceMultiplier {
-	// ????
-}
 
 export interface Resource {
 	type: ResourceType;
 	amount: ResourceAmount;
-	trigger: ResourceTrigger;
-	id: number;
-	multiplier: ResourceMultiplier;
 }
+
 export type ResourceAmount = typeof resourceAmounts[number];
 export type ResourceTrigger = typeof resourceTriggers[number];
 export type ResourceType = typeof resourceTypes[number];
@@ -34,87 +31,50 @@ export const resourceTriggers = [1, 2, 3, 4, 5, 6] as const;
 export const resourceAmounts = [0, 1, 2, 3] as const;
 
 export const RESOURCE_MAX = 3;
-let ids = 0;
+
+export interface ResourceCard extends CardInstance {
+	resourceType: ResourceType,
+	multiplier: number,
+}
 
 export const useResourceStore = defineStore('resources', () => {
-	const resources = reactive<Resource[]>([]);
+	const grid = useGridStore();
+	const resources = reactive<Record<ResourceType, number>>(Object.fromEntries(resourceTypes.map(type => ([type, 0]))) as Record<ResourceType, number>);
 
-	function consume(cost: Cost[]): void {
+	function consume(...cost: Cost[]): void {
 		return cost
 			.forEach(({type, amount}) => consumeResource(type, amount))
 	}
 
 	function consumeResource(type: ResourceType, amount: number): boolean {
-		if (availability.value[type] < amount) {return false;}
-		if (amount === 0) {return true;}
-
-		let consumeFrom = resources
-			.values()
-			.filter(resource => resource.type === type)
-			.toArray();
-
-		let consumed = 0;
-		for (const resource of consumeFrom) {
-			const leftToConsume = amount - consumed;
-
-			consumed += (
-				resource.amount >= leftToConsume
-					? leftToConsume
-					: resource.amount
-			);
-
-			resource.amount = (
-				resource.amount >= leftToConsume
-					? resource.amount - leftToConsume
-					: 0) as ResourceAmount;
-
-			if (amount - consumed === 0) {return true;}
-		}
-
-		throw new Error(`not enough ${type} resources but we failed to check for it.`)
+		throw new Error(`no`)
 	}
 
-	function canConsume(cost: Cost[]): boolean {
+	function canConsume(...cost: Cost[]): boolean {
 		return cost
-			.every(({type, amount}) => availability.value[type] >= amount)
+			.every(({type, amount}) => resources[type] >= amount)
 	}
+
+	const resourceCells = grid.filterCells((cell): cell is Cell<ResourceCard> => (resourceTypes as unknown as (string | undefined)[]).includes((cell.card as ResourceCard | undefined)?.resourceType))
 
 	function harvest(trigger: ResourceTrigger): void {
-		resources
-			.values()
-			.filter(resource => resource.trigger === trigger)
-			.forEach(resource => resource.amount += Number(resource.amount < RESOURCE_MAX))
-	}
+		resourceCells
+			.value
+			.forEach(({card}) => {
+				if (trigger !== card.trigger) {
+					return;
+				}
 
-	function add(type: ResourceType, trigger: ResourceTrigger) {
-		resources.push({
-			amount: 0,
-			trigger,
-			type,
-			id: ids++,
-			multiplier: 1
-		})
+				resources[card.resourceType] += card.multiplier;
+			})
 	}
-
-	const availability = computed<Record<ResourceType, number>>(() => {
-			return Object.fromEntries(resourceTypes
-				.map(type => [
-					type,
-					resources
-						.filter(resource => resource.type === type)
-						.reduce((acc, {amount}) => acc + amount as number, 0)
-				] as const)
-			) as Record<ResourceType, number>;
-		}
-	)
 
 	return {
 		resources,
-		availability,
+		resourceCells,
 		consume,
 		canConsume,
 		harvest,
-		add
 	}
 })
 

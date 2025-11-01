@@ -1,4 +1,6 @@
+import { pick } from "./math.helper";
 import { CardDescriptor } from "./stores/deck.store";
+import { ResourceCard, resourceTriggers } from "./stores/resource.store";
 
 export const cards = [
 	{
@@ -35,6 +37,9 @@ export const cards = [
 			name: 'brick factory',
 			icon: '🧱',
 			id: crypto.randomUUID(),
+			resourceType: "brick",
+			trigger: pick(resourceTriggers),
+			multiplier: 1
 		}),
 	},
 	{
@@ -46,17 +51,23 @@ export const cards = [
 			name: 'mine',
 			icon: '🪙',
 			id: crypto.randomUUID(),
+			resourceType: "gold",
+			trigger: pick(resourceTriggers),
+			multiplier: 1
 		}),
 	},
 	{
 		ponderation: .5,
-		create: () => ({
+		create: (): ResourceCard => ({
 			cost: [
 				{type: 'wood', amount: 1},
 			],
 			name: 'quarry',
 			icon: '🪨',
 			id: crypto.randomUUID(),
+			resourceType: "rock",
+			trigger: pick(resourceTriggers),
+			multiplier: 1
 		}),
 	},
 	{
@@ -69,6 +80,9 @@ export const cards = [
 			name: 'Field',
 			icon: '🌾',
 			id: crypto.randomUUID(),
+			resourceType: "wheat",
+			trigger: pick(resourceTriggers),
+			multiplier: 1
 		}),
 	},
 	{
@@ -81,6 +95,9 @@ export const cards = [
 			name: 'Forest',
 			icon: '🌳',
 			id: crypto.randomUUID(),
+			resourceType: "wood",
+			trigger: pick(resourceTriggers),
+			multiplier: 1
 		}),
 	},
 	{
@@ -93,6 +110,9 @@ export const cards = [
 			name: 'Field',
 			icon: '🐑',
 			id: crypto.randomUUID(),
+			resourceType: "wool",
+			trigger: pick(resourceTriggers),
+			multiplier: 1
 		}),
 	},
 ] satisfies CardDescriptor[];

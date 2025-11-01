@@ -15,7 +15,7 @@ const resourceStore = useResourceStore();
 				v-for="({type, amount}) in cost"
 				:key="type"
 				:title="`${amount} ${type}`"
-		>{{getResourceIcon(type)}} {{amount}} / {{resourceStore.availability[type]}}</span>
+		>{{getResourceIcon(type)}} {{amount}} / {{resourceStore.resources[type]}}</span>
 	</div>
 </template>
 
