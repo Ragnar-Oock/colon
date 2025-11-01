@@ -32,12 +32,23 @@ function interactCell() {
 	if (!(cell.card === undefined && deckStore.active !== null)) {
 		return;
 	}
-	
+
 	cell.card = deckStore.active;
 	deckStore.remove(cell.card);
 	gridStore.setCell(cell);
 }
 const visibleFilledCells = computed(() => gridStore.cells as FilledCell[]);
+
+const minHeight = computed(() => {
+	const tileNumberY = gridStore.bounds.bottom - gridStore.bounds.top;
+	console.log(tileNumberY)
+	return `${tileNumberY * tileHeight + (tileNumberY - 1) * gap}px`;
+});
+const minWidth = computed(() => {
+	const tileNumberX = gridStore.bounds.right - gridStore.bounds.left;
+	console.log(tileNumberX)
+	return `${tileNumberX * tileWidth + (tileNumberX - 1) * gap}px`;
+});
 </script>
 
 <template>
@@ -53,7 +64,8 @@ const visibleFilledCells = computed(() => gridStore.cells as FilledCell[]);
 	grid: repeat(auto-fill, v-bind('tileWidth+"px"')) / repeat(auto-fill, v-bind('tileHeight+"px"'));
 	gap: v-bind('gap+"px"');
 
-	min-height: 1000px;
+	min-height: v-bind(minHeight);
+	min-width: v-bind(minWidth);
 }
 
 .hovered {
