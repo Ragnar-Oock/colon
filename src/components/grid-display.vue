@@ -33,11 +33,14 @@ const hoveredCell = computed(() => ({
 let hasMoved = false;
 
 function interactCell() {
-	const cell = gridStore.getCellAt(hoveredCell.value);
 	if (hasMoved) {
 		hasMoved = false;
 		return;
 	}
+	const cell = gridStore.getCellAt({
+		x: hoveredCell.value.x + gridWindow.value.x - 1,
+		y: hoveredCell.value.y + gridWindow.value.y - 1,
+	} as GridVec);
 	if (!(cell.card === undefined && deck.active !== null)) {
 		return;
 	}
@@ -148,7 +151,7 @@ window: {{ gridWindow.x }} | {{ gridWindow.y }}
 	outline: 1px pink solid;
 	height: 100vh;
 	position: relative;
-	margin: 200px;
+	//margin: 200px;
 }
 
 .map {

@@ -7,7 +7,7 @@ import HandDisplay from "./components/hand-display.vue";
 import HarvestResources from "./components/harvest-resources.vue";
 import ResourcePile from "./components/resource-pile.vue";
 import { useDeckStore } from "./stores/deck.store";
-import { useGridStore } from "./stores/grid.store";
+import { GridVec, useGridStore } from "./stores/grid.store";
 
 const grid = useGridStore();
 
@@ -18,14 +18,14 @@ function initialiseGridAtRandom() {
 	for (let x = 0; x < 10; x++) {
 		for (let y = 0; y < 10; y++) {
 			grid.setCell({
-				position: {x, y},
+				position: {x, y} as GridVec,
 				card: deckStore.pick().create(),
 			});
 		}
 	}
 }
 
-initialiseGridAtRandom();
+// initialiseGridAtRandom();
 
 </script>
 
