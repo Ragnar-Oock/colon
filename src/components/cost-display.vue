@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import { Cost, getResourceIcon, useResourceStore } from "../stores/resource.store";
+
 defineProps<{
 	cost: Cost[],
 }>();
@@ -15,10 +16,15 @@ const resourceStore = useResourceStore();
 				v-for="({type, amount}) in cost"
 				:key="type"
 				:title="`${amount} ${type}`"
-		>{{getResourceIcon(type)}} {{amount}} / {{resourceStore.resources[type]}}</span>
+				:class="{'is-enough': resourceStore.resources[type] > amount}"
+		>{{ getResourceIcon(type) }} {{ resourceStore.resources[type] }} / {{ amount }}</span>
 	</div>
 </template>
 
 <style scoped>
-
+.requirement {
+	&:not(.is-enough) {
+		filter: saturate(60%);
+	}
+}
 </style>
