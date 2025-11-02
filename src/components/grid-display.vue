@@ -2,6 +2,7 @@
 import { useElementBounding, useMouse, useMousePressed } from "@vueuse/core";
 import { computed, ref, useTemplateRef, watchEffect } from "vue";
 import { useDeckStore } from "../stores/deck.store";
+import { useDraggableStore } from "../stores/draggable.store";
 import { Cell, FilledCell, GridVec, useGridStore, Vector2 } from "../stores/grid.store";
 import GridCell from "./grid-cell.vue";
 
@@ -10,16 +11,13 @@ type ScreenVec = Vector2 & { __brand: 'screen vec' };
 
 const gridStore = useGridStore();
 const deck = useDeckStore();
+const draggableStore = useDraggableStore();
 
 const grid = useTemplateRef<HTMLDivElement>('grid');
 const gridView = useTemplateRef<HTMLDivElement>('gridView');
 const {top, left} = useElementBounding(grid);
-const {x, y} = useMouse({
-	type: event => event instanceof MouseEvent
-			? [event.clientX - left.value, event.clientY - top.value]
-			: null,
-	target: grid
-})
+const x = ref(0);
+const y = ref(0);
 
 const tileHeight = 100,
 		tileWidth = 100,
@@ -32,15 +30,15 @@ const hoveredCell = computed(() => ({
 
 let hasMoved = false;
 
-function interactCell() {
-	if (hasMoved) {
-		hasMoved = false;
-		return;
-	}
-	const cell = gridStore.getCellAt({
+function getHoveredCell() {
+	return gridStore.getCellAt({
 		x: hoveredCell.value.x + gridWindow.value.x - 1,
 		y: hoveredCell.value.y + gridWindow.value.y - 1,
 	} as GridVec);
+}
+
+function setTile() {
+	const cell = getHoveredCell();
 	if (!(cell.card === undefined && deck.active !== null)) {
 		return;
 	}
@@ -48,6 +46,14 @@ function interactCell() {
 	cell.card = deck.active;
 	deck.remove(cell.card);
 	gridStore.setCell(cell);
+}
+
+function interactCell() {
+	if (hasMoved) {
+		hasMoved = false;
+		return;
+	}
+	setTile();
 }
 
 const filteredCells = gridStore.filterCells(({position: {x, y}}) =>
@@ -116,6 +122,41 @@ function px(value: number): string {
 	return `${ value.toString(10) }px`;
 }
 
+
+function dragOver(event: DragEvent) {
+	if (!event.dataTransfer) {
+		return;
+	}
+	event.preventDefault();
+	x.value = event.clientX - left.value;
+	y.value = event.clientY - top.value;
+}
+
+function drop(event: DragEvent) {
+	console.log(event)
+	try {
+		setTile();
+	}
+	finally {
+		draggableStore.dragged = null;
+		deck.dragged = null;
+	}
+}
+
+function pointerMove(event: PointerEvent) {
+	x.value = event.clientX - left.value;
+	y.value = event.clientY - top.value;
+}
+
+const canPerformAction = computed(() => {
+	const hoveredCell = getHoveredCell();
+	if (draggableStore.dragged !== null && hoveredCell.card === undefined) {
+		return true;
+	}
+
+	return false;
+})
+
 </script>
 
 <template>
@@ -129,7 +170,18 @@ size: {{ visibleGridSize.width }} | {{ visibleGridSize.height }}
 window: {{ gridWindow.x }} | {{ gridWindow.y }}
 	</pre>
 	<div ref="gridView" class="map-view">
-		<div ref="grid" class="map" @click="interactCell">
+		<div
+				ref="grid"
+				:class="{
+					'is-dragging': draggableStore.dragged !== null,
+					'can-perform-action': canPerformAction,
+				}"
+				class="map"
+				@click="interactCell"
+				@dragover="dragOver"
+				@drop="drop"
+				@pointermove="pointerMove"
+		>
 			<div class="hovered"></div>
 			<GridCell v-for="cell in visibleFilledCells" :key="cell.id" :cell></GridCell>
 		</div>
@@ -182,18 +234,22 @@ window: {{ gridWindow.x }} | {{ gridWindow.y }}
 	left: 0;
 
 
-	&:hover > .hovered {
+	&:hover > .hovered,
+	&.is-dragging > .hovered {
 		grid-area: v-bind('hoveredCell.y') / v-bind('hoveredCell.x');
 		pointer-events: none;
 		outline: solid 2px rgba(90, 230, 90, 0.17);
 		outline-offset: 1px;
-		animation: --pulse ease-in-out 500ms infinite;
 		display: revert;
 	}
-
 	.hovered {
 		display: none;
 	}
+
+	&.can-perform-action > .hovered {
+		animation: --pulse ease-in-out 500ms infinite;
+	}
+
 }
 
 @keyframes --pulse {

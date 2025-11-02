@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { registerAllCards } from "./cards.data";
+import DraggedItem from "./components/dragged-item.vue";
 // import AddResourceForm from "./components/add-resource-form.vue";
 // import ConsumeResource from "./components/consume-resource.vue";
 import GridDisplay from "./components/grid-display.vue";
@@ -38,6 +39,7 @@ function initialiseGridAtRandom() {
 		<hand-display/>
 		<resource-pile/>
 	</div>
+	<dragged-item/>
 
 </template>
 

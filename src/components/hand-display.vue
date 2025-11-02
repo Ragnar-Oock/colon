@@ -3,7 +3,6 @@
 import { computed } from "vue";
 import { CardDescriptor, CardInstance, useDeckStore } from "../stores/deck.store";
 import { getPonderatedCost } from "../stores/resource.store";
-import HandCard from "./hand-card.vue";
 import StackDisplay from "./stack-display.vue";
 
 const deckStore = useDeckStore();
@@ -31,5 +30,6 @@ const stacks = computed(() => Object
 <style scoped>
 .stacks{
 	display: flex;
+	gap: .25em;
 }
 </style>

@@ -1,6 +1,6 @@
 import { Emitter } from "mitt";
 import { defineStore } from "pinia";
-import { computed, reactive, ref } from "vue";
+import { computed, reactive, ref, watchEffect } from "vue";
 import { Cost, ResourceTrigger } from "./resource.store";
 
 export type CardHook = (...args: unknown[]) => void;
@@ -36,6 +36,17 @@ export interface CardDescriptor {
 export const useDeckStore = defineStore('deck',() => {
 	const hand = ref<CardInstance[]>([]);
 	const active = ref<CardInstance | null>(null);
+	const dragged = ref<CardInstance | null>(null);
+	watchEffect(() => {
+		if (dragged.value !== null) {
+			active.value = dragged.value;
+		}
+	})
+	watchEffect(() => {
+		if (active.value === null) {
+			dragged.value = null;
+		}
+	})
 
 	/**
 	 * All possible cards that can be drawn into a deck
@@ -100,6 +111,7 @@ export const useDeckStore = defineStore('deck',() => {
 		deck,
 		hand,
 		active,
+		dragged,
 		draw,
 		register,
 		pick,
