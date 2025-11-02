@@ -2,7 +2,7 @@
 import { useElementBounding, useMouse, useMousePressed } from "@vueuse/core";
 import { computed, ref, useTemplateRef, watchEffect } from "vue";
 import { useDeckStore } from "../stores/deck.store";
-import { FilledCell, GridVec, useGridStore, Vector2 } from "../stores/grid.store";
+import { Cell, FilledCell, GridVec, useGridStore, Vector2 } from "../stores/grid.store";
 import GridCell from "./grid-cell.vue";
 
 type ScreenVec = Vector2 & { __brand: 'screen vec' };
@@ -41,13 +41,18 @@ function interactCell() {
 	gridStore.setCell(cell);
 }
 
-const visibleFilledCells = computed(() => (gridStore.cells as FilledCell[])
+const filteredCells = gridStore.filterCells(({position: {x, y}}) =>
+		gridWindow.value.x < x && x < visibleGridSize.value.width
+		&& gridWindow.value.y < y && y < visibleGridSize.value.height
+);
+
+const visibleFilledCells = computed(() => (filteredCells.value as FilledCell[])
 		.map(({card, position}): FilledCell => ({
 			card,
 			// position
 			position: {
-				x: position.x + gridWindows.value.x,
-				y: position.y + gridWindows.value.y,
+				x: position.x - gridWindow.value.x,
+				y: position.y - gridWindow.value.y,
 			} as GridVec
 		})));
 
@@ -57,9 +62,9 @@ const {x: dx, y: dy} = useMouse({type: 'movement', target: grid});
  * visible position of the grid in pixel, used for display and mapping from screen space to grid space
  */
 const gridPosition = ref({x: 0, y: 0} as ScreenVec);
-const gridWindows = computed(() => ({
-	x: Math.trunc(gridPosition.value.x / (tileWidth + gap)),
-	y: Math.trunc(gridPosition.value.y / (tileHeight + gap)),
+const gridWindow = computed(() => ({
+	x: (Math.trunc(gridPosition.value.x / (tileWidth + gap)) + 1) * -1,
+	y: (Math.trunc(gridPosition.value.y / (tileHeight + gap)) + 1) * -1,
 } as GridVec))
 /**
  * position of the origin of the grid in screen space
@@ -69,6 +74,9 @@ const visibleGridOffset = computed(() => ({
 	y: gridPosition.value.y % (tileHeight + gap) - (tileWidth + gap),
 } as ScreenVec))
 const {width, height} = useElementBounding(gridView);
+/**
+ * size of the visible grid in number of tiles
+ */
 const visibleGridSize = computed(() => ({
 	width: width.value % (tileWidth + gap) + 2,
 	height: height.value % (tileHeight + gap) + 2,
@@ -95,7 +103,8 @@ mouse delta: {{ dx }} | {{ dy }}
 hovered cell: {{ hoveredCell.x }} | {{ hoveredCell.y }}
 grid position: {{ gridPosition.x }} | {{ gridPosition.y }}
 visible grid position: {{ visibleGridOffset.x }} | {{ visibleGridOffset.y }}
-window: {{ gridWindows.x }} | {{ gridWindows.y }}
+size: {{ visibleGridSize.width }} | {{ visibleGridSize.height }}
+window: {{ gridWindow.x }} | {{ gridWindow.y }}
 	</pre>
 	<div ref="gridView" class="map-view">
 		<div ref="grid" class="map" @click="interactCell">

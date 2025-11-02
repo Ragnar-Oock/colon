@@ -62,7 +62,9 @@ export const useGridStore = defineStore('grid', () => {
 		bottom: 0,
 	}));
 
-	function filterCells<target extends Cell>(predicate: (cell: Cell, index: number, array: Cell[]) => cell is target): ComputedRef<target[]> {
+	function filterCells(predicate: (cell: Cell, index: number, array: Cell[]) => boolean): ComputedRef<Cell[]>;
+	function filterCells<target extends Cell>(predicate: (cell: Cell, index: number, array: Cell[]) => cell is target): ComputedRef<target[]>;
+	function filterCells(predicate: (cell: Cell, index: number, array: Cell[]) => boolean) {
 		return computed(() => cells.value.filter(predicate))
 	}
 
