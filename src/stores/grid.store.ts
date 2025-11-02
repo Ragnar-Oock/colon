@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, ComputedRef, reactive, ref } from "vue";
+import { computed, ComputedRef, ref } from "vue";
 import { CardInstance } from "./deck.store";
 
 interface Vector2 {
@@ -13,13 +13,15 @@ interface Vector2 {
 	y: number;
 }
 
-export interface Cell<card extends (CardInstance | undefined) = (CardInstance | undefined)> {
+export type MaybeCard = CardInstance | undefined;
+
+export interface Cell<card extends MaybeCard = MaybeCard> {
 	card: card;
 	position: Vector2
 }
 
-export interface FilledCell extends Cell {
-	card: CardInstance;
+export interface FilledCell<card extends MaybeCard = MaybeCard> extends Cell<card> {
+	card: Exclude<card, undefined>;
 }
 
 export const useGridStore = defineStore('grid', () => {

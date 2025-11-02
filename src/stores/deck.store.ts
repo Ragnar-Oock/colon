@@ -1,13 +1,22 @@
+import { Emitter } from "mitt";
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { Cost, ResourceTrigger } from "./resource.store";
+
+export type CardHook = (...args: unknown[]) => void;
+
+export interface CardHooks {
+	// hooks declarations added by extending this interface
+	[x: string | symbol]: CardHook;
+}
 
 export interface CardInstance {
 	name: string;
 	icon: string;
 	cost: Cost[];
 	id: string;
-	trigger?: ResourceTrigger
+	trigger?: ResourceTrigger;
+	hooks: Emitter<CardHooks>
 }
 
 export interface CardDescriptor {

@@ -1292,6 +1292,7 @@ __metadata:
   dependencies:
     "@vitejs/plugin-vue": "npm:^6.0.1"
     "@vueuse/core": "npm:^14.0.0"
+    mitt: "npm:^3.0.1"
     pinia: "npm:^3.0.3"
     typescript: "npm:^5.9.3"
     vite: "npm:^7.1.12"

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useElementBounding, useMouse } from "@vueuse/core";
-import { computed, useTemplateRef, watchEffect } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useDeckStore } from "../stores/deck.store";
 import { FilledCell, useGridStore } from "../stores/grid.store";
 import GridCell from "./grid-cell.vue";
 
 
 const gridStore = useGridStore();
-const deckStore = useDeckStore();
+const deck = useDeckStore();
 
 const grid = useTemplateRef<HTMLDivElement>('grid');
 const {top, left} = useElementBounding(grid);
@@ -29,24 +29,23 @@ const hoveredCell = computed(() => ({
 
 function interactCell() {
 	const cell = gridStore.getCellAt(hoveredCell.value);
-	if (!(cell.card === undefined && deckStore.active !== null)) {
+	if (!(cell.card === undefined && deck.active !== null)) {
 		return;
 	}
 
-	cell.card = deckStore.active;
-	deckStore.remove(cell.card);
+	cell.card = deck.active;
+	deck.remove(cell.card);
 	gridStore.setCell(cell);
 }
-const visibleFilledCells = computed(() => gridStore.cells as FilledCell[]);
+
+const visibleFilledCells = computed(() => (gridStore.cells as FilledCell[]));
 
 const minHeight = computed(() => {
 	const tileNumberY = gridStore.bounds.bottom - gridStore.bounds.top;
-	console.log(tileNumberY)
 	return `${tileNumberY * tileHeight + (tileNumberY - 1) * gap}px`;
 });
 const minWidth = computed(() => {
 	const tileNumberX = gridStore.bounds.right - gridStore.bounds.left;
-	console.log(tileNumberX)
 	return `${tileNumberX * tileWidth + (tileNumberX - 1) * gap}px`;
 });
 </script>
