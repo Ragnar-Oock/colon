@@ -30,8 +30,14 @@ const hoveredCell = computed(() => ({
 	y: Math.trunc(((y.value - visibleGridOffset.value.y) + (.5 * gap)) / (tileHeight + gap)),
 } as GridVec))
 
+let hasMoved = false;
+
 function interactCell() {
 	const cell = gridStore.getCellAt(hoveredCell.value);
+	if (hasMoved) {
+		hasMoved = false;
+		return;
+	}
 	if (!(cell.card === undefined && deck.active !== null)) {
 		return;
 	}
@@ -56,8 +62,6 @@ const visibleFilledCells = computed(() => (filteredCells.value as FilledCell[])
 			} as GridVec
 		})));
 
-const {pressed} = useMousePressed({target: grid});
-const {x: dx, y: dy} = useMouse({type: 'movement', target: grid});
 /**
  * visible position of the grid in pixel, used for display and mapping from screen space to grid space
  */
@@ -67,7 +71,7 @@ const gridWindow = computed(() => ({
 	y: (Math.trunc(gridPosition.value.y / (tileHeight + gap)) + 1) * -1,
 } as GridVec))
 /**
- * position of the origin of the grid in screen space
+ * offset of the css grid relative to the map, both x and y are between -1 tile size + gap and 0
  */
 const visibleGridOffset = computed(() => ({
 	x: gridPosition.value.x % (tileWidth + gap) - (tileWidth + gap),
@@ -82,12 +86,27 @@ const visibleGridSize = computed(() => ({
 	height: height.value % (tileHeight + gap) + 2,
 }))
 
+const {pressed} = useMousePressed({target: grid});
+const {x: dx, y: dy} = useMouse({type: 'movement', target: grid});
+const accumulatedDelta = {x: 0, y: 0};
+const deltaThreshold = 2;
+
 watchEffect(() => {
 	if (!pressed.value) {
 		return;
 	}
-	gridPosition.value.x += dx.value;
-	gridPosition.value.y += dy.value;
+
+	if (Math.abs(dx.value) < deltaThreshold && Math.abs(dy.value) < deltaThreshold) {
+		accumulatedDelta.x += dx.value;
+		accumulatedDelta.y += dy.value;
+		return;
+	}
+
+	gridPosition.value.x += dx.value + accumulatedDelta.x;
+	gridPosition.value.y += dy.value + accumulatedDelta.y;
+	accumulatedDelta.x = 0;
+	accumulatedDelta.y = 0;
+	hasMoved = true;
 })
 
 function px(value: number): string {
