@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ComputedRef, ref } from "vue";
 import { CardInstance } from "./deck.store";
 
-interface Vector2 {
+export interface Vector2 {
 	/**
 	 * a signed integer designating a row of the grid
 	 */
@@ -13,11 +13,13 @@ interface Vector2 {
 	y: number;
 }
 
+export type GridVec = Vector2 & { __brand: 'grid vec' };
+
 export type MaybeCard = CardInstance | undefined;
 
 export interface Cell<card extends MaybeCard = MaybeCard> {
 	card: card;
-	position: Vector2
+	position: GridVec
 }
 
 export interface FilledCell<card extends MaybeCard = MaybeCard> extends Cell<card> {
@@ -27,14 +29,14 @@ export interface FilledCell<card extends MaybeCard = MaybeCard> extends Cell<car
 export const useGridStore = defineStore('grid', () => {
 	const cells = ref<Cell[]>([])
 
-	function cell(position: Vector2): Cell {
+	function cell(position: GridVec): Cell {
 		return {
 			card: undefined,
 			position,
 		}
 	}
 
-	function getCellAt(position: Vector2): Cell {
+	function getCellAt(position: GridVec): Cell {
 		return cells.value.find(({position: {x, y}}) => position.x === x && position.y === y) ?? cell(position);
 	}
 

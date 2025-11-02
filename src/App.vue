@@ -32,21 +32,18 @@ initialiseGridAtRandom();
 <template>
 <!--	<add-resource-form/>-->
 <!--	<consume-resource/>-->
-	<harvest-resources/>
-	<hand-display/>
-	<resource-pile/>
-
 	<grid-display/>
+	<div class="ui">
+		<harvest-resources/>
+		<hand-display/>
+		<resource-pile/>
+	</div>
+
 </template>
 
 <style scoped>
-.grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(15ch, 30ch));
-	gap: 1rem;
-	padding: 1rem;
-}
-main {
-	width: 100%;
+.ui {
+	position: fixed;
+	bottom: 0;
 }
 </style>
