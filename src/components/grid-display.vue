@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useElementBounding, useMouse, useMousePressed } from "@vueuse/core";
 import { computed, ref, useTemplateRef, watchEffect } from "vue";
+import { Vector2 } from "../helpers/vector.helper";
 import { useDeckStore } from "../stores/deck.store";
 import { useDraggableStore } from "../stores/draggable.store";
-import { Cell, FilledCell, GridVec, useGridStore, Vector2 } from "../stores/grid.store";
+import { Cell, FilledCell, GridVec, useGridStore } from "../stores/grid.store";
 import GridCell from "./grid-cell.vue";
 
 type ScreenVec = Vector2 & { __brand: 'screen vec' };
@@ -30,22 +31,20 @@ const hoveredCell = computed(() => ({
 
 let hasMoved = false;
 
-function getHoveredCell() {
-	return gridStore.getCellAt({
-		x: hoveredCell.value.x + gridWindow.value.x - 1,
-		y: hoveredCell.value.y + gridWindow.value.y - 1,
-	} as GridVec);
-}
+const getHoveredCellPosition = () => ({
+	x: hoveredCell.value.x + gridWindow.value.x - 1,
+	y: hoveredCell.value.y + gridWindow.value.y - 1,
+} as GridVec);
+
+const getHoveredCell = () => gridStore.getCellAt(getHoveredCellPosition());
 
 function setTile() {
-	const cell = getHoveredCell();
-	if (!(cell.card === undefined && deck.active !== null)) {
+	if (deck.active === null) {
 		return;
 	}
-
-	cell.card = deck.active;
-	deck.remove(cell.card);
-	gridStore.setCell(cell);
+	if (gridStore.place(deck.active, getHoveredCellPosition())) {
+		deck.remove(deck.active);
+	}
 }
 
 function interactCell() {
@@ -133,7 +132,6 @@ function dragOver(event: DragEvent) {
 }
 
 function drop(event: DragEvent) {
-	console.log(event)
 	try {
 		setTile();
 	}
@@ -148,10 +146,15 @@ function pointerMove(event: PointerEvent) {
 	y.value = event.clientY - top.value;
 }
 
-const canPerformAction = computed(() => {
+const canPlace = computed(() => {
 	const hoveredCell = getHoveredCell();
-	if (draggableStore.dragged !== null && hoveredCell.card === undefined) {
-		return true;
+	if (
+			draggableStore.dragged !== null
+			&& deck.active !== null
+	) {
+		const canPlace = gridStore.canPlace(deck.active, hoveredCell.position);
+		console.log(canPlace);
+		return canPlace;
 	}
 
 	return false;
@@ -174,7 +177,7 @@ window: {{ gridWindow.x }} | {{ gridWindow.y }}
 				ref="grid"
 				:class="{
 					'is-dragging': draggableStore.dragged !== null,
-					'can-perform-action': canPerformAction,
+					'can-place': canPlace,
 				}"
 				class="map"
 				@click="interactCell"
@@ -246,7 +249,7 @@ window: {{ gridWindow.x }} | {{ gridWindow.y }}
 		display: none;
 	}
 
-	&.can-perform-action > .hovered {
+	&.can-place > .hovered {
 		animation: --pulse ease-in-out 500ms infinite;
 	}
 

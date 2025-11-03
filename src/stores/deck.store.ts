@@ -1,6 +1,7 @@
 import { Emitter } from "mitt";
 import { defineStore } from "pinia";
 import { computed, reactive, ref, watchEffect } from "vue";
+import { Cell } from "./grid.store";
 import { Cost, ResourceTrigger } from "./resource.store";
 
 export type CardHook = (...args: unknown[]) => void;
@@ -16,7 +17,13 @@ export interface CardInstance {
 	cost: Cost[];
 	id: string;
 	trigger?: ResourceTrigger;
-	hooks: Emitter<CardHooks>
+	hooks: Emitter<CardHooks>;
+	/**
+	 * Invoked before being placed to check if the current position is viable.
+	 *
+	 * @param neighbors a list of all future neighbors and their relative position
+	 */
+	checkNeighbors?: (neighbors: Cell[]) => boolean;
 }
 
 export interface CardDescriptor {
@@ -66,8 +73,6 @@ export const useDeckStore = defineStore('deck',() => {
 	 */
 	function pick() {
 		const drawIndex = Math.random() * totalPonderation.value;
-
-		console.log(`drawing ${drawIndex}`)
 
 		// is that default useful and sensible ?
 		let visitedPonderation = 0;

@@ -12,6 +12,7 @@ export const cards = [
 			],
 			name: 'town',
 			icon: '🏘️',
+			checkNeighbors: neighbors => neighbors.some(neighbor => ['town', 'road'].includes(neighbor.card?.name!)),
 		}),
 	},
 	{
