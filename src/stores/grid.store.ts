@@ -37,7 +37,7 @@ export const useGridStore = defineStore('grid', () => {
 		return cells.value.find(({position: {x, y}}) => position.x === x && position.y === y) ?? cell(position);
 	}
 
-	function getCardAt(position: Readonly<GridVec>): Card | undefined {
+	function getCardAt(position: Readonly<GridVec>): CardInstance | undefined {
 		return cells.value.find(({position: {x, y}}) => position.x === x && position.y === y)?.card;
 	}
 
