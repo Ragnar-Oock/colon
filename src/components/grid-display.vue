@@ -12,7 +12,7 @@ import ValidPlacements from "./valid-placements.vue";
 
 const gridStore = useGridStore();
 const deck = useDeckStore();
-const draggableStore = useDraggableStore();
+const draggable = useDraggableStore();
 const board = useBoardStore();
 
 const grid = useTemplateRef<HTMLDivElement>('grid');
@@ -66,8 +66,7 @@ function drop(event: DragEvent) {
 		setTile();
 	}
 	finally {
-		draggableStore.dragged = null;
-		deck.dragged = null;
+		draggable.end();
 	}
 }
 
@@ -78,7 +77,7 @@ function pointerMove(event: PointerEvent) {
 
 const canPlace = computed(() => {
 	if (
-			draggableStore.dragged !== null
+			draggable.dragged !== null
 			&& deck.active !== null
 	) {
 		return gridStore.canPlace(deck.active, gridStore.getCellAt(getHoveredCellPosition()).position);
@@ -93,7 +92,7 @@ const canPlace = computed(() => {
 	<div
 			ref="grid"
 			:class="{
-				'is-dragging': draggableStore.dragged !== null,
+				'is-dragging': draggable.dragged !== null,
 				'can-place': canPlace,
 			}"
 			class="map"

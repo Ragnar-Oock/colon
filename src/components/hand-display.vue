@@ -1,18 +1,26 @@
 <script setup lang="ts">
 
+import { useEventListener } from "@vueuse/core";
 import { computed } from "vue";
-import { CardDescriptor, CardInstance, useDeckStore } from "../stores/deck.store";
+import { CardInstance, useDeckStore } from "../stores/deck.store";
+import { useDraggableStore } from "../stores/draggable.store";
 import { getPonderatedCost } from "../stores/resource.store";
 import StackDisplay from "./stack-display.vue";
 
 const deckStore = useDeckStore();
 
-const hand: CardDescriptor[] = [];
-
-
 const stacks = computed(() => Object
-		.values<CardInstance[]>(Object.groupBy(deckStore.hand, ({name}) => name))
+		.values(Object.groupBy(deckStore.hand, ({name}) => name) as Record<string, CardInstance[]>)
 		.sort(([a], [b]) => getPonderatedCost(a.cost) - getPonderatedCost(b.cost)));
+
+const draggable = useDraggableStore();
+
+useEventListener('keyup', event => {
+	if (event.key === 'Escape') {
+		draggable.cancel();
+	}
+})
+
 
 </script>
 
@@ -28,7 +36,7 @@ const stacks = computed(() => Object
 </template>
 
 <style scoped>
-.stacks{
+.stacks {
 	display: flex;
 	gap: .25em;
 }

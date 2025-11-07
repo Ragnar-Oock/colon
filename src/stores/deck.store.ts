@@ -1,6 +1,6 @@
 import { Emitter } from "mitt";
 import { defineStore } from "pinia";
-import { computed, reactive, ref, watchEffect } from "vue";
+import { computed, reactive, ref } from "vue";
 import { Cell } from "./grid.store";
 import { Cost, ResourceTrigger } from "./resource.store";
 
@@ -31,6 +31,7 @@ export interface CardDescriptor {
 	 * Create a card instance to use in a hand
 	 */
 	create(): CardInstance
+
 	/**
 	 * a ponderation of the likeliness of drawing a specific card :
 	 * - 1 : as likely as anything else
@@ -40,20 +41,9 @@ export interface CardDescriptor {
 	ponderation: number;
 }
 
-export const useDeckStore = defineStore('deck',() => {
+export const useDeckStore = defineStore('deck', () => {
 	const hand = ref<CardInstance[]>([]);
 	const active = ref<CardInstance | null>(null);
-	const dragged = ref<CardInstance | null>(null);
-	watchEffect(() => {
-		if (dragged.value !== null) {
-			active.value = dragged.value;
-		}
-	})
-	watchEffect(() => {
-		if (active.value === null) {
-			dragged.value = null;
-		}
-	})
 
 	/**
 	 * All possible cards that can be drawn into a deck
@@ -116,7 +106,6 @@ export const useDeckStore = defineStore('deck',() => {
 		deck,
 		hand,
 		active,
-		dragged,
 		draw,
 		register,
 		pick,
