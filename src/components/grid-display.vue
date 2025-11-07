@@ -113,7 +113,7 @@ const canPlace = computed(() => {
 	--gap: v-bind('gap');
 
 	display: grid;
-	grid: repeat(v-bind('board.visibleGridSize.width'), var(--tileHeight)) / repeat(v-bind('board.visibleGridSize.width'), var(--tileWidth));
+	grid: repeat(v-bind('board.visibleGridSize.height'), var(--tileHeight)) / repeat(v-bind('board.visibleGridSize.width'), var(--tileWidth));
 	gap: v-bind('px(gap)');
 
 
