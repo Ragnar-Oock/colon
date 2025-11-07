@@ -13,8 +13,8 @@ const boardRef = useTemplateRef<HTMLDivElement>('boardRef');
 const {width, height} = useElementBounding(boardRef);
 
 watchEffect(() => {
-	board.visibleGridSize.width = width.value % (tileWidth + gap) + 2;
-	board.visibleGridSize.height = height.value % (tileHeight + gap) + 2;
+	board.visibleGridSize.width = Math.ceil(width.value / (tileWidth + gap)) + 2;
+	board.visibleGridSize.height = Math.ceil(height.value / (tileHeight + gap)) + 2;
 })
 const pressed = ref(false);
 
