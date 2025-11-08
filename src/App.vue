@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { registerAllCards } from "./cards.data";
+import BoardView from "./components/board-view.vue";
 import DraggedItem from "./components/dragged-item.vue";
 // import AddResourceForm from "./components/add-resource-form.vue";
 // import ConsumeResource from "./components/consume-resource.vue";
-import GridDisplay from "./components/grid-display.vue";
 import HandDisplay from "./components/hand-display.vue";
 import HarvestResources from "./components/harvest-resources.vue";
 import ResourcePile from "./components/resource-pile.vue";
+import { iter } from "./helpers/iterator.helper";
 import { useDeckStore } from "./stores/deck.store";
 import { GridVec, useGridStore } from "./stores/grid.store";
 
@@ -31,9 +32,9 @@ function initialiseGridAtRandom() {
 </script>
 
 <template>
-<!--	<add-resource-form/>-->
-<!--	<consume-resource/>-->
-	<grid-display/>
+	<!--	<add-resource-form/>-->
+	<!--	<consume-resource/>-->
+	<board-view/>
 	<div class="ui">
 		<harvest-resources/>
 		<hand-display/>
