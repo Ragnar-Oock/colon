@@ -1,31 +1,35 @@
 <script setup lang="ts">
 
-import { useEventListener } from "@vueuse/core";
-import { computed } from "vue";
-import { CardInstance, useDeckStore } from "../stores/deck.store";
-import { useDraggableStore } from "../stores/draggable.store";
-import { getPonderatedCost } from "../stores/resource.store";
-import StackDisplay from "./stack-display.vue";
+	import { useEventListener } from "@vueuse/core";
+	import { computed } from "vue";
+	import { CardInstance, useDeckStore } from "../stores/deck.store";
+	import { useDraggableStore } from "../stores/draggable.store";
+	import { getPonderatedCost } from "../stores/resource.store";
+	import StackDisplay from "./stack-display.vue";
 
-const deckStore = useDeckStore();
+	const deckStore = useDeckStore();
 
-const stacks = computed(() => Object
+	const stacks = computed(() => Object
 		.values(Object.groupBy(deckStore.hand, ({name}) => name) as Record<string, CardInstance[]>)
 		.sort(([a], [b]) => getPonderatedCost(a.cost) - getPonderatedCost(b.cost)));
 
-const draggable = useDraggableStore();
+	const draggable = useDraggableStore();
 
-useEventListener('keyup', event => {
-	if (event.key === 'Escape') {
-		draggable.cancel();
-	}
-})
+	useEventListener('keyup', event => {
+		if (event.key === 'Escape') {
+			draggable.cancel();
+		}
+	})
 
 
 </script>
 
 <template>
-	<div class="hand">
+	<div
+		class="hand"
+		@drop.prevent="draggable.cancel()"
+		@dragover.prevent
+	>
 		<div>
 			<button @click="deckStore.draw()">draw</button>
 		</div>
@@ -36,8 +40,8 @@ useEventListener('keyup', event => {
 </template>
 
 <style scoped>
-.stacks {
-	display: flex;
-	gap: .25em;
-}
+	.stacks {
+		display: flex;
+		gap: .25em;
+	}
 </style>
