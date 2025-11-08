@@ -1,68 +1,68 @@
 <script setup lang="ts">
 
-import { computed, ref } from "vue";
-import { CardInstance, useDeckStore } from "../stores/deck.store";
-import { useDraggableStore } from "../stores/draggable.store";
-import { useResourceStore } from "../stores/resource.store";
-import CostDisplay from "./cost-display.vue";
+	import { computed, ref } from "vue";
+	import { CardInstance, useDeckStore } from "../stores/deck.store";
+	import { useDraggableStore } from "../stores/draggable.store";
+	import { useResourceStore } from "../stores/resource.store";
+	import CostDisplay from "./cost-display.vue";
 
 
-const {card} = defineProps<{
-	card: CardInstance,
-}>()
+	const {card} = defineProps<{
+		card: CardInstance,
+	}>()
 
-const resourceStore = useResourceStore();
-const deckStore = useDeckStore();
-const draggable = useDraggableStore();
+	const resourceStore = useResourceStore();
+	const deckStore = useDeckStore();
+	const draggable = useDraggableStore();
 
-const canUse = computed(() => resourceStore.canConsume(...card.cost))
-const isActive = computed(() => deckStore.active === card);
+	const canUse = computed(() => resourceStore.canConsume(...card.cost))
+	const isActive = computed(() => deckStore.active === card);
 
-function select() {
-	deckStore.active = card;
-}
+	function select() {
+		deckStore.active = card;
+	}
 
-const seed = ref(0);
-const hoverAngle = computed(() => `${ (seed.value - .5) * 15 }deg`)
+	const seed = ref(0);
+	const hoverAngle = computed(() => `${ (seed.value - .5) * 15 }deg`)
 
-function hover() {
-	seed.value = Math.random();
-}
+	function hover() {
+		seed.value = Math.random();
+	}
 
-const isDragged = ref(false)
+	const isDragged = ref(false)
 
-function dragStart(event: DragEvent) {
-	isDragged.value = true;
-	deckStore.active = card;
+	function dragStart(event: DragEvent) {
+		isDragged.value = true;
+		deckStore.active = card;
 
-	draggable.start({
-		type: 'image',
-		src: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>${ card.icon }</text></svg>`,
-		height: 120,
-		width: 120
-	}, {
-		onCancel: () => {
-		},
-		onEnd() {
-			deckStore.active = null
-			isDragged.value = false;
-		},
-	})
+		draggable.start({
+			type: 'image',
+			src: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>${ card.icon }</text></svg>`,
+			height: 120,
+			width: 120
+		}, {
+			onCancel: () => {
+			},
+			onEnd() {
+				deckStore.active = null
+				isDragged.value = false;
+			},
+		})
 
-	event.dataTransfer?.setDragImage(new Image(), 0, 0);
-	event.dataTransfer?.setData('text/card-id', card.id);
-}
+		event.dataTransfer?.setDragImage(new Image(), 0, 0);
+		event.dataTransfer?.setData('text/card-id', card.id);
+	}
 
 </script>
 
 <template>
 	<div
-			:class="{'can-use': canUse, active: isActive, 'is-dragged': isDragged}"
-			class="card"
-			draggable="true"
-			@click="select"
-			@dragstart="dragStart"
-			@mouseenter="hover"
+		:class="{'can-use': canUse, active: isActive, 'is-dragged': isDragged}"
+		class="card"
+		draggable="true"
+		@click="select"
+		@dragstart="dragStart"
+		@mouseenter="hover"
 	>
 		<p>{{ card.icon }} {{ card.name }}</p>
 		<CostDisplay :cost="card.cost"/>
@@ -70,43 +70,42 @@ function dragStart(event: DragEvent) {
 </template>
 
 <style scoped>
-.card {
-	background: #2c3e50;
-	border-radius: 5px;
-	padding: .5em;
-	font-size: 1.5rem;
-	transition: transform ease-in-out 500ms;
-	isolation: isolate;
-	box-shadow: 0 0 10px hsla(0, 0%, 0%, 18%),
-	0 0 3px hsla(0, 0%, 0%, 80%);
+	.card {
+		background: #2c3e50;
+		border-radius: 5px;
+		padding: .5em;
+		font-size: 1.5rem;
+		transition: transform ease-in-out 500ms;
+		isolation: isolate;
+		box-shadow: 0 0 10px hsla(0, 0%, 0%, 18%),
+		0 0 3px hsla(0, 0%, 0%, 80%);
 
-	&.is-dragged {
-		opacity: 0;
+		&.is-dragged {
+			opacity: 0;
+		}
+
+		&:not(.can-use) {
+			filter: saturate(60%);
+		}
+
+		/* todo use aria stuff instead */
+
+		&.active {
+			--offset: -5em;
+		}
+
+		&:hover,
+		&.active {
+			transform: translateY(var(--offset, -2.5em)) rotate(v-bind(hoverAngle));
+			transition-duration: 300ms;
+			transition-delay: 50ms;
+		}
+
+		&::after {
+			content: '';
+			display: block;
+			width: 100%;
+			aspect-ratio: 1;
+		}
 	}
-
-	&:not(.can-use) {
-		filter: saturate(60%);
-	}
-
-	/* todo use aria stuff instead */
-
-	&.active {
-		--offset: -5em;
-	}
-
-	&:hover,
-	&.active {
-		transform: translateY(var(--offset, -2.5em)) rotate(v-bind(hoverAngle));
-		transition-duration: 300ms;
-		transition-delay: 50ms;
-	}
-
-	&::after {
-		content: '';
-		//background-color: lime;
-		display: block;
-		width: 100%;
-		aspect-ratio: 1;
-	}
-}
 </style>
