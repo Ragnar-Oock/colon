@@ -1,24 +1,27 @@
-<script setup lang="ts">
-import { computed } from "vue";
-import { FilledCell, useGridStore } from "../stores/grid.store";
+<script lang="ts" setup>
+	import { computed } from "vue";
+	import { FilledCell } from "../stores/grid.store";
 
-const {
-	cell
-} = defineProps<{
-	cell: FilledCell
-}>();
-const grid = useGridStore();
+	const {
+		cell
+	} = defineProps<{
+		cell: FilledCell
+	}>();
 
-// offset the position to put the grid's top left most cell in the 1 / 1 css grid cell
-const x = computed(() => cell.position.x - grid.bounds.left + 1);
-const y = computed(() => cell.position.y - grid.bounds.top + 1);
+	// offset the position to put the grid's top left most cell in the 1 / 1 css grid cell
+	const x = computed(() => cell.position.x + 1);
+	const y = computed(() => cell.position.y + 1);
 </script>
 
 <template>
-<div class="board-card">
-	<div class="icon">{{ cell.card?.icon }}</div>
-	<span class="trigger" v-if="cell.card?.trigger !== undefined" title="trigger harvest on :">{{cell.card?.trigger}}</span>
-</div>
+	<div class="board-card">
+		<div class="icon">{{ cell.card?.icon }}</div>
+		<span
+			v-if="cell.card?.trigger !== undefined"
+			class="trigger"
+			title="trigger harvest on :"
+		>{{ cell.card?.trigger }}</span>
+	</div>
 </template>
 
 <style scoped>
@@ -31,6 +34,7 @@ const y = computed(() => cell.position.y - grid.bounds.top + 1);
 			font-size: 5em;
 			pointer-events: none;
 		}
+
 		.trigger {
 			position: absolute;
 			top: 0;
