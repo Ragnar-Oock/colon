@@ -40,7 +40,11 @@ export const useGridStore = defineStore('grid', () => {
 	}
 
 	function getCardAt(position: Readonly<GridVec>): CardInstance | undefined {
-		return cells.value.find(({position: {x, y}}) => position.x === x && position.y === y)?.card;
+		return getCard(position.x, position.y);
+	}
+
+	function getCard(X: number, Y: number): CardInstance | undefined {
+		return cells.value.find(({position: {x, y}}) => X === x && Y === y)?.card;
 	}
 
 	function setCell(cell: Cell): Cell {
@@ -126,6 +130,8 @@ export const useGridStore = defineStore('grid', () => {
 	return {
 		cells,
 		getCellAt,
+		getCardAt,
+		getCard,
 		bounds,
 		setCell,
 		place,
