@@ -2,7 +2,7 @@ import emitter, { EventHandlerMap } from "mitt";
 import { defineStore } from "pinia";
 import { reactive } from "vue";
 import { CardHooks, CardInstance } from "./deck.store";
-import { Cell, useGridStore } from "./grid.store";
+import { FilledCell, useGridStore } from "./grid.store";
 
 
 export interface Resource {
@@ -66,7 +66,11 @@ export const useResourceStore = defineStore('resources', () => {
 			.every(({type, amount}) => resources[type] >= amount)
 	}
 
-	const resourceCells = grid.filterCells((cell): cell is Cell<ResourceCard> => (resourceTypes as unknown as (string | undefined)[]).includes((cell.card as ResourceCard | undefined)?.resourceType))
+	const resourceCells = grid.filterCells(
+		(cell): cell is FilledCell<ResourceCard> =>
+			(resourceTypes as unknown as (string | undefined)[])
+				.includes((cell.card as ResourceCard).resourceType)
+	)
 
 	function harvest(trigger: ResourceTrigger): void {
 		resourceCells

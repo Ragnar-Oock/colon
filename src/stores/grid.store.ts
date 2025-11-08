@@ -14,8 +14,10 @@ export interface Cell<card extends MaybeCard = MaybeCard> {
 }
 
 export interface FilledCell<card extends MaybeCard = MaybeCard> extends Cell<card> {
-	card: Exclude<card, undefined>;
+	card: NonNullable<card>;
 }
+
+const isFilled = (cell: Cell): cell is FilledCell => cell.card !== undefined
 
 const neighbors = [
 	{x: -1, y: -1}, {x: 0, y: -1}, {x: 1, y: -1},
@@ -24,7 +26,7 @@ const neighbors = [
 ] as GridVec[];
 
 export const useGridStore = defineStore('grid', () => {
-	const cells = ref<Cell[]>([])
+	const cells = ref<FilledCell[]>([])
 
 	function cell(position: Readonly<GridVec>, card?: CardInstance): Cell {
 		return {
@@ -42,6 +44,10 @@ export const useGridStore = defineStore('grid', () => {
 	}
 
 	function setCell(cell: Cell): Cell {
+		if (!isFilled(cell)) {
+			return cell;
+		}
+
 		if (!cells.value.includes(cell)) {
 			cells.value.push(cell);
 		}
@@ -76,10 +82,13 @@ export const useGridStore = defineStore('grid', () => {
 			)
 	);
 
-	function filterCells(predicate: (cell: Cell, index: number, array: Cell[]) => boolean): ComputedRef<Cell[]>;
-	function filterCells<target extends Cell>(predicate: (cell: Cell, index: number, array: Cell[]) => cell is target): ComputedRef<target[]>;
-	function filterCells(predicate: (cell: Cell, index: number, array: Cell[]) => boolean) {
-		return computed(() => cells.value.filter(predicate))
+	function filterCells<target extends FilledCell>(predicate: (cell: FilledCell, index: number) => cell is target): ComputedRef<target[]>;
+	function filterCells(predicate: (cell: FilledCell, index: number) => boolean): ComputedRef<FilledCell[]>;
+	function filterCells(predicate: (cell: FilledCell, index: number) => boolean) {
+		return computed(() => cells
+			.value
+			.filter(predicate)
+		)
 	}
 
 	/**
