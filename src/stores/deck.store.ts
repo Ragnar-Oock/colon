@@ -1,45 +1,6 @@
-import { Emitter } from "mitt";
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
-import { Cell } from "./grid.store";
-import { Cost, ResourceTrigger } from "./resource.store";
-
-export type CardHook = (...args: unknown[]) => void;
-
-export interface CardHooks {
-	// hooks declarations added by extending this interface
-	[x: string | symbol]: CardHook;
-}
-
-export interface CardInstance {
-	name: string;
-	icon: string;
-	cost: Cost[];
-	id: string;
-	trigger?: ResourceTrigger;
-	hooks: Emitter<CardHooks>;
-	/**
-	 * Invoked before being placed to check if the current position is viable.
-	 *
-	 * @param neighbors a list of all future neighbors and their relative position
-	 */
-	checkNeighbors?: (neighbors: Cell[]) => boolean;
-}
-
-export interface CardDescriptor {
-	/**
-	 * Create a card instance to use in a hand
-	 */
-	create(): CardInstance
-
-	/**
-	 * a ponderation of the likeliness of drawing a specific card :
-	 * - 1 : as likely as anything else
-	 * - \>1 : more likely
-	 * - \<1 : less likely
-	 */
-	ponderation: number;
-}
+import { CardDescriptor, CardInstance } from "../helpers/card.helper";
 
 export const useDeckStore = defineStore('deck', () => {
 	const hand = ref<CardInstance[]>([]);
@@ -100,7 +61,8 @@ export const useDeckStore = defineStore('deck', () => {
 		deck.push(descriptor);
 	}
 
-	const totalPonderation = computed(() => deck.reduce((acc, {ponderation}) => acc + ponderation, 0))
+	const totalPonderation = computed(() => deck.reduce((acc, {ponderation}) => acc + ponderation, 0));
+
 
 	return {
 		deck,

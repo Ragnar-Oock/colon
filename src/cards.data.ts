@@ -1,8 +1,8 @@
+import { card, CardDescriptor, CardInstance } from "./helpers/card.helper";
 import { combine, expectAtLeast, expectNone } from "./helpers/neighborhood-predicate.helper";
 import { countType } from "./helpers/score-multiplier.helper";
 import { ofType, sameType } from "./helpers/score-predicate";
 import { pick } from "./math.helper";
-import { card, CardDescriptor, CardInstance } from "./stores/deck.store";
 import { FilledCell } from "./stores/grid.store";
 import { ResourceCard, resourceTriggers } from "./stores/resource.store";
 
@@ -20,6 +20,9 @@ export const cards = [
 			name: 'town',
 			icon: '🏘️',
 			checkNeighbors: expectAtLeast('town', 'road'),
+			scoreContributors: (placement, {floodFetch}) =>
+				floodFetch(placement, sameType('town')) as FilledCell[],
+			multiplier: countType('town')
 		}),
 	},
 	{
@@ -31,6 +34,7 @@ export const cards = [
 			],
 			name: 'road',
 			icon: '🛣️',
+			scoreContributors: () => []
 		}),
 	},
 	{
@@ -44,7 +48,6 @@ export const cards = [
 			icon: '🧱',
 			resourceType: "brick",
 			trigger: pick(resourceTriggers),
-			multiplier: 1,
 			checkNeighbors: expectAtLeast('town'),
 		}),
 	},
@@ -58,8 +61,8 @@ export const cards = [
 			icon: '🪙',
 			resourceType: "gold",
 			trigger: pick(resourceTriggers),
-			multiplier: 1,
 			checkNeighbors: expectAtLeast('town'),
+			bonus: type => type === 'town' ? 1 : 0
 		}),
 	},
 	{
@@ -72,7 +75,6 @@ export const cards = [
 			icon: '🪨',
 			resourceType: "rock",
 			trigger: pick(resourceTriggers),
-			multiplier: 1,
 		}),
 	},
 	{
@@ -86,7 +88,6 @@ export const cards = [
 			icon: '🌾',
 			resourceType: "wheat",
 			trigger: pick(resourceTriggers),
-			multiplier: 1,
 			checkNeighbors: combine(
 				expectNone('quarry'),
 				expectAtLeast('meadow', 'road', 'town'),
@@ -104,7 +105,6 @@ export const cards = [
 			icon: '🌳',
 			resourceType: "wood",
 			trigger: pick(resourceTriggers),
-			multiplier: 1,
 		}),
 	},
 	{
@@ -118,8 +118,9 @@ export const cards = [
 			icon: '🐑',
 			resourceType: "wool",
 			trigger: pick(resourceTriggers),
-			multiplier: 1,
 			checkNeighbors: expectAtLeast('meadow', 'road', 'town'),
+			scoreContributors: (placement, {floodFetch}) =>
+				floodFetch(placement, ofType('meadow', 'field')) as FilledCell[],
 		}),
 	},
 ] satisfies CardDescriptor[];

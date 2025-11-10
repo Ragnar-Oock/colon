@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
 	import { computed, ref } from "vue";
-	import { CardInstance, useDeckStore } from "../stores/deck.store";
+	import { CardInstance } from "../helpers/card.helper";
+	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
 	import { useResourceStore } from "../stores/resource.store";
 	import CostDisplay from "./cost-display.vue";

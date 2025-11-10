@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { CardInstance } from "../stores/deck.store";
-import HandCard from "./hand-card.vue";
+	import { CardInstance } from "../helpers/card.helper";
+	import HandCard from "./hand-card.vue";
 
-defineProps<{
-	stack: CardInstance[]
-}>()
+	defineProps<{
+		stack: CardInstance[]
+	}>()
 </script>
 
 <template>
@@ -13,7 +13,7 @@ defineProps<{
 				 :key="card.id"
 				 class="item">
 			<HandCard
-					:card
+				:card
 			/>
 		</div>
 	</div>

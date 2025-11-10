@@ -2,7 +2,8 @@
 
 	import { useEventListener } from "@vueuse/core";
 	import { computed } from "vue";
-	import { CardInstance, useDeckStore } from "../stores/deck.store";
+	import { CardInstance } from "../helpers/card.helper";
+	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
 	import { getPonderatedCost } from "../stores/resource.store";
 	import StackDisplay from "./stack-display.vue";

@@ -1,7 +1,6 @@
-import emitter, { EventHandlerMap } from "mitt";
 import { defineStore } from "pinia";
 import { reactive } from "vue";
-import { CardHooks, CardInstance } from "./deck.store";
+import { CardInstance } from "../helpers/card.helper";
 import { FilledCell, useGridStore } from "./grid.store";
 
 
@@ -35,17 +34,6 @@ export const RESOURCE_MAX = 3;
 
 export interface ResourceCard extends CardInstance {
 	resourceType: ResourceType,
-	multiplier: number,
-}
-
-export type ProtoCard<card extends CardInstance> = Omit<card, 'id' | 'hooks'>
-
-export function card<card extends CardInstance>(proto: ProtoCard<card>, hooks?: EventHandlerMap<CardHooks>): card {
-	return {
-		...proto,
-		id: crypto.randomUUID(),
-		hooks: emitter(hooks)
-	} as card
 }
 
 export const useResourceStore = defineStore('resources', () => {
@@ -80,7 +68,7 @@ export const useResourceStore = defineStore('resources', () => {
 					return;
 				}
 
-				resources[card.resourceType] += card.multiplier;
+				resources[card.resourceType] += 1;
 			})
 	}
 
