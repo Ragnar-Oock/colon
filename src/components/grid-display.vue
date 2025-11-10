@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 	import { useElementBounding } from "@vueuse/core";
-	import { computed, reactive, useTemplateRef } from "vue";
-	import { useBoardStore } from "../stores/board.store";
+	import { computed, useTemplateRef } from "vue";
+	import { ScreenVec, useBoardStore } from "../stores/board.store";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
-	import { GridVec, useGridStore } from "../stores/grid.store";
+	import { useGridStore } from "../stores/grid.store";
+	// noinspection ES6UnusedImports
 	import { gap, tileHeight, tileWidth } from "./grid.config";
 	import PlacedCards from "./placed-cards.vue";
 	import ValidPlacements from "./valid-placements.vue";
@@ -18,23 +19,11 @@
 	const grid = useTemplateRef<HTMLDivElement>('grid');
 	const {top, left} = useElementBounding(grid);
 
-	const pointer = reactive({x: 0, y: 0});
-
-	const hoveredCell = computed(() => ({
-		x: Math.trunc(((pointer.x) + (.5 * gap)) / (tileWidth + gap)) + 1,
-		y: Math.trunc(((pointer.y) + (.5 * gap)) / (tileHeight + gap)) + 1,
-	} as GridVec))
-
-	const getHoveredCellPosition = () => ({
-		x: hoveredCell.value.x + board.gridWindow.x - 1,
-		y: hoveredCell.value.y + board.gridWindow.y - 1,
-	} as GridVec);
-
 	function setTile() {
-		if (deck.active === null) {
+		if (deck.active === null || board.hoveredCell === null) {
 			return;
 		}
-		if (gridStore.place(deck.active, getHoveredCellPosition())) {
+		if (gridStore.place(deck.active, board.hoveredCell)) {
 			deck.remove(deck.active);
 		}
 	}
@@ -47,7 +36,6 @@
 		setTile();
 	}
 
-
 	function px(value: number): string {
 		return `${ value.toString(10) }px`;
 	}
@@ -57,11 +45,10 @@
 			return;
 		}
 		event.preventDefault();
-		pointer.x = event.clientX - left.value;
-		pointer.y = event.clientY - top.value;
+		pointerMove(event)
 	}
 
-	function drop(event: DragEvent) {
+	function drop() {
 		try {
 			setTile();
 		}
@@ -70,22 +57,26 @@
 		}
 	}
 
-	function pointerMove(event: PointerEvent) {
-		pointer.x = event.clientX - left.value;
-		pointer.y = event.clientY - top.value;
+	function pointerMove(event: { clientX: number, clientY: number }): void {
+		board.pointerPosition = {
+			x: event.clientX - left.value,
+			y: event.clientY - top.value,
+		} as ScreenVec;
 	}
 
 	const canPlace = computed(() => {
 		if (
-			draggable.dragged !== null
-			&& deck.active !== null
+			draggable.dragged === null
+			|| deck.active === null
+			|| board.hoveredCell === null
 		) {
-			return gridStore.canPlace(deck.active, gridStore.getCellAt(getHoveredCellPosition()).position);
+			return false;
 		}
-
-		return false;
+		return gridStore.canPlace(
+			deck.active,
+			board.hoveredCell
+		);
 	})
-
 </script>
 
 <template>
@@ -126,9 +117,9 @@
 		--bgc1: #333;
 		--bgc2: #3d3d3d;
 		background-image: conic-gradient(
-				at v-bind('px(tileWidth)') v-bind('px(tileHeight)'),
-				var(--bgc1) 0deg, var(--bgc1) 270deg,
-				var(--bgc2) 270deg, var(--bgc2) 360deg
+			at v-bind('px(tileWidth)') v-bind('px(tileHeight)'),
+			var(--bgc1) 0deg, var(--bgc1) 270deg,
+			var(--bgc2) 270deg, var(--bgc2) 360deg
 		);
 		background-size: v-bind('px(tileWidth+gap)') v-bind('px(tileHeight+gap)');
 		position: absolute;
@@ -138,7 +129,7 @@
 
 		&:hover > .hovered,
 		&.is-dragging > .hovered {
-			grid-area: v-bind('hoveredCell.y') / v-bind('hoveredCell.x');
+			grid-area: v-bind('board.visuallyHoveredCell.y') / v-bind('board.visuallyHoveredCell.x');
 			pointer-events: none;
 			outline: solid 2px rgba(90, 230, 90, 0.17);
 			outline-offset: 1px;

@@ -8,6 +8,26 @@ export type ScreenVec = Vector2 & { __brand: 'screen vec' };
 export const useBoardStore = defineStore('board', () => {
 	const visibleGridSize = reactive({width: 0, height: 0});
 	const isPanning = ref(false);
+	const pointerPosition = ref<ScreenVec | null>(null);
+
+	const hoveredCell = computed(() => {
+		if (pointerPosition.value === null) {
+			return null
+		}
+		return ({
+			x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) - 1,
+			y: Math.trunc(((pointerPosition.value.y) + (.5 * gap)) / (tileHeight + gap)) - 1,
+		} as GridVec);
+	});
+	const visuallyHoveredCell = computed(() => {
+		if (hoveredCell.value) {
+			return {
+				x: hoveredCell.value.x - gridWindow.value.x + 1,
+				y: hoveredCell.value.y - gridWindow.value.y + 1,
+			};
+		}
+		return {x: 0, y: 0};
+	})
 
 	/**
 	 * visible position of the grid in pixel, used for display and mapping from screen space to grid space
@@ -32,6 +52,9 @@ export const useBoardStore = defineStore('board', () => {
 		gridWindow,
 		visibleGridOffset,
 		visibleGridSize,
-		isPanning
+		isPanning,
+		pointerPosition,
+		hoveredCell,
+		visuallyHoveredCell
 	}
 })
