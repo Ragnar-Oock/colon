@@ -1,24 +1,24 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import { useBoardStore } from "../stores/board.store";
-import { FilledCell, GridVec, useGridStore } from "../stores/grid.store";
-import GridCell from "./grid-cell.vue";
+	import { computed } from "vue";
+	import { useBoardStore } from "../stores/board.store";
+	import { FilledCell, GridVec, useGridStore } from "../stores/grid.store";
+	import GridCell from "./grid-cell.vue";
 
-const {filterCells} = useGridStore();
-const board = useBoardStore();
+	const {filterCells} = useGridStore();
+	const board = useBoardStore();
 
-const visibleCells = filterCells(({position: {x, y}}) =>
+	const visibleCells = filterCells(({position: {x, y}}) =>
 		board.gridWindow.x < x && x < board.visibleGridSize.width
 		&& board.gridWindow.y < y && y < board.visibleGridSize.height
-);
+	);
 
-const visibleFilledCells = computed(() => (visibleCells.value as FilledCell[])
-		.map(({card, position}): FilledCell => ({
+	const visibleFilledCells = computed(() => (visibleCells.value as FilledCell[])
+		.map(({card, position}) => ({
 			card,
-			// position
-			position: {
-				x: position.x - board.gridWindow.x,
-				y: position.y - board.gridWindow.y,
+			position,
+			visiblePosition: {
+				x: position.x - board.gridWindow.x + 1,
+				y: position.y - board.gridWindow.y + 1,
 			} as GridVec
 		})));
 </script>
