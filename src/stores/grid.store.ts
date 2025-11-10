@@ -1,7 +1,10 @@
 import { defineStore } from "pinia";
 import { computed, ComputedRef, ref } from "vue";
-import { addVec, Vector2 } from "../helpers/vector.helper";
-import { CardInstance } from "./deck.store";
+import { CardInstance, ScoreHelpers } from "../helpers/card.helper";
+import { addVec, equalsVec, Vector2 } from "../helpers/vector.helper";
+import { useBoardStore } from "./board.store";
+import { useDeckStore } from "./deck.store";
+import { useScoreStore } from "./score.store";
 
 declare const gridVec: unique symbol;
 export type GridVec = Vector2 & { [gridVec]: 'grid vec' };
@@ -26,6 +29,8 @@ const neighbors = [
 ] as GridVec[];
 
 export const useGridStore = defineStore('grid', () => {
+	const score = useScoreStore();
+
 	const cells = ref<FilledCell[]>([])
 
 	function cell(position: Readonly<GridVec>, card?: CardInstance): Cell {
@@ -35,16 +40,16 @@ export const useGridStore = defineStore('grid', () => {
 		}
 	}
 
-	function getCellAt(position: Readonly<GridVec>): Cell {
-		return cells.value.find(({position: {x, y}}) => position.x === x && position.y === y) ?? cell(position);
+	function getCellAt(cells: ReadonlyArray<FilledCell>, position: Readonly<GridVec>): Cell {
+		return cells.find(({position: {x, y}}) => position.x === x && position.y === y) ?? cell(position);
 	}
 
-	function getCardAt(position: Readonly<GridVec>): CardInstance | undefined {
-		return getCard(position.x, position.y);
+	function getCardAt(cells: ReadonlyArray<FilledCell>, position: Readonly<GridVec>): CardInstance | undefined {
+		return getCard(cells, position.x, position.y);
 	}
 
-	function getCard(X: number, Y: number): CardInstance | undefined {
-		return cells.value.find(({position: {x, y}}) => X === x && Y === y)?.card;
+	function getCard(cells: ReadonlyArray<FilledCell>, X: number, Y: number): CardInstance | undefined {
+		return cells.find(({position: {x, y}}) => X === x && Y === y)?.card;
 	}
 
 	function setCell(cell: Cell): Cell {
@@ -60,11 +65,80 @@ export const useGridStore = defineStore('grid', () => {
 	}
 
 	function place(card: CardInstance, at: GridVec): boolean {
-		if (!canPlace(card, at)) {
+		if (!canPlace(cells.value, card, at)) {
 			return false;
 		}
 		setCell(cell(at, card));
+		updateScore(card, at);
 		return true;
+	}
+
+	const deck = useDeckStore();
+	const board = useBoardStore();
+
+	function getScoreContributors(card: CardInstance, position: GridVec, effectiveCells: FilledCell[]): (FilledCell & {
+		score: number
+	})[] {
+		if (card === null || position === null || !canPlace(cells.value, card, position)) {
+			return [];
+		}
+
+		const helpers = getScoreHelpers(card, position, effectiveCells);
+
+		return card
+			.scoreContributors?.(position, helpers)
+			?.map(contributor => ({
+					...contributor,
+					score: contributor
+						.card
+						?.multiplier?.(
+							helpers
+								.getNeighbors(contributor.position)
+								.map(neighbor => {
+									if (neighbor.card === undefined && equalsVec(addVec(contributor.position, neighbor.position), position)) {
+										return {
+											card,
+											position: position
+										}
+									}
+									return neighbor;
+								})
+						)
+				})
+			) ?? []
+	}
+
+	const scoreContributors = computed<(FilledCell & { score: number })[] | null>(() => {
+		const card = deck.active;
+		const position = board.hoveredCell;
+		if (card === null || position === null || !canPlace(cells.value, card, position)) {
+			return null;
+		}
+
+		return getScoreContributors(card, position, cells.value);
+	})
+
+	function getScoreHelpers(card: CardInstance, position: GridVec, cells: FilledCell[]): ScoreHelpers {
+		const effectiveCells = Array
+			.from(cells)
+			.concat([{
+				card,
+				position
+			}]);
+
+		return {
+			getCard: at => getCardAt(effectiveCells, position),
+			getNeighbors: at => getNeighbors(effectiveCells, at),
+			floodFetch: (start, predicate) => floodFetch(effectiveCells, start, predicate)
+		}
+	}
+
+	function updateScore(card: CardInstance, at: Readonly<GridVec>): void {
+		const placementScore = getScoreContributors(card, at, cells.value)
+				?.reduce((acc, {score}) => acc + score, 0)
+			?? 0;
+
+		score.score += placementScore;
 	}
 
 	const bounds = computed(() =>
@@ -98,25 +172,23 @@ export const useGridStore = defineStore('grid', () => {
 	/**
 	 * Check if a card can be placed somewhere. A card can only be placed near another one (unless it's the first) and it
 	 * all of it's to be nei
+	 * @param cells
 	 * @param card
 	 * @param at
 	 */
-	function canPlace(card: Readonly<CardInstance>, at: Readonly<GridVec>): boolean {
+	function canPlace(cells: ReadonlyArray<FilledCell>, card: Readonly<CardInstance>, at: Readonly<GridVec>): boolean {
 		// at the start everywhere is a valid placement
-		if (cells.value.length === 0) {
+		if (cells.length === 0) {
 			return true;
 		}
 
 		// can't place on an existing tile (yet ?)
-		const cellAt = getCellAt(at);
+		const cellAt = getCellAt(cells, at);
 		if (cellAt.card !== undefined) {
 			return false;
 		}
 
-		const neighboringCells = neighbors.map(position => ({
-			card: getCardAt(addVec(at, position)),
-			position,
-		}));
+		const neighboringCells = getNeighbors(cells, at);
 
 		// only allow placing cards near an existing card
 		if (!neighboringCells.some(({card}) => card !== undefined)) {
@@ -127,15 +199,53 @@ export const useGridStore = defineStore('grid', () => {
 		return card.checkNeighbors?.(neighboringCells) ?? true
 	}
 
+	function getNeighbors(cells: ReadonlyArray<FilledCell>, at: GridVec): Cell[] {
+		return neighbors.map(position => ({
+			card: getCardAt(cells, addVec(at, position)),
+			position,
+		}))
+	}
+
+	function floodFetch(cells: ReadonlyArray<FilledCell>, start: GridVec, predicate: (card: MaybeCard) => boolean): Cell[] {
+		const queue = [
+			addVec(start, {x: 1, y: 0} as GridVec),
+			addVec(start, {x: -1, y: 0} as GridVec),
+			addVec(start, {x: 0, y: 1} as GridVec),
+			addVec(start, {x: 0, y: -1} as GridVec),
+		];
+		const flood = new Set<Cell>();
+		while (queue.length > 0) {
+			let next = queue.shift();
+			if (next === undefined) {
+				break;
+			}
+			const cell = getCellAt(cells, next);
+			if (flood.has(cell)) {
+				continue;
+			}
+			if (predicate(cell.card)) {
+				flood.add(cell);
+				queue.push(
+					addVec(next, {x: 1, y: 0} as GridVec),
+					addVec(next, {x: -1, y: 0} as GridVec),
+					addVec(next, {x: 0, y: 1} as GridVec),
+					addVec(next, {x: 0, y: -1} as GridVec),
+				)
+			}
+		}
+		return Array.from(flood);
+	}
+
 	return {
 		cells,
-		getCellAt,
-		getCardAt,
-		getCard,
+		getCellAt: (position: Readonly<GridVec>) => getCellAt(cells.value, position),
+		getCardAt: (position: Readonly<GridVec>) => getCardAt(cells.value, position),
+		getCard: (x: number, y: number) => getCard(cells.value, x, y),
 		bounds,
 		setCell,
 		place,
 		filterCells,
-		canPlace,
+		canPlace: (card: CardInstance, at: Readonly<GridVec>) => canPlace(cells.value, card, at),
+		getScoreContributors
 	}
 })

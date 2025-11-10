@@ -31,3 +31,11 @@ export const inverseVec = <vec extends Vector2>({x, y}: vec): vec => ({
 	x: -x,
 	y: -y,
 } as vec)
+
+export const toString = (
+	{x, y}: Vector2
+): string =>
+	`(${ x.toString(10).padStart(3, ' ') } | ${ y.toString(10).padStart(3, ' ') })`
+
+export const equalsVec = <vec extends Vector2>(a: Readonly<vec>, b: Readonly<vec>): boolean =>
+	a.x === b.x && a.y === b.y
