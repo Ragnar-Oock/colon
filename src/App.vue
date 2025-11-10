@@ -1,19 +1,19 @@
 <script setup lang="ts">
+	import { onMounted } from "vue";
 	import { registerAllCards } from "./cards.data";
 	import BoardView from "./components/board-view.vue";
 	import DraggedItem from "./components/dragged-item.vue";
-	// import AddResourceForm from "./components/add-resource-form.vue";
-	// import ConsumeResource from "./components/consume-resource.vue";
 	import HandDisplay from "./components/hand-display.vue";
 	import HarvestResources from "./components/harvest-resources.vue";
-	import ResourcePile from "./components/resource-pile.vue";
 	import { iter } from "./helpers/iterator.helper";
 	import { useDeckStore } from "./stores/deck.store";
 	import { GridVec, useGridStore } from "./stores/grid.store";
+	import { useScoreStore } from "./stores/score.store";
 
 	const grid = useGridStore();
-
+	const score = useScoreStore();
 	const deckStore = useDeckStore();
+
 	registerAllCards(deckStore.register);
 
 	function initialiseGridAtRandom(size: number) {
@@ -32,19 +32,19 @@
 			.forEach(() => deckStore.draw())
 	}
 
-	// initialiseGridAtRandom(5);
-	initializeHandAtRandom(7);
-
+	onMounted(() => {
+		// initialiseGridAtRandom(5);
+		initializeHandAtRandom(21);
+	})
 </script>
 
 <template>
-	<!--	<add-resource-form/>-->
-	<!--	<consume-resource/>-->
 	<board-view/>
 	<div class="ui">
+		{{ score.score }}
+
 		<harvest-resources/>
 		<hand-display/>
-		<resource-pile/>
 	</div>
 	<dragged-item/>
 
