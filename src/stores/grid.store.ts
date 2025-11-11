@@ -68,8 +68,8 @@ export const useGridStore = defineStore('grid', () => {
 		if (!canPlace(cells.value, card, at)) {
 			return false;
 		}
-		setCell(cell(at, card));
 		updateScore(card, at);
+		setCell(cell(at, card));
 		return true;
 	}
 
