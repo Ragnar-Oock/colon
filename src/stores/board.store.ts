@@ -15,8 +15,8 @@ export const useBoardStore = defineStore('board', () => {
 			return null
 		}
 		return ({
-			x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) - 1,
-			y: Math.trunc(((pointerPosition.value.y) + (.5 * gap)) / (tileHeight + gap)) - 1,
+			x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) + gridWindow.value.x,
+			y: Math.trunc(((pointerPosition.value.y) + (.5 * gap)) / (tileHeight + gap)) + gridWindow.value.y,
 		} as GridVec);
 	});
 	const visuallyHoveredCell = computed(() => {
