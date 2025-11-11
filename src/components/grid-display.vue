@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 	import { useElementBounding } from "@vueuse/core";
-	import { computed, useTemplateRef } from "vue";
+	import { useTemplateRef } from "vue";
 	import { ScreenVec, useBoardStore } from "../stores/board.store";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
 	import { useGridStore } from "../stores/grid.store";
 	// noinspection ES6UnusedImports
 	import { gap, tileHeight, tileWidth } from "./grid.config";
+	import HoveredCell from "./hovered-cell.vue";
 	import PlacedCards from "./placed-cards.vue";
 	import ValidPlacements from "./valid-placements.vue";
 
@@ -64,35 +65,18 @@
 		} as ScreenVec;
 	}
 
-	const canPlace = computed(() => {
-		if (
-			draggable.dragged === null
-			|| deck.active === null
-			|| board.hoveredCell === null
-		) {
-			return false;
-		}
-		return gridStore.canPlace(
-			deck.active,
-			board.hoveredCell
-		);
-	})
 </script>
 
 <template>
 	<div
 		ref="grid"
-		:class="{
-				'is-dragging': draggable.dragged !== null,
-				'can-place': canPlace,
-			}"
 		class="map"
 		@click="interactCell"
 		@dragover="dragOver"
 		@drop="drop"
 		@pointermove="pointerMove"
 	>
-		<div class="hovered"></div>
+		<hovered-cell/>
 		<PlacedCards/>
 		<ValidPlacements/>
 	</div>
@@ -125,30 +109,5 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-
-
-		&:hover > .hovered,
-		&.is-dragging > .hovered {
-			grid-area: v-bind('board.visuallyHoveredCell.y') / v-bind('board.visuallyHoveredCell.x');
-			pointer-events: none;
-			outline: solid 2px rgba(90, 230, 90, 0.17);
-			outline-offset: 1px;
-			display: revert;
-		}
-
-		.hovered {
-			display: none;
-		}
-
-		&.can-place > .hovered {
-			animation: --pulse ease-in-out 500ms infinite;
-		}
-
-	}
-
-	@keyframes --pulse {
-		50% {
-			scale: 1.05;
-		}
 	}
 </style>
