@@ -1,7 +1,7 @@
 import { card, CardDescriptor, CardInstance } from "./helpers/card.helper";
 import { combine, expectAtLeast, expectNone } from "./helpers/neighborhood-predicate.helper";
-import { countType } from "./helpers/score-multiplier.helper";
-import { ofType, sameType } from "./helpers/score-predicate";
+import { countEmpty, countType } from "./helpers/score-multiplier.helper";
+import { ofType } from "./helpers/score-predicate";
 import { pick } from "./math.helper";
 import { FilledCell } from "./stores/grid.store";
 import { ResourceCard, resourceTriggers } from "./stores/resource.store";
@@ -21,8 +21,7 @@ export const cards = [
 			icon: '🏘️',
 			checkNeighbors: expectAtLeast('town', 'road'),
 			scoreContributors: (placement, {floodFetch}) =>
-				floodFetch(placement, sameType('town')) as FilledCell[],
-			multiplier: countType('town')
+				floodFetch(placement, ofType('town')) as FilledCell[],
 		}),
 	},
 	{
@@ -34,7 +33,8 @@ export const cards = [
 			],
 			name: 'road',
 			icon: '🛣️',
-			scoreContributors: () => []
+			scoreContributors: () => [],
+			multiplier: () => 1
 		}),
 	},
 	{
@@ -48,7 +48,9 @@ export const cards = [
 			icon: '🧱',
 			resourceType: "brick",
 			trigger: pick(resourceTriggers),
-			checkNeighbors: expectAtLeast('town'),
+			checkNeighbors: expectAtLeast('town'), scoreContributors: (placement, {floodFetch}) =>
+				floodFetch(placement, ofType('town')) as FilledCell[],
+			multiplier: neighbors => countType('brick factory')(neighbors) > 0 ? 0 : 1
 		}),
 	},
 	{
@@ -105,6 +107,9 @@ export const cards = [
 			icon: '🌳',
 			resourceType: "wood",
 			trigger: pick(resourceTriggers),
+			scoreContributors: (placement, {floodFetch}) =>
+				floodFetch(placement, ofType('meadow', 'field')) as FilledCell[],
+			multiplier: countEmpty()
 		}),
 	},
 	{

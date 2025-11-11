@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ComputedRef, ref } from "vue";
 import { CardInstance, ScoreHelpers } from "../helpers/card.helper";
-import { addVec, equalsVec, Vector2 } from "../helpers/vector.helper";
+import { addVec, toString, Vector2 } from "../helpers/vector.helper";
 import { useBoardStore } from "./board.store";
 import { useDeckStore } from "./deck.store";
 import { useScoreStore } from "./score.store";
@@ -27,6 +27,11 @@ const neighbors = [
 	{x: -1, y: 0}, {x: 1, y: 0},
 	{x: -1, y: 1}, {x: 0, y: 1}, {x: 1, y: 1},
 ] as GridVec[];
+
+/**
+ * Limit the number of cells the flood fill algorithm is allowed to return
+ */
+const MAX_FLOOD_SIZE = 100;
 
 export const useGridStore = defineStore('grid', () => {
 	const score = useScoreStore();
@@ -77,66 +82,82 @@ export const useGridStore = defineStore('grid', () => {
 	const board = useBoardStore();
 
 	function getScoreContributors(card: CardInstance, position: GridVec, effectiveCells: FilledCell[]): (FilledCell & {
-		score: number
+		score: number;
+		bonus: number;
 	})[] {
 		if (card === null || position === null || !canPlace(cells.value, card, position)) {
 			return [];
 		}
 
-		const helpers = getScoreHelpers(card, position, effectiveCells);
+		const helpers = getScoreHelpers(effectiveCells);
 
-		return card
-			.scoreContributors?.(position, helpers)
-			?.map(contributor => ({
+		const bonuses = new Map(
+			getNeighbors(cells.value, position)
+				.filter(isFilled)
+				.map(neighbor => ({
+					...neighbor,
+					bonus: neighbor.card.bonus?.(card.name) ?? 0,
+					score: 0,
+				}))
+				.map(neighbor => [toString(neighbor.position), neighbor])
+		);
+		const contributors = new Map(
+			card
+				.scoreContributors?.(position, helpers)
+				.map(contributor => ({
 					...contributor,
-					score: contributor
-						.card
-						?.multiplier?.(
-							helpers
-								.getNeighbors(contributor.position)
-								.map(neighbor => {
-									if (neighbor.card === undefined && equalsVec(addVec(contributor.position, neighbor.position), position)) {
-										return {
-											card,
-											position: position
-										}
-									}
-									return neighbor;
-								})
-						)
-				})
-			) ?? []
+					score: 1,
+					bonus: 0
+				}))
+				.map(contributor => [toString(contributor.position), contributor])
+			?? []);
+
+		bonuses.forEach((bonus, position) => {
+			const contributor = contributors.get(position);
+			if (contributor) {
+				contributor.bonus = bonus.bonus
+			}
+			else {
+				contributors.set(position, bonus);
+			}
+		})
+
+		return contributors.values().toArray();
 	}
 
-	const scoreContributors = computed<(FilledCell & { score: number })[] | null>(() => {
+	const scoreContributors = computed<(FilledCell & { score: number, bonus: number })[] | null>(() => {
 		const card = deck.active;
 		const position = board.hoveredCell;
 		if (card === null || position === null || !canPlace(cells.value, card, position)) {
 			return null;
 		}
 
-		return getScoreContributors(card, position, cells.value);
+		const contributors = getScoreContributors(card, position, cells.value);
+
+		return contributors.length === 0 ? null : contributors;
 	})
 
-	function getScoreHelpers(card: CardInstance, position: GridVec, cells: FilledCell[]): ScoreHelpers {
-		const effectiveCells = Array
-			.from(cells)
-			.concat([{
-				card,
-				position
-			}]);
+	const placementScore = computed(() =>
+		Math.max(
+			scoreContributors.value
+				?.reduce((total, {score, bonus}) => total + score + bonus, 0) ?? 0,
+			1
+		)
+	)
 
+	function getScoreHelpers(cells: FilledCell[]): ScoreHelpers {
 		return {
-			getCard: at => getCardAt(effectiveCells, position),
-			getNeighbors: at => getNeighbors(effectiveCells, at),
-			floodFetch: (start, predicate) => floodFetch(effectiveCells, start, predicate)
+			getNeighbors: at => getNeighbors(cells, at),
+			floodFetch: (start, predicate) => floodFetch(cells, start, predicate)
 		}
 	}
 
 	function updateScore(card: CardInstance, at: Readonly<GridVec>): void {
-		const placementScore = getScoreContributors(card, at, cells.value)
-				?.reduce((acc, {score}) => acc + score, 0)
-			?? 0;
+		const placementScore = Math.max(
+			getScoreContributors(card, at, Array.from(cells.value))
+				?.reduce((acc, {score, bonus}) => acc + score + bonus, 0) ?? 0,
+			1,
+		);
 
 		score.score += placementScore;
 	}
@@ -216,11 +237,11 @@ export const useGridStore = defineStore('grid', () => {
 		const flood = new Set<Cell>();
 		while (queue.length > 0) {
 			let next = queue.shift();
-			if (next === undefined) {
+			if (next === undefined || flood.size > MAX_FLOOD_SIZE) {
 				break;
 			}
 			const cell = getCellAt(cells, next);
-			if (flood.has(cell)) {
+			if (flood.has(cell) || cell.card === undefined) {
 				continue;
 			}
 			if (predicate(cell.card)) {
@@ -246,6 +267,7 @@ export const useGridStore = defineStore('grid', () => {
 		place,
 		filterCells,
 		canPlace: (card: CardInstance, at: Readonly<GridVec>) => canPlace(cells.value, card, at),
-		getScoreContributors
+		scoreContributors,
+		placementScore
 	}
 })
