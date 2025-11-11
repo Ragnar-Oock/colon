@@ -45,7 +45,6 @@
 		if (!event.dataTransfer) {
 			return;
 		}
-		event.preventDefault();
 		pointerMove(event)
 	}
 
@@ -71,8 +70,11 @@
 	<div
 		ref="grid"
 		class="map"
+		:class="{
+			'is-dragging': draggable.dragged !== null,
+		}"
 		@click="interactCell"
-		@dragover="dragOver"
+		@dragover.prevent="dragOver"
 		@drop="drop"
 		@pointermove="pointerMove"
 	>
@@ -109,5 +111,9 @@
 		position: absolute;
 		top: 0;
 		left: 0;
+
+		&.is-dragging {
+			cursor: grabbing;
+		}
 	}
 </style>

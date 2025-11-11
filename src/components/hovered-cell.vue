@@ -39,18 +39,24 @@
 <style scoped>
 	.hovered {
 		display: none;
+		grid-area: v-bind('board.visuallyHoveredCell.y') / v-bind('board.visuallyHoveredCell.x');
+		pointer-events: none;
+		outline: solid 2px rgba(90, 230, 90, 0.17);
+		outline-offset: 1px;
 
-		:global(:hover) > &,
+
 		&.is-dragging {
 			display: revert;
-			grid-area: v-bind('board.visuallyHoveredCell.y') / v-bind('board.visuallyHoveredCell.x');
-			pointer-events: none;
-			outline: solid 2px rgba(90, 230, 90, 0.17);
-			outline-offset: 1px;
 		}
 
 		&.can-place {
 			animation: --pulse ease-in-out 500ms infinite;
+		}
+	}
+
+	:global(.map:hover) {
+		& > .hovered {
+			display: revert;
 		}
 	}
 

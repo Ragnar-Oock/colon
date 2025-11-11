@@ -50,8 +50,11 @@
 			},
 		})
 
-		event.dataTransfer?.setDragImage(new Image(), 0, 0);
-		event.dataTransfer?.setData('text/card-id', card.id);
+		const dataTransfer = event.dataTransfer!;
+
+		dataTransfer.setDragImage(new Image(), 0, 0);
+		dataTransfer.setData('text/card-id', card.id);
+		dataTransfer.effectAllowed = 'move';
 	}
 
 </script>
@@ -80,6 +83,8 @@
 		isolation: isolate;
 		box-shadow: 0 0 10px hsla(0, 0%, 0%, 18%),
 		0 0 3px hsla(0, 0%, 0%, 80%);
+		user-select: none;
+		cursor: grab;
 
 		&.is-dragged {
 			opacity: 0;
