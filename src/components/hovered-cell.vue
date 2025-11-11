@@ -4,6 +4,7 @@
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
 	import { useGridStore } from "../stores/grid.store";
+	import PlacementScore from "./placement-score.vue";
 
 
 	const gridStore = useGridStore();
@@ -23,7 +24,9 @@
 			deck.active,
 			board.hoveredCell
 		);
-	})
+	});
+
+	const score = computed(() => canPlace.value ? gridStore.placementScore : 0);
 </script>
 
 <template>
@@ -33,30 +36,37 @@
 			'can-place': canPlace,
 		}"
 		class="hovered"
-	></div>
+	>
+		<placement-score :score main/>
+	</div>
 </template>
 
 <style scoped>
 	.hovered {
-		display: none;
 		grid-area: v-bind('board.visuallyHoveredCell.y') / v-bind('board.visuallyHoveredCell.x');
 		pointer-events: none;
-		outline: solid 2px rgba(90, 230, 90, 0.17);
-		outline-offset: 1px;
+		position: relative;
 
 
-		&.is-dragging {
-			display: revert;
+		&::before {
+			outline: solid 2px rgba(90, 230, 90, 0.17);
+			outline-offset: 1px;
+			position: absolute;
+			inset: 0;
 		}
 
-		&.can-place {
+		&.is-dragging::before {
+			content: '';
+		}
+
+		&.can-place::before {
 			animation: --pulse ease-in-out 500ms infinite;
 		}
 	}
 
 	:global(.map:hover) {
-		& > .hovered {
-			display: revert;
+		& > .hovered::before {
+			content: '';
 		}
 	}
 

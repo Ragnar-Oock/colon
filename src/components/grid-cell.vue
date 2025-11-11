@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 	import { useScoreContribution } from "../helpers/useScoreContribution";
 	import { FilledCell, GridVec } from "../stores/grid.store";
+	import PlacementScore from "./placement-score.vue";
 
 	const {
 		cell
@@ -14,14 +15,7 @@
 
 <template>
 	<div class="board-card">
-		<Transition appear>
-			<div
-				v-if="contribution !== null"
-				:key="contribution"
-				class="score"
-			>+ {{ contribution }}
-			</div>
-		</Transition>
+		<PlacementScore :score="contribution"/>
 		<div class="icon">{{ cell.card?.icon }}</div>
 		<!--				<span
 							v-if="cell.card?.trigger !== undefined"
@@ -42,14 +36,6 @@
 			pointer-events: none;
 		}
 
-		.score {
-			position: absolute;
-			top: -1rem;
-			left: 50%;
-			translate: -50%;
-			font-size: 2em;
-		}
-
 		/*.trigger {
 			position: absolute;
 			top: 0;
@@ -62,24 +48,5 @@
 			border-radius: 100%;
 		}*/
 
-		.v-enter-active,
-		.v-leave-active {
-			transition: 0.3s ease;
-			transition-property: transform, opacity;
-		}
-
-		/*.v-leave-active {*/
-		/*	transition-delay: 300ms;*/
-		/*}*/
-
-		.v-enter-from {
-			transform: translateY(1em);
-			opacity: 0;
-		}
-
-		.v-leave-to {
-			transform: translateY(-1em);
-			opacity: 0;
-		}
 	}
 </style>
