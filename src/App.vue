@@ -4,9 +4,9 @@
 	import BoardView from "./components/board-view.vue";
 	import DraggedItem from "./components/dragged-item.vue";
 	import HandDisplay from "./components/hand-display.vue";
-	import HarvestResources from "./components/harvest-resources.vue";
 	import { card } from "./helpers/card.helper";
 	import { iter } from "./helpers/iterator.helper";
+	import { forget } from "./helpers/save.helper";
 	import { useDeckStore } from "./stores/deck.store";
 	import { GridVec, useGridStore } from "./stores/grid.store";
 	import { useScoreStore } from "./stores/score.store";
@@ -36,6 +36,11 @@
 		// initialiseGridAtRandom(5);
 		initializeHandAtRandom(21);
 	})
+
+	function newGame() {
+		forget(0);
+		window.location.reload();
+	}
 </script>
 
 <template>
@@ -43,7 +48,8 @@
 	<div class="ui">
 		{{ score.score }}
 
-		<harvest-resources/>
+		<!--		<harvest-resources/>-->
+		<button @click="newGame">new game</button>
 		<hand-display/>
 	</div>
 	<dragged-item/>

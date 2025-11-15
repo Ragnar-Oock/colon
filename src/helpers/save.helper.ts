@@ -67,16 +67,24 @@ function deserialize(cells: string, types: string): FilledCell[] {
 		})
 }
 
+function getSlotKey(slot = 0): string {
+	return `game.${ slot.toString(10) }`
+}
+
 export function saveMap(map: FilledCell[], slot: number = 0): void {
 	const game = serializeMap(map);
-	localStorage.setItem(`game.${ slot.toString(10) }`, JSON.stringify(game));
+	localStorage.setItem(getSlotKey(slot), JSON.stringify(game));
 }
 
 export function loadMap(slot = 0): FilledCell[] {
-	const game = localStorage.getItem(`game.${ slot.toString(10) }`);
+	const game = localStorage.getItem(getSlotKey(slot));
 	if (game === null) {
 		return [];
 	}
 	const {cells, lut} = JSON.parse(game);
 	return deserialize(cells, lut);
+}
+
+export function forget(slot = 0): void {
+	localStorage.removeItem(getSlotKey(slot))
 }
