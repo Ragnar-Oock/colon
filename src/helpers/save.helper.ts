@@ -35,6 +35,10 @@ function serializeMap(map: FilledCell[]): SerializedGame {
 }
 
 function deserialize(cells: string, types: string): FilledCell[] {
+	if (cells === '') {
+		return [];
+	}
+
 	const {registry} = useDeckStore();
 
 	const typeLookUpTable = Object.fromEntries(
