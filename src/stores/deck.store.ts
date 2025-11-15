@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
+import { bus } from "../event.helper";
 import { card, CardDescriptor, CardInstance } from "../helpers/card.helper";
 
 export const useDeckStore = defineStore('deck', () => {
@@ -73,6 +74,7 @@ export const useDeckStore = defineStore('deck', () => {
 
 	const totalPonderation = computed(() => deck.reduce((acc, {ponderation}) => acc + ponderation, 0));
 
+	bus.on('placed', () => draw())
 
 	return {
 		deck,

@@ -34,7 +34,7 @@
 
 	onMounted(() => {
 		// initialiseGridAtRandom(5);
-		initializeHandAtRandom(21);
+		initializeHandAtRandom(7);
 	})
 
 	function newGame() {

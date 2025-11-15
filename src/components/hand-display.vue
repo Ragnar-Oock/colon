@@ -31,9 +31,6 @@
 		@drop.prevent="draggable.cancel()"
 		@dragover.prevent
 	>
-		<div>
-			<button @click="deckStore.draw()">draw</button>
-		</div>
 		<div class="stacks">
 			<StackDisplay v-for="stack in stacks" :stack/>
 		</div>

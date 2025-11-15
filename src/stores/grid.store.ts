@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ComputedRef, ref, watchEffect } from "vue";
+import { bus } from "../event.helper";
 import { CardInstance, ScoreHelpers } from "../helpers/card.helper";
 import { loadMap, saveMap } from "../helpers/save.helper";
 import { addVec, toString, Vector2 } from "../helpers/vector.helper";
@@ -78,6 +79,8 @@ export const useGridStore = defineStore('grid', () => {
 		}
 		updateScore(card, at);
 		setCell(cell(at, card));
+
+		bus.emit('placed');
 		return true;
 	}
 
