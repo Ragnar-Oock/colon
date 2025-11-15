@@ -1,6 +1,6 @@
 import emitter, { Emitter, EventHandlerMap } from "mitt";
 import { Cell, FilledCell, GridVec } from "../stores/grid.store";
-import { Cost, ResourceTrigger } from "../stores/resource.store";
+import { Cost } from "../stores/resource.store";
 import { ScorePredicate } from "./score-predicate";
 
 export type CardHook = (...args: unknown[]) => void;
@@ -31,7 +31,6 @@ export interface CardInstance {
 	icon: string;
 	cost: Cost[];
 	id: string;
-	trigger?: ResourceTrigger;
 	hooks: Emitter<CardHooks>;
 	/**
 	 * Invoked before being placed to check if the current position is viable.
@@ -83,7 +82,7 @@ export interface CardDescriptor {
 	ponderation: number;
 
 	/**
-	 * Create a card instance to use in a hand
+	 * an object describing the behavior and properties of a card
 	 */
-	create(): CardInstance
+	proto: ProtoCard<CardInstance>
 }

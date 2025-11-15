@@ -1,10 +1,8 @@
-import { card, CardDescriptor, CardInstance } from "./helpers/card.helper";
+import { CardDescriptor, CardInstance } from "./helpers/card.helper";
 import { combine, expectAtLeast, expectNone } from "./helpers/neighborhood-predicate.helper";
 import { countEmpty, countType } from "./helpers/score-multiplier.helper";
 import { ofType } from "./helpers/score-predicate";
-import { pick } from "./math.helper";
 import { FilledCell } from "./stores/grid.store";
-import { ResourceCard, resourceTriggers } from "./stores/resource.store";
 
 export type CardType = CardInstance["name"];
 
@@ -12,7 +10,7 @@ export type CardType = CardInstance["name"];
 export const cards = [
 	{
 		ponderation: 1,
-		create: () => card({
+		proto: {
 			cost: [
 				{type: "brick", amount: 3},
 				{type: 'wood', amount: 2}
@@ -22,11 +20,11 @@ export const cards = [
 			checkNeighbors: expectAtLeast('town', 'road'),
 			scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('town')) as FilledCell[],
-		}),
+		},
 	},
 	{
 		ponderation: 1,
-		create: () => card({
+		proto: {
 			cost: [
 				{type: 'brick', amount: 2},
 				{type: 'wood', amount: 1},
@@ -35,98 +33,86 @@ export const cards = [
 			icon: '🛣️',
 			scoreContributors: () => [],
 			multiplier: () => 1
-		}),
+		},
 	},
 	{
 		ponderation: .5,
-		create: () => card<ResourceCard>({
+		proto: {
 			cost: [
 				{type: 'rock', amount: 2},
 				{type: 'wood', amount: 1},
 			],
 			name: 'brick factory',
 			icon: '🧱',
-			resourceType: "brick",
-			trigger: pick(resourceTriggers),
 			checkNeighbors: expectAtLeast('town'), scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('town')) as FilledCell[],
 			multiplier: neighbors => countType('brick factory')(neighbors) > 0 ? 0 : 1
-		}),
+		},
 	},
 	{
 		ponderation: .5,
-		create: () => card<ResourceCard>({
+		proto: {
 			cost: [
 				{type: 'wood', amount: 1},
 			],
 			name: 'bank',
 			icon: '🪙',
-			resourceType: "gold",
-			trigger: pick(resourceTriggers),
 			checkNeighbors: expectAtLeast('town'),
 			bonus: type => type === 'town' ? 1 : 0
-		}),
+		},
 	},
 	{
 		ponderation: .5,
-		create: () => card<ResourceCard>({
+		proto: {
 			cost: [
 				{type: 'wood', amount: 1},
 			],
 			name: 'quarry',
 			icon: '🪨',
-			resourceType: "rock",
-			trigger: pick(resourceTriggers),
-		}),
+		},
 	},
 	{
 		ponderation: .5,
-		create: () => card<ResourceCard>({
+		proto: {
 			cost: [
 				{type: 'rock', amount: 2},
 				{type: 'wood', amount: 1},
 			],
 			name: 'field',
 			icon: '🌾',
-			resourceType: "wheat",
-			trigger: pick(resourceTriggers),
 			checkNeighbors: combine(
 				expectNone('quarry'),
 				expectAtLeast('meadow', 'road', 'town'),
 			)
-		}),
+		},
 	},
 	{
 		ponderation: .5,
-		create: () => card<ResourceCard>({
+		proto: {
 			cost: [
 				{type: 'rock', amount: 2},
 				{type: 'wood', amount: 1},
 			],
 			name: 'forest',
 			icon: '🌳',
-			resourceType: "wood",
-			trigger: pick(resourceTriggers),
 			scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('meadow', 'field')) as FilledCell[],
 			multiplier: countEmpty()
-		}),
+		},
 	},
 	{
 		ponderation: .5,
-		create: () => card<ResourceCard>({
+		proto: {
 			cost: [
 				{type: 'rock', amount: 2},
 				{type: 'wood', amount: 1},
 			],
 			name: 'meadow',
 			icon: '🐑',
-			resourceType: "wool",
-			trigger: pick(resourceTriggers),
 			checkNeighbors: expectAtLeast('meadow', 'road', 'town'),
 			scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('meadow', 'field')) as FilledCell[],
-		}),
+		},
 	},
 ] satisfies CardDescriptor[];
 

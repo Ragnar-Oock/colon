@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
-import { CardDescriptor, CardInstance } from "../helpers/card.helper";
+import { card, CardDescriptor, CardInstance } from "../helpers/card.helper";
 
 export const useDeckStore = defineStore('deck', () => {
 	const hand = ref<CardInstance[]>([]);
@@ -11,12 +11,22 @@ export const useDeckStore = defineStore('deck', () => {
 	 */
 	const deck = reactive<CardDescriptor[]>([]);
 
+	const registry = computed(() =>
+		new Map(
+			deck
+				.map(descriptor => [
+					descriptor.proto.name,
+					descriptor
+				])
+		)
+	)
+
 
 	/**
 	 * create a new card and put it in the hand
 	 */
 	function draw(): void {
-		hand.value.push(pick().create())
+		hand.value.push(card(pick().proto))
 	}
 
 	/**
@@ -66,6 +76,7 @@ export const useDeckStore = defineStore('deck', () => {
 
 	return {
 		deck,
+		registry,
 		hand,
 		active,
 		draw,
