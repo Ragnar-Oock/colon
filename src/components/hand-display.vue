@@ -1,18 +1,16 @@
 <script setup lang="ts">
-
 	import { useEventListener } from "@vueuse/core";
 	import { computed } from "vue";
-	import { CardInstance } from "../helpers/card.helper";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
-	import { getPonderatedCost } from "../stores/resource.store";
-	import StackDisplay from "./stack-display.vue";
+	import HandCard from "./hand-card.vue";
 
 	const deckStore = useDeckStore();
 
-	const stacks = computed(() => Object
-		.values(Object.groupBy(deckStore.hand, ({name}) => name) as Record<string, CardInstance[]>)
-		.sort(([a], [b]) => getPonderatedCost(a.cost) - getPonderatedCost(b.cost)));
+	const hand = computed(() => deckStore
+		.idleHand
+		.sort((a, b) => a.name.localeCompare(b.name))
+	)
 
 	const draggable = useDraggableStore();
 
@@ -21,8 +19,6 @@
 			draggable.cancel();
 		}
 	})
-
-
 </script>
 
 <template>
@@ -32,14 +28,22 @@
 		@dragover.prevent
 	>
 		<div class="stacks">
-			<StackDisplay v-for="stack in stacks" :stack/>
+			<HandCard
+				v-for="(card, index) in hand"
+				:key="card.id"
+				:card
+				:index
+			/>
 		</div>
 	</div>
 </template>
 
 <style scoped>
 	.stacks {
-		display: flex;
+		display: grid;
+		grid: 100% / auto-flow 25ch;
 		gap: .25em;
+		margin-inline: auto;
+		width: min-content;
 	}
 </style>

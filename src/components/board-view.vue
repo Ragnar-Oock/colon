@@ -79,6 +79,7 @@
 		overflow: clip;
 		height: 100vh;
 		position: relative;
+		isolation: isolate;
 
 		&::after {
 			--hsl: 272, 48.4%, 6.1%;

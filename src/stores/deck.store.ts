@@ -8,6 +8,14 @@ export const useDeckStore = defineStore('deck', () => {
 	const active = ref<CardInstance | null>(null);
 
 	/**
+	 * List the cards in hand minus the active one.
+	 */
+	const idleHand = computed(() =>
+		hand
+			.value
+			.filter(card => reactive(card) !== active.value)
+	);
+	/**
 	 * All possible cards that can be drawn into a deck
 	 */
 	const deck = reactive<CardDescriptor[]>([]);
@@ -81,6 +89,7 @@ export const useDeckStore = defineStore('deck', () => {
 		registry,
 		hand,
 		active,
+		idleHand,
 		draw,
 		register,
 		pick,
