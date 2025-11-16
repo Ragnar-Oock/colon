@@ -54,18 +54,20 @@
 </script>
 
 <template>
-	<div
-		:class="{
+	<Transition appear>
+		<div
+			:class="{
 		'can-use': canUse,
 		'is-dragged': isActive,
 	}"
-		class="card"
-		draggable="true"
-		@dragstart="dragStart"
-		@mouseenter="hover"
-	>
-		<p>{{ card.icon }} {{ card.name }}</p>
-	</div>
+			class="card"
+			draggable="true"
+			@dragstart="dragStart"
+			@mouseenter="hover"
+		>
+			<p>{{ card.icon }} {{ card.name }}</p>
+		</div>
+	</Transition>
 </template>
 
 <style scoped>
@@ -79,6 +81,12 @@
 		syntax: "<angle>";
 		inherits: false;
 		initial-value: -146deg;
+	}
+
+	@property --vertical-offset {
+		syntax: "<number>";
+		inherits: false;
+		initial-value: 0;
 	}
 
 	.card {
@@ -171,5 +179,13 @@
 			top: 100%;
 			position: absolute;
 		}
+	}
+
+	.v-enter-active {
+		transition: --vertical-offset ease-in 500ms;
+	}
+
+	.v-enter-from {
+		--vertical-offset: -2;
 	}
 </style>
