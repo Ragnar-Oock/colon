@@ -1,41 +1,31 @@
 <script setup lang="ts">
 
-	import { computed, ref } from "vue";
+	import { computed, onUnmounted, ref } from "vue";
 	import { CardInstance } from "../helpers/card.helper";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
 	import { useResourceStore } from "../stores/resource.store";
 
 
-	const {card, index} = defineProps<{
+	const {card} = defineProps<{
 		card: CardInstance,
-		index: number,
 	}>()
 
 	const resourceStore = useResourceStore();
 	const deckStore = useDeckStore();
 	const draggable = useDraggableStore();
+	const index = computed(() => deckStore.idleHand.indexOf(card))
 
 	const canUse = computed(() => resourceStore.canConsume(...card.cost))
-	const isActive = computed(() => deckStore.active === card);
-
-	function select() {
-		deckStore.active = card;
-	}
+	const isActive = computed(() => index.value === -1);
 
 	const seed = ref(0);
-
-	function hover() {
-		seed.value = Math.random();
-	}
-
 	const hoverAngle = computed(() => `${ (seed.value - .5) * 15 }deg`)
+	const hover = () => seed.value = Math.random();
 
-	const parameter = computed(() => (index / (deckStore.idleHand.length - 1)) - 0.5);
+	const parameter = computed(() => (index.value / (deckStore.idleHand.length - 1)) - 0.5);
 
 	function dragStart(event: DragEvent) {
-		deckStore.active = card;
-
 		draggable.start({
 			type: 'image',
 			src: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%22-0.06em%22 y=%221em%22 font-size=%2278%22>${ card.icon }</text></svg>`,
@@ -54,7 +44,11 @@
 		dataTransfer.setDragImage(new Image(), 0, 0);
 		dataTransfer.setData('text/card-id', card.id);
 		dataTransfer.effectAllowed = 'move';
+
+		deckStore.active = card;
 	}
+
+	onUnmounted(() => console.log('unmounted'))
 
 
 </script>
@@ -62,12 +56,11 @@
 <template>
 	<div
 		:class="{
-			'can-use': canUse,
-			active: isActive,
-		}"
+		'can-use': canUse,
+		'is-dragged': isActive,
+	}"
 		class="card"
 		draggable="true"
-		@click="select"
 		@dragstart="dragStart"
 		@mouseenter="hover"
 	>
@@ -151,8 +144,11 @@
 
 		/* todo use aria stuff instead */
 
-		&:hover,
-		&.active {
+		&.is-dragged {
+			display: none;
+		}
+
+		&:hover {
 			--offset: -2.5rem;
 			--hovered: v-bind(hoverAngle);
 			--bgc-pos: 0%;
