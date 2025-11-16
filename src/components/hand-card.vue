@@ -182,10 +182,11 @@
 	}
 
 	.v-enter-active {
-		transition: --vertical-offset ease-in 500ms;
+		--easing: linear(0, 0.342 8%, 0.608 16.4%, 0.805 25.4%, 0.879 30.2%, 0.938 35.2%, 1.006 44.5%, 1.025 49.7%, 1.035 55.3%, 1.035 64.1%, 1.006 86.9%, 1);
+		transition: --vertical-offset var(--easing) 500ms;
 	}
 
 	.v-enter-from {
-		--vertical-offset: -2;
+		--vertical-offset: -2.5;
 	}
 </style>
