@@ -53,7 +53,7 @@ function deserialize(cells: string, types: string): FilledCell[] {
 			const [typeId, x, y] = entity.split(propertySeparator);
 			const descriptor = registry.get(typeLookUpTable[typeId] as CardType);
 			if (descriptor === undefined) {
-				throw new ReferenceError(`unknown card "${ typeId }" at index ${ index }`);
+				throw new ReferenceError(`unknown card "${ typeLookUpTable[typeId] }" (${ typeId }) at index ${ index }`);
 			}
 
 			let position = {x: 0, y: 0} as GridVec;
