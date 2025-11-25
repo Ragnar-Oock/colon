@@ -21,7 +21,12 @@ export interface FilledCell<card extends MaybeCard = MaybeCard> extends Cell<car
 	card: NonNullable<card>;
 }
 
-const isFilled = (cell: Cell): cell is FilledCell => cell.card !== undefined
+export interface EmptyCell extends Cell {
+	card: undefined;
+}
+
+export const isFilled = (cell: Cell): cell is FilledCell => cell.card !== undefined
+export const isEmpty = (cell: Cell): cell is EmptyCell => cell.card === undefined
 
 const neighbors = [
 	{x: -1, y: -1}, {x: 0, y: -1}, {x: 1, y: -1},
@@ -84,7 +89,7 @@ export const useGridStore = defineStore('grid', () => {
 	const deck = useDeckStore();
 	const board = useBoardStore();
 
-	function getScoreContributors(card: CardInstance, position: GridVec, effectiveCells: FilledCell[]): (FilledCell & {
+	function getScoreContributors(card: CardInstance, position: GridVec, effectiveCells: FilledCell[]): (Cell & {
 		score: number;
 		bonus: number;
 	})[] {
@@ -128,7 +133,7 @@ export const useGridStore = defineStore('grid', () => {
 		return contributors.values().toArray();
 	}
 
-	const scoreContributors = computed<(FilledCell & { score: number, bonus: number })[] | null>(() => {
+	const scoreContributors = computed<(Cell & { score: number, bonus: number })[] | null>(() => {
 		const card = deck.active;
 		const position = board.hoveredCell;
 		if (card === null || position === null || !canPlace(cells.value, card, position)) {

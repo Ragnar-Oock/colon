@@ -1,8 +1,9 @@
+import { merge } from "./helpers/array.helper";
 import { CardDescriptor } from "./helpers/card.helper";
 import { combine, expectAtLeast, expectNone } from "./helpers/neighborhood-predicate.helper";
 import { countEmpty, countType } from "./helpers/score-multiplier.helper";
 import { ofType } from "./helpers/score-predicate";
-import { FilledCell } from "./stores/grid.store";
+import { Cell, FilledCell, isEmpty } from "./stores/grid.store";
 
 declare module './helpers/card.helper' {
 	// noinspection JSUnusedGlobalSymbols
@@ -34,26 +35,33 @@ export const cards = [
 		proto: {
 			name: 'road',
 			icon: '🛣️',
-			scoreContributors: () => [],
+			scoreContributors: (placement, {floodFetch}) =>
+				floodFetch(placement, ofType('road')) as FilledCell[],
 			multiplier: () => 1
 		},
 	},
 	{
-		ponderation: .5,
+		ponderation: .2,
 		proto: {
 			name: 'brickFactory',
 			icon: '🧱',
-			checkNeighbors: expectAtLeast('town'), scoreContributors: (placement, {floodFetch}) =>
+			checkNeighbors: expectAtLeast('town'),
+			scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('town')) as FilledCell[],
 			multiplier: neighbors => countType('brickFactory')(neighbors) > 0 ? 0 : 1
 		},
 	},
 	{
-		ponderation: .5,
+		ponderation: .05,
 		proto: {
 			name: 'bank',
 			icon: '🪙',
-			checkNeighbors: expectAtLeast('town'),
+			checkNeighbors: combine(
+				expectAtLeast('town'),
+				expectNone('quarry', 'brickFactory'),
+			),
+			scoreContributors: (placement, {floodFetch}) =>
+				floodFetch(placement, ofType('town')) as FilledCell[],
 			bonus: type => type === 'town' ? 1 : 0
 		},
 	},
@@ -62,6 +70,13 @@ export const cards = [
 		proto: {
 			name: 'quarry',
 			icon: '🪨',
+			checkNeighbors: combine(
+				expectAtLeast('road', 'town'),
+				expectAtLeast('meadow', 'forest'),
+			),
+			scoreContributors: (placement, {getNeighbors}) =>
+				getNeighbors(placement)
+					.filter(cell => ['field', 'meadow', 'bank'].includes(cell.card?.name!))
 		},
 	},
 	{
@@ -72,17 +87,10 @@ export const cards = [
 			checkNeighbors: combine(
 				expectNone('quarry'),
 				expectAtLeast('meadow', 'road', 'town'),
-			)
-		},
-	},
-	{
-		ponderation: .5,
-		proto: {
-			name: 'forest',
-			icon: '🌳',
-			scoreContributors: (placement, {floodFetch}) =>
-				floodFetch(placement, ofType('meadow', 'field')) as FilledCell[],
-			multiplier: countEmpty()
+			),
+			scoreContributors: (placement, {getNeighbors}) =>
+				getNeighbors(placement)
+					.filter(cell => ['field', 'meadow'].includes(cell.card?.name!))
 		},
 	},
 	{
@@ -93,6 +101,20 @@ export const cards = [
 			checkNeighbors: expectAtLeast('meadow', 'road', 'town'),
 			scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('meadow', 'field')) as FilledCell[],
+		},
+	},
+	{
+		ponderation: 1,
+		proto: {
+			name: 'forest',
+			icon: '🌳',
+			checkNeighbors: expectAtLeast('meadow', 'forest', 'field', 'road'),
+			scoreContributors: (placement, {floodFetch, getNeighbors}) =>
+				merge<Cell>(
+					floodFetch(placement, ofType('meadow', 'field')) as FilledCell[],
+					getNeighbors(placement).filter(isEmpty)
+				),
+			multiplier: countEmpty()
 		},
 	},
 ] satisfies CardDescriptor[];

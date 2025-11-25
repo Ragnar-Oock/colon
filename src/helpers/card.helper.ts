@@ -1,5 +1,5 @@
 import emitter, { Emitter, EventHandlerMap } from "mitt";
-import { Cell, FilledCell, GridVec } from "../stores/grid.store";
+import { Cell, GridVec } from "../stores/grid.store";
 import { ScorePredicate } from "./score-predicate";
 
 export type CardHook = (...args: unknown[]) => void;
@@ -52,7 +52,7 @@ export interface CardInstance {
 	scoreContributors?: (
 		placement: GridVec,
 		helpers: ScoreHelpers
-	) => FilledCell[],
+	) => Cell[],
 
 	/**
 	 * Compute the score value of a card from itself, and it's direct neighbors.
