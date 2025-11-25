@@ -146,11 +146,9 @@ export const useGridStore = defineStore('grid', () => {
 	})
 
 	const placementScore = computed(() =>
-		Math.max(
-			scoreContributors.value
-				?.reduce((total, {score, bonus}) => total + score + bonus, 0) ?? 0,
-			1
-		)
+		scoreContributors.value
+			?.reduce((total, {score, bonus}) => total + score + bonus, 1)
+		?? 1
 	)
 
 	function getScoreHelpers(cells: FilledCell[]): ScoreHelpers {
@@ -161,11 +159,11 @@ export const useGridStore = defineStore('grid', () => {
 	}
 
 	function updateScore(card: CardInstance, at: Readonly<GridVec>): void {
-		const placementScore = Math.max(
+		const placementScore =
 			getScoreContributors(card, at, Array.from(cells.value))
-				?.reduce((acc, {score, bonus}) => acc + score + bonus, 0) ?? 0,
-			1,
-		);
+				?.reduce((acc, {score, bonus}) => acc + score + bonus, 1)
+			?? 1;
+
 
 		score.score += placementScore;
 	}
