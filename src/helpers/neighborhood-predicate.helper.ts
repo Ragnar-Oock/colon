@@ -24,7 +24,7 @@ export const expectNone = (...of: CardType[]): NeighborhoodPredicate => neighbor
  * @param of a set of types that should be present at least `amount` times
  * @returns is the neighborhood suitable ?
  */
-const expectAtMost = (amount: number, ...of: CardType[]): NeighborhoodPredicate =>
+export const expectAtMost = (amount: number, ...of: CardType[]): NeighborhoodPredicate =>
 	neighborhood => neighborhood.reduce(
 		(count, neighbor) => count + (of.includes(neighbor.card?.name!) ? 1 : 0),
 		0
@@ -39,5 +39,5 @@ export const combine = (...predicates: NeighborhoodPredicate[]): NeighborhoodPre
  * Combine multiple {@link NeighborhoodPredicate} into a single one, at least one of which should match.
  * @param predicates
  */
-const either = (...predicates: NeighborhoodPredicate[]): NeighborhoodPredicate =>
+export const either = (...predicates: NeighborhoodPredicate[]): NeighborhoodPredicate =>
 	neighborhood => predicates.some(predicate => predicate(neighborhood));
