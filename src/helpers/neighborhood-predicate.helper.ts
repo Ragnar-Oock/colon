@@ -1,5 +1,5 @@
-import { CardType } from "../cards.data";
 import { Cell } from "../stores/grid.store";
+import { CardType } from "./card.helper";
 
 export type NeighborhoodPredicate = (neighborhood: Cell[]) => boolean;
 /**

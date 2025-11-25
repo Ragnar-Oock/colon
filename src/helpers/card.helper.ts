@@ -10,8 +10,13 @@ export interface CardHooks {
 	[x: string | symbol]: CardHook;
 }
 
-export type CardType = string;
-export type ProtoCard<card extends CardInstance> = Omit<card, 'id' | 'hooks'>
+export interface CardTypes<T = unknown> {
+	// types will need to be added by augmentation
+}
+
+export type CardType = keyof CardTypes;
+
+export type ProtoCard<card extends CardInstance> = Omit<card, 'id' | 'hooks'> & Record<string, unknown>
 
 export function card<card extends CardInstance>(proto: ProtoCard<card>, hooks?: EventHandlerMap<CardHooks>): Required<card> {
 	return {

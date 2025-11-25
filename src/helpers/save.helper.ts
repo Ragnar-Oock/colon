@@ -1,6 +1,6 @@
 import { useDeckStore } from "../stores/deck.store";
 import { Cell, FilledCell, GridVec } from "../stores/grid.store";
-import { card } from "./card.helper";
+import { card, CardType } from "./card.helper";
 
 const propertySeparator = ',';
 const entitySeparator = ';';
@@ -51,7 +51,7 @@ function deserialize(cells: string, types: string): FilledCell[] {
 		.split(entitySeparator)
 		.map((entity, index) => {
 			const [typeId, x, y] = entity.split(propertySeparator);
-			const descriptor = registry.get(typeLookUpTable[typeId]);
+			const descriptor = registry.get(typeLookUpTable[typeId] as CardType);
 			if (descriptor === undefined) {
 				throw new ReferenceError(`unknown card "${ typeId }" at index ${ index }`);
 			}

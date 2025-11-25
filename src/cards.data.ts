@@ -1,11 +1,22 @@
-import { CardDescriptor, CardInstance } from "./helpers/card.helper";
+import { CardDescriptor } from "./helpers/card.helper";
 import { combine, expectAtLeast, expectNone } from "./helpers/neighborhood-predicate.helper";
 import { countEmpty, countType } from "./helpers/score-multiplier.helper";
 import { ofType } from "./helpers/score-predicate";
 import { FilledCell } from "./stores/grid.store";
 
-export type CardType = CardInstance["name"];
-
+declare module './helpers/card.helper' {
+	// noinspection JSUnusedGlobalSymbols
+	export interface CardTypes<T> {
+		town: T;
+		road: T;
+		brickFactory: T;
+		bank: T;
+		quarry: T;
+		field: T;
+		forest: T;
+		meadow: T;
+	}
+}
 
 export const cards = [
 	{
@@ -42,11 +53,11 @@ export const cards = [
 				{type: 'rock', amount: 2},
 				{type: 'wood', amount: 1},
 			],
-			name: 'brick factory',
+			name: 'brickFactory',
 			icon: '🧱',
 			checkNeighbors: expectAtLeast('town'), scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('town')) as FilledCell[],
-			multiplier: neighbors => countType('brick factory')(neighbors) > 0 ? 0 : 1
+			multiplier: neighbors => countType('brickFactory')(neighbors) > 0 ? 0 : 1
 		},
 	},
 	{
