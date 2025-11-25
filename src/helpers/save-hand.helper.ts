@@ -1,6 +1,7 @@
 import { useDeckStore } from "../stores/deck.store";
 import { card, CardInstance, CardType } from "./card.helper";
-import { entitySeparator } from "./save-format";
+import { iter } from "./iterator.helper";
+import { entitySeparator, slotKeyBuilder } from "./save-format.helper";
 
 function serializeHand(hand: CardInstance[]): string {
 	return hand
@@ -9,6 +10,10 @@ function serializeHand(hand: CardInstance[]): string {
 }
 
 function deserializeHand(save: string): CardInstance[] {
+	if (save.length === 0) {
+		return [];
+	}
+
 	const {registry} = useDeckStore();
 
 	return save
@@ -24,9 +29,7 @@ function deserializeHand(save: string): CardInstance[] {
 		})
 }
 
-function getSlotKey(slot = 0): string {
-	return `hand.${ slot.toString(10) }`
-}
+const getSlotKey = slotKeyBuilder('hand');
 
 export function saveHand(hand: CardInstance[], slot = 0): void {
 	localStorage.setItem(
@@ -38,7 +41,11 @@ export function saveHand(hand: CardInstance[], slot = 0): void {
 export function loadHand(slot = 0): CardInstance[] {
 	const save = localStorage.getItem(getSlotKey(slot));
 	if (save === null) {
-		return [];
+		const {pick} = useDeckStore();
+		// TODO declare this value somewhere
+		return iter(7)
+			.map(() => card(pick().proto))
+			.toArray();
 	}
 	return deserializeHand(JSON.parse(save));
 }

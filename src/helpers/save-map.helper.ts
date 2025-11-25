@@ -1,7 +1,7 @@
 import { useDeckStore } from "../stores/deck.store";
 import { Cell, FilledCell, GridVec } from "../stores/grid.store";
 import { card, CardType } from "./card.helper";
-import { entitySeparator, integerRadix, propertySeparator } from "./save-format";
+import { entitySeparator, integerRadix, propertySeparator, slotKeyBuilder } from "./save-format.helper";
 
 
 export type SerializedGame = {
@@ -68,9 +68,8 @@ function deserialize(cells: string, types: string): FilledCell[] {
 		})
 }
 
-function getSlotKey(slot = 0): string {
-	return `game.${ slot.toString(10) }`
-}
+const getSlotKey = slotKeyBuilder('game');
+
 
 export function saveMap(map: FilledCell[], slot: number = 0): void {
 	const game = serializeMap(map);
@@ -86,6 +85,6 @@ export function loadMap(slot = 0): FilledCell[] {
 	return deserialize(cells, lut);
 }
 
-export function forget(slot = 0): void {
+export function forgetMap(slot = 0): void {
 	localStorage.removeItem(getSlotKey(slot))
 }

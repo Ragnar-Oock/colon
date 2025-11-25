@@ -4,9 +4,11 @@
 	import BoardView from "./components/board-view.vue";
 	import DraggedItem from "./components/dragged-item.vue";
 	import HandDisplay from "./components/hand-display.vue";
+	import { useAutoSave } from "./helpers/auto-save.composable";
 	import { card } from "./helpers/card.helper";
 	import { iter } from "./helpers/iterator.helper";
-	import { forget } from "./helpers/save-map.helper";
+	import { forgetHand } from "./helpers/save-hand.helper";
+	import { forgetMap } from "./helpers/save-map.helper";
 	import { useDeckStore } from "./stores/deck.store";
 	import { GridVec, useGridStore } from "./stores/grid.store";
 	import { useScoreStore } from "./stores/score.store";
@@ -32,15 +34,16 @@
 			.forEach(() => deckStore.draw())
 	}
 
-	onMounted(() => {
-		// initialiseGridAtRandom(5);
-		initializeHandAtRandom(7);
-	})
-
 	function newGame() {
-		forget(0);
+		forgetMap(0);
+		forgetHand(0);
 		window.location.reload();
 	}
+
+	onMounted(() => {
+		useAutoSave(0);
+	});
+
 </script>
 
 <template>

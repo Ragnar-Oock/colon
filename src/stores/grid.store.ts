@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
-import { computed, ComputedRef, ref, watchEffect } from "vue";
+import { computed, ComputedRef, ref } from "vue";
 import { bus } from "../event.helper";
 import { CardInstance, ScoreHelpers } from "../helpers/card.helper";
-import { loadMap, saveMap } from "../helpers/save-map.helper";
 import { addVec, toString, Vector2 } from "../helpers/vector.helper";
 import { useBoardStore } from "./board.store";
 import { useDeckStore } from "./deck.store";
@@ -38,9 +37,7 @@ const MAX_FLOOD_SIZE = 100;
 export const useGridStore = defineStore('grid', () => {
 	const score = useScoreStore();
 
-	const cells = ref<FilledCell[]>(loadMap());
-
-	watchEffect(() => saveMap(cells.value));
+	const cells = ref<FilledCell[]>([]);
 
 	function cell(position: Readonly<GridVec>, card?: CardInstance): Cell {
 		return {

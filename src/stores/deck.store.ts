@@ -88,7 +88,10 @@ export const useDeckStore = defineStore('deck', () => {
 	return {
 		deck,
 		registry,
-		hand: computed(() => hand.value.sort((a, b) => a.name.localeCompare(b.name))),
+		hand: computed({
+			get: () => hand.value.sort((a, b) => a.name.localeCompare(b.name)),
+			set: newHand => hand.value = newHand,
+		}),
 		active,
 		idleHand,
 		draw,
