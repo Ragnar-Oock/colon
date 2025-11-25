@@ -26,7 +26,17 @@ export function card<card extends CardInstance>(proto: ProtoCard<card>, hooks?: 
 }
 
 export interface ScoreHelpers {
+	/**
+	 * Get the 8 cells around the give position. Returned cells might be empty.
+	 * @param at the position we want the neighbors of
+	 */
 	getNeighbors: (at: Readonly<GridVec>) => Cell[];
+	/**
+	 * Fetch all the filled cells connected to the `start` position and matching the `predicate`
+	 * @param start which cell to start fetching cells at, if the position is empty the function will return an empty
+	 *   array
+	 * @param predicate check if a cells should be included in the fetched collection
+	 */
 	floodFetch: (start: Readonly<GridVec>, predicate: ScorePredicate) => Cell[];
 }
 
