@@ -6,7 +6,7 @@
 	import HandDisplay from "./components/hand-display.vue";
 	import { card } from "./helpers/card.helper";
 	import { iter } from "./helpers/iterator.helper";
-	import { forget } from "./helpers/save.helper";
+	import { forget } from "./helpers/save-map.helper";
 	import { useDeckStore } from "./stores/deck.store";
 	import { GridVec, useGridStore } from "./stores/grid.store";
 	import { useScoreStore } from "./stores/score.store";

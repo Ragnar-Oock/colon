@@ -1,10 +1,7 @@
 import { useDeckStore } from "../stores/deck.store";
 import { Cell, FilledCell, GridVec } from "../stores/grid.store";
 import { card, CardType } from "./card.helper";
-
-const propertySeparator = ',';
-const entitySeparator = ';';
-const integerRadix = 10;
+import { entitySeparator, integerRadix, propertySeparator } from "./save-format";
 
 
 export type SerializedGame = {
@@ -53,7 +50,7 @@ function deserialize(cells: string, types: string): FilledCell[] {
 			const [typeId, x, y] = entity.split(propertySeparator);
 			const descriptor = registry.get(typeLookUpTable[typeId] as CardType);
 			if (descriptor === undefined) {
-				throw new ReferenceError(`unknown card "${ typeLookUpTable[typeId] }" (${ typeId }) at index ${ index }`);
+				throw new ReferenceError(`unknown card "${ typeLookUpTable[typeId] }" (${ typeId }) in cells at index ${ index }`);
 			}
 
 			let position = {x: 0, y: 0} as GridVec;
