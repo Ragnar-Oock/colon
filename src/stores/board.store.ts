@@ -6,7 +6,14 @@ import type { GridVec } from "./grid.store";
 
 export type ScreenVec = Vector2 & { __brand: 'screen vec' };
 export const useBoardStore = defineStore('board', () => {
+	/**
+	 * maximum number of tiles visible in each axis
+	 */
 	const visibleGridSize = reactive({width: 0, height: 0});
+	/**
+	 * size of the board element in pixels
+	 */
+	const boardSize = reactive<ScreenVec>({x: 0, y: 0} as ScreenVec);
 	const isPanning = ref(false);
 	const pointerPosition = ref<ScreenVec | null>(null);
 
@@ -58,6 +65,7 @@ export const useBoardStore = defineStore('board', () => {
 		gridWindow,
 		visibleGridOffset,
 		visibleGridSize,
+		boardSize,
 		isPanning,
 		pointerPosition,
 		hoveredCell,

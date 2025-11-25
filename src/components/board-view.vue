@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-	import { useElementBounding } from "@vueuse/core";
+	import { useElementBounding, useElementSize } from "@vueuse/core";
 	import { reactive, ref, useTemplateRef, watchEffect } from "vue";
 	import { addVec, setVec, subtractVec } from "../helpers/vector.helper";
 	import { ScreenVec, useBoardStore } from "../stores/board.store";
@@ -57,6 +57,11 @@
 		finally {
 			setVec(previousPointer, pointer);
 		}
+	})
+
+	const boardSize = useElementSize(boardRef);
+	watchEffect(() => {
+		setVec(board.boardSize, {x: boardSize.width.value, y: boardSize.height.value} as ScreenVec);
 	})
 
 </script>
