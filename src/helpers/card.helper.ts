@@ -1,6 +1,5 @@
 import emitter, { Emitter, EventHandlerMap } from "mitt";
 import { Cell, FilledCell, GridVec } from "../stores/grid.store";
-import { Cost } from "../stores/resource.store";
 import { ScorePredicate } from "./score-predicate";
 
 export type CardHook = (...args: unknown[]) => void;
@@ -34,7 +33,6 @@ export interface ScoreHelpers {
 export interface CardInstance {
 	name: CardType;
 	icon: string;
-	cost: Cost[];
 	id: string;
 	hooks: Emitter<CardHooks>;
 	/**

@@ -16,7 +16,6 @@
 	const draggable = useDraggableStore();
 	const index = computed(() => deckStore.idleHand.indexOf(card))
 
-	const canUse = computed(() => resourceStore.canConsume(...card.cost))
 	const isActive = computed(() => index.value === -1);
 
 	const seed = ref(0);
@@ -57,9 +56,8 @@
 	<Transition appear>
 		<div
 			:class="{
-		'can-use': canUse,
-		'is-dragged': isActive,
-	}"
+				'is-dragged': isActive,
+			}"
 			class="card"
 			draggable="true"
 			@dragstart="dragStart"
@@ -144,11 +142,6 @@
 		transition: transform var(--position-easing) 650ms,
 		--bgc-pos var(--border-easing) 550ms,
 		--bgc-angle ease-out 550ms;
-
-
-		&:not(.can-use) {
-			filter: saturate(60%);
-		}
 
 		/* todo use aria stuff instead */
 

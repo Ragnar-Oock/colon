@@ -22,10 +22,6 @@ export const cards = [
 	{
 		ponderation: 1,
 		proto: {
-			cost: [
-				{type: "brick", amount: 3},
-				{type: 'wood', amount: 2}
-			],
 			name: 'town',
 			icon: '🏘️',
 			checkNeighbors: expectAtLeast('town', 'road'),
@@ -36,10 +32,6 @@ export const cards = [
 	{
 		ponderation: 1,
 		proto: {
-			cost: [
-				{type: 'brick', amount: 2},
-				{type: 'wood', amount: 1},
-			],
 			name: 'road',
 			icon: '🛣️',
 			scoreContributors: () => [],
@@ -49,10 +41,6 @@ export const cards = [
 	{
 		ponderation: .5,
 		proto: {
-			cost: [
-				{type: 'rock', amount: 2},
-				{type: 'wood', amount: 1},
-			],
 			name: 'brickFactory',
 			icon: '🧱',
 			checkNeighbors: expectAtLeast('town'), scoreContributors: (placement, {floodFetch}) =>
@@ -63,9 +51,6 @@ export const cards = [
 	{
 		ponderation: .5,
 		proto: {
-			cost: [
-				{type: 'wood', amount: 1},
-			],
 			name: 'bank',
 			icon: '🪙',
 			checkNeighbors: expectAtLeast('town'),
@@ -75,9 +60,6 @@ export const cards = [
 	{
 		ponderation: .5,
 		proto: {
-			cost: [
-				{type: 'wood', amount: 1},
-			],
 			name: 'quarry',
 			icon: '🪨',
 		},
@@ -85,10 +67,6 @@ export const cards = [
 	{
 		ponderation: .5,
 		proto: {
-			cost: [
-				{type: 'rock', amount: 2},
-				{type: 'wood', amount: 1},
-			],
 			name: 'field',
 			icon: '🌾',
 			checkNeighbors: combine(
@@ -100,10 +78,6 @@ export const cards = [
 	{
 		ponderation: .5,
 		proto: {
-			cost: [
-				{type: 'rock', amount: 2},
-				{type: 'wood', amount: 1},
-			],
 			name: 'forest',
 			icon: '🌳',
 			scoreContributors: (placement, {floodFetch}) =>
@@ -114,10 +88,6 @@ export const cards = [
 	{
 		ponderation: .5,
 		proto: {
-			cost: [
-				{type: 'rock', amount: 2},
-				{type: 'wood', amount: 1},
-			],
 			name: 'meadow',
 			icon: '🐑',
 			checkNeighbors: expectAtLeast('meadow', 'road', 'town'),
