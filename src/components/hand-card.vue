@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-	import { computed, onUnmounted, ref } from "vue";
+	import { computed, ref } from "vue";
 	import { CardInstance } from "../helpers/card.helper";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
@@ -46,10 +46,6 @@
 
 		deckStore.active = card;
 	}
-
-	onUnmounted(() => console.log('unmounted'))
-
-
 </script>
 
 <template>
