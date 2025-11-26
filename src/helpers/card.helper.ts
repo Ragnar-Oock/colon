@@ -77,15 +77,19 @@ export interface CardInstance {
 	 * @param neighbors a list of all neighbors and their relative position.
 	 * @returns the value of the card given its placement on the board,
 	 * **MUST** be an integer, **CAN** be negative, positive or 0.
+	 *
+	 * @default () => 0
 	 */
 	multiplier?: (neighbors: Cell[]) => number;
 
 	/**
-	 * Compute the score multiplier bonus this card can grant to it's neighbors.
+	 * Compute the score multiplier bonus this card can grant to its neighbors.
 	 *
 	 * Resolves to a value of 0 if not provided, i.e. no bonus
 	 *
 	 * @param type the type of the neighbor asking for a bonus.
+	 *
+	 * @default () => 0
 	 */
 	bonus?: (type: CardType) => number;
 	/**
