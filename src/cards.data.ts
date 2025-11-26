@@ -27,7 +27,7 @@ export const cards = [
 			icon: '🏘️',
 			checkNeighbors: expectAtLeast('town', 'road'),
 			scoreContributors: (placement, {floodFetch}) =>
-				floodFetch(placement, ofType('town')) as FilledCell[],
+				floodFetch(placement, ofType('town'), 5) as FilledCell[],
 		},
 	},
 	{

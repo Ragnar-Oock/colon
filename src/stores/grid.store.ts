@@ -154,7 +154,7 @@ export const useGridStore = defineStore('grid', () => {
 	function getScoreHelpers(cells: FilledCell[]): ScoreHelpers {
 		return {
 			getNeighbors: at => getNeighbors(cells, at),
-			floodFetch: (start, predicate) => floodFetch(cells, start, predicate)
+			floodFetch: (start, predicate, limit) => floodFetch(cells, start, predicate, limit)
 		}
 	}
 
@@ -234,7 +234,7 @@ export const useGridStore = defineStore('grid', () => {
 		}))
 	}
 
-	function floodFetch(cells: ReadonlyArray<FilledCell>, start: GridVec, predicate: (card: MaybeCard) => boolean): Cell[] {
+	function floodFetch(cells: ReadonlyArray<FilledCell>, start: GridVec, predicate: (card: MaybeCard) => boolean, limit = MAX_FLOOD_SIZE): Cell[] {
 		const queue = [
 			addVec(start, {x: 1, y: 0} as GridVec),
 			addVec(start, {x: -1, y: 0} as GridVec),
@@ -244,7 +244,7 @@ export const useGridStore = defineStore('grid', () => {
 		const flood = new Set<Cell>();
 		while (queue.length > 0) {
 			let next = queue.shift();
-			if (next === undefined || flood.size > MAX_FLOOD_SIZE) {
+			if (next === undefined || flood.size >= MAX_FLOOD_SIZE || flood.size >= limit) {
 				break;
 			}
 			const cell = getCellAt(cells, next);

@@ -37,7 +37,7 @@ export interface ScoreHelpers {
 	 *   array
 	 * @param predicate check if a cells should be included in the fetched collection
 	 */
-	floodFetch: (start: Readonly<GridVec>, predicate: ScorePredicate) => Cell[];
+	floodFetch: (start: Readonly<GridVec>, predicate: ScorePredicate, limit?: number) => Cell[];
 }
 
 export interface CardInstance {
