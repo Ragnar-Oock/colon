@@ -146,7 +146,7 @@
 		}
 
 		&:hover {
-			--offset: -2.5rem;
+			--offset: -4rem;
 			--hovered: v-bind(hoverAngle);
 			--bgc-pos: 0%;
 			--bgc-angle: -60deg;
