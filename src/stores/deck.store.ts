@@ -31,6 +31,21 @@ export const useDeckStore = defineStore('deck', () => {
 		)
 	)
 
+	/**
+	 * @debug
+	 */
+	const distribution = computed(() =>
+		Object.fromEntries(
+			registry
+				.value
+				.values()
+				.map((descriptor) => [
+					descriptor.proto.name,
+					descriptor.ponderation / totalPonderation.value,
+				])
+		)
+	)
+
 
 	/**
 	 * create a new card and put it in the hand
@@ -97,6 +112,7 @@ export const useDeckStore = defineStore('deck', () => {
 		draw,
 		register,
 		pick,
-		remove
+		remove,
+		distribution
 	}
 })
