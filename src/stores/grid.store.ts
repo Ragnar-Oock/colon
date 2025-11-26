@@ -107,6 +107,7 @@ export const useGridStore = defineStore('grid', () => {
 					bonus: neighbor.card.bonus?.(card.name) ?? 0,
 					score: 0,
 				}))
+				.filter(({bonus}) => bonus > 0)
 				.map(neighbor => [toString(neighbor.position), neighbor])
 		);
 		const contributors = new Map(
@@ -228,10 +229,7 @@ export const useGridStore = defineStore('grid', () => {
 	}
 
 	function getNeighbors(cells: ReadonlyArray<FilledCell>, at: GridVec): Cell[] {
-		return neighbors.map(position => ({
-			card: getCardAt(cells, addVec(at, position)),
-			position,
-		}))
+		return neighbors.map(neighbor => getCellAt(cells, addVec(at, neighbor)))
 	}
 
 	function floodFetch(cells: ReadonlyArray<FilledCell>, start: GridVec, predicate: (card: MaybeCard) => boolean, limit = MAX_FLOOD_SIZE): Cell[] {
