@@ -25,7 +25,7 @@ export const cards = [
 		proto: {
 			name: 'town',
 			icon: '🏘️',
-			checkNeighbors: expectAtLeast('town', 'road'),
+			checkPlacement: expectAtLeast('town', 'road'),
 			scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('town'), 5) as FilledCell[],
 		},
@@ -45,7 +45,7 @@ export const cards = [
 		proto: {
 			name: 'brickFactory',
 			icon: '🧱',
-			checkNeighbors: expectAtLeast('town'),
+			checkPlacement: expectAtLeast('town'),
 			scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('town')) as FilledCell[],
 			multiplier: neighbors => countType('brickFactory')(neighbors) > 0 ? 0 : 1
@@ -56,7 +56,7 @@ export const cards = [
 		proto: {
 			name: 'bank',
 			icon: '🪙',
-			checkNeighbors: combine(
+			checkPlacement: combine(
 				expectAtLeast('town'),
 				expectNone('quarry', 'brickFactory'),
 			),
@@ -72,8 +72,8 @@ export const cards = [
 		proto: {
 			name: 'quarry',
 			icon: '🪨',
-			checkNeighbors: combine(
 				expectAtLeast('road', 'town'),
+			checkPlacement: combine(
 				expectAtLeast('meadow', 'forest'),
 			),
 			scoreContributors: (placement, {getNeighbors}) =>
@@ -87,7 +87,7 @@ export const cards = [
 		proto: {
 			name: 'field',
 			icon: '🌾',
-			checkNeighbors: combine(
+			checkPlacement: combine(
 				expectNone('quarry'),
 				expectAtLeast('meadow', 'road', 'town'),
 			),
@@ -101,7 +101,7 @@ export const cards = [
 		proto: {
 			name: 'meadow',
 			icon: '🐑',
-			checkNeighbors: expectAtLeast('meadow', 'road', 'town'),
+			checkPlacement: expectAtLeast('meadow', 'road', 'town'),
 			scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('meadow', 'field')) as FilledCell[],
 		},
@@ -111,7 +111,7 @@ export const cards = [
 		proto: {
 			name: 'forest',
 			icon: '🌳',
-			checkNeighbors: expectAtLeast('meadow', 'forest', 'field', 'road'),
+			checkPlacement: expectAtLeast('meadow', 'forest', 'field', 'road'),
 			scoreContributors: (placement, {floodFetch, getNeighbors}) =>
 				merge<Cell>(
 					floodFetch(placement, ofType('meadow', 'field')) as FilledCell[],

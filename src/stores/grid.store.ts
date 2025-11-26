@@ -224,7 +224,7 @@ export const useGridStore = defineStore('grid', () => {
 		}
 
 		// check if the card is ok with all of it's to be neighbors
-		return card.checkNeighbors?.(neighboringCells) ?? true
+		return card.checkPlacement?.(neighboringCells) ?? true
 	}
 
 	function getNeighbors(cells: ReadonlyArray<FilledCell>, at: GridVec): Cell[] {

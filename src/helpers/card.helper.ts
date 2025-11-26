@@ -52,7 +52,7 @@ export interface CardInstance {
 	 *
 	 * @param neighbors a list of all future neighbors and their relative position
 	 */
-	checkNeighbors?: (neighbors: Cell[]) => boolean;
+	checkPlacement?: (neighbors: Cell[]) => boolean;
 	/**
 	 * Compute the list of cards that will contribute to the score of a card placement, final score will be the sum of the
 	 * returned card's multipliers
