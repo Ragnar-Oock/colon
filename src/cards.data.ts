@@ -35,8 +35,11 @@ export const cards = [
 		proto: {
 			name: 'road',
 			icon: '🛣️',
-			scoreContributors: (placement, {floodFetch}) =>
-				floodFetch(placement, ofType('road')) as FilledCell[],
+			scoreContributors: (placement, {floodFetch}) => {
+				const connected = floodFetch(placement, ofType('road')) as FilledCell[];
+				const maxConnected = 5;
+				return connected.length >= maxConnected ? connected.slice(0, 2) : connected;
+			},
 			multiplier: () => 1
 		},
 	},
@@ -65,6 +68,7 @@ export const cards = [
 			scoreContribution: 2,
 			bonus: type => type === 'town' ? 1 : 0,
 			baseScore: 4,
+			multiplier: countType('town'),
 		},
 	},
 	{
@@ -72,9 +76,10 @@ export const cards = [
 		proto: {
 			name: 'quarry',
 			icon: '🪨',
-				expectAtLeast('road', 'town'),
 			checkPlacement: combine(
+				expectAtLeast('road'),
 				expectAtLeast('meadow', 'forest'),
+				expectNone('town'),
 			),
 			scoreContributors: (placement, {getNeighbors}) =>
 				getNeighbors(placement)
