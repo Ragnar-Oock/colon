@@ -15,7 +15,7 @@
 
 <template>
 	<div class="board-card">
-		<PlacementScore :score="contribution"/>
+		<PlacementScore :bonus="contribution.bonus" :score="contribution.score"/>
 		<div class="icon">{{ cell.card?.icon }}</div>
 		<!--				<span
 							v-if="cell.card?.trigger !== undefined"
