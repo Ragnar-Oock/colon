@@ -114,7 +114,7 @@ export const useGridStore = defineStore('grid', () => {
 				.scoreContributors?.(position, helpers)
 				.map(contributor => ({
 					...contributor,
-					score: 1,
+					score: (contributor.card?.scoreContribution ?? 1) * (contributor.card?.multiplier?.(getNeighbors(effectiveCells, contributor.position)) ?? 1),
 					bonus: 0
 				}))
 				.map(contributor => [toString(contributor.position), contributor])

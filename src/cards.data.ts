@@ -62,7 +62,7 @@ export const cards = [
 			),
 			scoreContributors: (placement, {floodFetch}) =>
 				floodFetch(placement, ofType('town')) as FilledCell[],
-			bonus: type => type === 'town' ? 1 : 0
+			scoreContribution: 2,
 			bonus: type => type === 'town' ? 1 : 0,
 			baseScore: 4,
 		},

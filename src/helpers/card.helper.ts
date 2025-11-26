@@ -63,6 +63,11 @@ export interface CardInstance {
 		placement: GridVec,
 		helpers: ScoreHelpers
 	) => Cell[],
+	/**
+	 * How many point the current card contributes to a neighboring card's placement
+	 * @default 1
+	 */
+	scoreContribution?: number;
 
 	/**
 	 * Compute the score value of a card from itself, and it's direct neighbors.
