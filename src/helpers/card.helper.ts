@@ -83,6 +83,12 @@ export interface CardInstance {
 	 * @param type the type of the neighbor asking for a bonus.
 	 */
 	bonus?: (type: CardType) => number;
+	/**
+	 * number of score point earned by placing this card on its own (not taking bonuses or contributors into account)
+	 *
+	 * @default 1
+	 */
+	baseScore?: number,
 }
 
 export interface CardDescriptor {

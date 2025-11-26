@@ -159,10 +159,11 @@ export const useGridStore = defineStore('grid', () => {
 	}
 
 	function updateScore(card: CardInstance, at: Readonly<GridVec>): void {
+		const baseScore = card.baseScore ?? 1;
 		const placementScore =
 			getScoreContributors(card, at, Array.from(cells.value))
-				?.reduce((acc, {score, bonus}) => acc + score + bonus, 1)
-			?? 1;
+				?.reduce((acc, {score, bonus}) => acc + score + bonus, baseScore)
+			?? baseScore;
 
 
 		score.score += placementScore;
