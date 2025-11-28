@@ -49,11 +49,11 @@
 </script>
 
 <template>
-	<template v-if="isVisible">
-		<div v-for="({renderPosition: {x, y}}, index) in visibleCells" :style="{'--x': x, '--y': y}"
+	<div v-if="isVisible" class="valid-placements d-content">
+		<div v-for="({renderPosition: {x, y}}) in visibleCells" :style="{'--x': x, '--y': y}"
 				 class="valid-placement"
 		/>
-	</template>
+	</div>
 </template>
 
 <style scoped>

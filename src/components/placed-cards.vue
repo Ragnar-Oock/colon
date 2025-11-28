@@ -24,9 +24,7 @@
 </script>
 
 <template>
-	<GridCell v-for="cell in visibleFilledCells" :key="cell.card.id" :cell></GridCell>
+	<div class="placed-cards d-content">
+		<GridCell v-for="cell in visibleFilledCells" :key="cell.card.id" :cell></GridCell>
+	</div>
 </template>
-
-<style scoped>
-
-</style>
