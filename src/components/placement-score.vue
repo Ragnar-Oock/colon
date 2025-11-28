@@ -1,36 +1,61 @@
 <script lang="ts" setup>
-	const {bonus = 0, main = false, score} = defineProps<{
+	import { computed } from "vue";
+	import { useBoardStore } from "../stores/board.store";
+	import { GridVec } from "../stores/grid.store";
+
+	const {bonus = 0, main = false, score, placement} = defineProps<{
 		score: number,
 		bonus?: number,
 		main?: boolean,
+		/**
+		 * position of the score on the map
+		 */
+		placement?: GridVec,
 	}>();
+
+	const board = useBoardStore();
+
+	const gridArea = computed(() => {
+		if (placement) {
+			const {x, y} = board.toDisplayGrid(placement);
+			return `${ y } / ${ x }`;
+		}
+		else {
+			return undefined;
+		}
+	});
 </script>
 
 <template>
-	<Transition>
-		<div
-			v-if="score > 0"
-			:key="score"
-			:class="{
-				'accent': main,
-				'has-bonus': bonus > 0
-			}"
-			class="score"
-		>+ {{ score }}
-		</div>
-	</Transition>
-	<Transition>
-		<div
-			v-if="bonus > 0"
-			:key="bonus"
-			:class="{
-				'accent': main,
-				'has-score': score > 0
-			}"
-			class="bonus"
-		>+ {{ bonus }}
-		</div>
-	</Transition>
+	<div
+		:style="{ gridArea }"
+		class="placement-score"
+	>
+		<Transition>
+			<div
+				v-if="score > 0"
+				:key="score"
+				:class="{
+					'accent': main,
+					'has-bonus': bonus > 0
+				}"
+				class="score"
+			>+ {{ score }}
+			</div>
+		</Transition>
+		<Transition>
+			<div
+				v-if="bonus > 0"
+				:key="bonus"
+				:class="{
+					'accent': main,
+					'has-score': score > 0
+				}"
+				class="bonus"
+			>+ {{ bonus }}
+			</div>
+		</Transition>
+	</div>
 </template>
 
 <style scoped>
@@ -44,6 +69,12 @@
 		initial-value: 0%;
 		inherits: false;
 		syntax: "<length-percentage>";
+	}
+
+	.placement-score {
+		user-select: none;
+		position: relative;
+		inset: 0;
 	}
 
 	.score,

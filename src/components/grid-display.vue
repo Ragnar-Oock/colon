@@ -9,6 +9,7 @@
 	import { gap, tileHeight, tileWidth } from "./grid.config";
 	import HoveredCell from "./hovered-cell.vue";
 	import PlacedCards from "./placed-cards.vue";
+	import PlacementScores from "./placement-scores.vue";
 	import ValidPlacements from "./valid-placements.vue";
 
 
@@ -79,6 +80,7 @@
 		@pointermove="pointerMove"
 	>
 		<hovered-cell/>
+		<placement-scores/>
 		<PlacedCards/>
 		<ValidPlacements/>
 	</div>
