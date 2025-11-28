@@ -27,7 +27,7 @@ export const cards = [
 			name: 'town',
 			icon: '🏘️',
 			checkPlacement: expectAtLeast('town', 'road'),
-			scoreContributors: floodFetch(ofType('town'), 5),
+			scoreContributors: floodFetch(ofType('town', 'bank'), 5),
 		},
 	},
 	{
@@ -40,7 +40,7 @@ export const cards = [
 				const maxConnected = 5;
 				return connected.length >= maxConnected ? connected.slice(0, 2) : connected;
 			},
-			multiplier: () => 1
+			multiplier: countType('bank')
 		},
 	},
 	{
