@@ -13,7 +13,7 @@ export const expectAtLeast = (...oneOf: CardType[]): NeighborhoodPredicate =>
 /**
  * Check that none of the neighbors is of a given set of types
  * @param of a set of types, none of which should be present in the future neighbors
- * @returns is the neighborhood suitable ?
+ * @returns `true` if none of the neighbor match any of the given types
  */
 export const expectNone = (...of: CardType[]): NeighborhoodPredicate => neighborhood =>
 	!neighborhood.some(neighbor => of.includes(neighbor.card?.name!))

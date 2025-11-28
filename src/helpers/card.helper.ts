@@ -1,6 +1,6 @@
 import emitter, { Emitter, EventHandlerMap } from "mitt";
-import { Cell, GridVec } from "../stores/grid.store";
-import { ScorePredicate } from "./score-predicate";
+import { Cell } from "../stores/grid.store";
+import { ScoreHelpers } from "./score.helper";
 
 export type CardHook = (...args: unknown[]) => void;
 
@@ -25,21 +25,6 @@ export function card<card extends CardInstance>(proto: ProtoCard<card>, hooks?: 
 	} as unknown as Required<card>
 }
 
-export interface ScoreHelpers {
-	/**
-	 * Get the 8 cells around the give position. Returned cells might be empty.
-	 * @param at the position we want the neighbors of
-	 */
-	getNeighbors: (at: Readonly<GridVec>) => Cell[];
-	/**
-	 * Fetch all the filled cells connected to the `start` position and matching the `predicate`
-	 * @param start which cell to start fetching cells at, if the position is empty the function will return an empty
-	 *   array
-	 * @param predicate check if a cells should be included in the fetched collection
-	 */
-	floodFetch: (start: Readonly<GridVec>, predicate: ScorePredicate, limit?: number) => Cell[];
-}
-
 export interface CardInstance {
 	name: CardType;
 	icon: string;
@@ -60,7 +45,6 @@ export interface CardInstance {
 	 * Resolves to an empty array if not provided, i.e. placement score is not impacted by neighboring cards.
 	 */
 	scoreContributors?: (
-		placement: GridVec,
 		helpers: ScoreHelpers
 	) => Cell[],
 	/**

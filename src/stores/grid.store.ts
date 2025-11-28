@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ComputedRef, ref } from "vue";
 import { bus } from "../event.helper";
-import { CardInstance, ScoreHelpers } from "../helpers/card.helper";
+import { CardInstance } from "../helpers/card.helper";
+import { ScoreHelpers } from "../helpers/score.helper";
 import { addVec, toString, Vector2 } from "../helpers/vector.helper";
 import { useBoardStore } from "./board.store";
 import { useDeckStore } from "./deck.store";
@@ -97,7 +98,7 @@ export const useGridStore = defineStore('grid', () => {
 			return [];
 		}
 
-		const helpers = getScoreHelpers(effectiveCells);
+		const helpers = getScoreHelpers(position, effectiveCells);
 
 		const bonuses = new Map(
 			getNeighbors(cells.value, position)
@@ -112,7 +113,7 @@ export const useGridStore = defineStore('grid', () => {
 		);
 		const contributors = new Map(
 			card
-				.scoreContributors?.(position, helpers)
+				.scoreContributors?.(helpers)
 				.map(contributor => ({
 					...contributor,
 					score: (contributor.card?.scoreContribution ?? 1) * (contributor.card?.multiplier?.(getNeighbors(effectiveCells, contributor.position)) ?? 1),
@@ -152,10 +153,16 @@ export const useGridStore = defineStore('grid', () => {
 		?? 1
 	)
 
-	function getScoreHelpers(cells: FilledCell[]): ScoreHelpers {
+	function getScoreHelpers(at: Readonly<GridVec>, cells: FilledCell[]): ScoreHelpers {
 		return {
-			getNeighbors: at => getNeighbors(cells, at),
-			floodFetch: (start, predicate, limit) => floodFetch(cells, start, predicate, limit)
+			get neighbors() {
+				return getNeighbors(cells, at)
+			},
+			get placement() {
+				return at;
+			},
+			getNeighborsAt: (position: Readonly<GridVec>) => getNeighbors(cells, position),
+			floodFetch: (predicate, limit) => floodFetch(cells, at, predicate, limit)
 		}
 	}
 
@@ -232,21 +239,21 @@ export const useGridStore = defineStore('grid', () => {
 		return neighbors.map(neighbor => getCellAt(cells, addVec(at, neighbor)))
 	}
 
-	function floodFetch(cells: ReadonlyArray<FilledCell>, start: GridVec, predicate: (card: MaybeCard) => boolean, limit = MAX_FLOOD_SIZE): Cell[] {
+	function floodFetch(cells: ReadonlyArray<FilledCell>, start: GridVec, predicate: (card: MaybeCard) => boolean, limit = MAX_FLOOD_SIZE): FilledCell[] {
 		const queue = [
 			addVec(start, {x: 1, y: 0} as GridVec),
 			addVec(start, {x: -1, y: 0} as GridVec),
 			addVec(start, {x: 0, y: 1} as GridVec),
 			addVec(start, {x: 0, y: -1} as GridVec),
 		];
-		const flood = new Set<Cell>();
+		const flood = new Set<FilledCell>();
 		while (queue.length > 0) {
 			let next = queue.shift();
 			if (next === undefined || flood.size >= MAX_FLOOD_SIZE || flood.size >= limit) {
 				break;
 			}
 			const cell = getCellAt(cells, next);
-			if (flood.has(cell) || cell.card === undefined) {
+			if (!isFilled(cell) || flood.has(cell)) {
 				continue;
 			}
 			if (predicate(cell.card)) {
