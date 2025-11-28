@@ -24,6 +24,8 @@
 			return undefined;
 		}
 	});
+	const showHighlight = computed(() => (score > 0 || bonus > 0));
+	const delay = `${ Math.ceil(Math.random() * 5) * 16 * 2 }ms`
 </script>
 
 <template>
@@ -31,7 +33,7 @@
 		:style="{ gridArea }"
 		class="placement-score"
 	>
-		<Transition>
+		<Transition appear>
 			<div
 				v-if="score > 0"
 				:key="score"
@@ -43,7 +45,7 @@
 			>+ {{ score }}
 			</div>
 		</Transition>
-		<Transition>
+		<Transition appear>
 			<div
 				v-if="bonus > 0"
 				:key="bonus"
@@ -54,6 +56,9 @@
 				class="bonus"
 			>+ {{ bonus }}
 			</div>
+		</Transition>
+		<Transition appear name="blink">
+			<div :class="{ highlight: showHighlight }"/>
 		</Transition>
 	</div>
 </template>
@@ -75,6 +80,27 @@
 		user-select: none;
 		position: relative;
 		inset: 0;
+	}
+
+	.highlight {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: radial-gradient(circle at bottom center, rgba(90, 230, 90, 0.17), transparent);
+		filter: blur(5px);
+
+		&.blink-enter-active {
+			--timing-function: linear(0, -0.019 9.2%, -0.008 15.6%, 0.036 21%, 0.117 25.7%, 0.246 30.3%, 0.423 34.7%, 0.999 44.7%, 0.443 54.3%, 0.326 57.8%, 0.296 59.5%, 0.287 61.1%, 0.296 62.6%, 0.323 64.2%, 0.43 67.4%, 0.997 77.4%, 0.83 81.6%, 0.792 83.5%, 0.779 85.4%, 0.787 86.9%, 0.812 88.6%, 0.972 95.9%, 0.994 97.9%, 1);
+			transition: opacity 300ms v-bind(delay) var(--timing-function);
+		}
+
+		&.blink-enter-to {
+			opacity: 1;
+		}
+
+		&.blink-enter-from {
+			opacity: 0;
+		}
 	}
 
 	.score,
@@ -122,12 +148,12 @@
 	}
 
 	.v-enter-from {
-		--offset-y: calc(1em * var(--direction, 1));
+		--offset-y: 50%;
 		opacity: 0;
 	}
 
 	.v-leave-to {
-		--offset-y: calc(-1em * var(--direction, 1));
+		--offset-y: -50%;
 		opacity: 0;
 	}
 </style>
