@@ -60,6 +60,18 @@ export const useBoardStore = defineStore('board', () => {
 		y: gridPosition.y % (tileHeight + gap) - (tileHeight + gap),
 	} as ScreenVec));
 
+	/**
+	 * Convert a map position into a css grid position
+	 * @param vec
+	 */
+	function toDisplayGrid(vec: GridVec): GridVec {
+		return {
+			x: vec.x - gridWindow.value.x + 1,
+			y: vec.y - gridWindow.value.y + 1,
+		} as GridVec
+	}
+
+
 	return {
 		gridPosition,
 		gridWindow,
@@ -69,6 +81,7 @@ export const useBoardStore = defineStore('board', () => {
 		isPanning,
 		pointerPosition,
 		hoveredCell,
-		visuallyHoveredCell
+		visuallyHoveredCell,
+		toDisplayGrid
 	}
 })
