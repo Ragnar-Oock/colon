@@ -1,4 +1,5 @@
-@import './base.css';
+@use 'base';
+@use 'utils';
 
 #app {
 	font-weight: normal;
