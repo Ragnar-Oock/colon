@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 	import { computed } from "vue";
+	import { toString } from "../helpers/vector.helper";
 	import { useBoardStore } from "../stores/board.store";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
@@ -36,9 +37,14 @@
 			'can-place': canPlace,
 		}"
 		class="hovered"
-	>
-		<placement-score :score main/>
-	</div>
+	></div>
+	<placement-score
+		v-if="score > 0"
+		:key="toString(board.visuallyHoveredCell)"
+		:placement="board.hoveredCell ?? undefined"
+		:score
+		main
+	/>
 </template>
 
 <style scoped>
@@ -46,7 +52,6 @@
 		grid-area: v-bind('board.visuallyHoveredCell.y') / v-bind('board.visuallyHoveredCell.x');
 		pointer-events: none;
 		position: relative;
-
 
 		&::before {
 			outline: solid 2px rgba(90, 230, 90, 0.17);
