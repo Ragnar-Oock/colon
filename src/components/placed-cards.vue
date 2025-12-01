@@ -8,8 +8,8 @@
 	const board = useBoardStore();
 
 	const visibleCells = filterCells(({position: {x, y}}) =>
-		board.gridWindow.x < x && x < (board.visibleGridSize.width + board.gridWindow.x)
-		&& board.gridWindow.y < y && y < (board.visibleGridSize.height + board.gridWindow.y)
+		board.gridWindow.x < x + 1 && x + 1 < (board.visibleGridSize.width + board.gridWindow.x)
+		&& board.gridWindow.y < y + 1 && y + 1 < (board.visibleGridSize.height + board.gridWindow.y)
 	);
 
 	const visibleFilledCells = computed(() => (visibleCells.value as FilledCell[])
