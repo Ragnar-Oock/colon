@@ -42,17 +42,20 @@ const neighbors = [
  */
 const MAX_FLOOD_SIZE = 100;
 
+export function cell(position: Readonly<GridVec>, card?: undefined): EmptyCell;
+export function cell<instance extends CardInstance>(position: Readonly<GridVec>, card: instance): FilledCell<instance>;
+export function cell(position: Readonly<GridVec>, card?: CardInstance): Cell {
+	return {
+		card,
+		position,
+	}
+}
+
 export const useGridStore = defineStore('grid', () => {
 	const score = useScoreStore();
 
 	const cells = ref<FilledCell[]>([]);
 
-	function cell(position: Readonly<GridVec>, card?: CardInstance): Cell {
-		return {
-			card,
-			position,
-		}
-	}
 
 	function getCellAt(cells: ReadonlyArray<FilledCell>, position: Readonly<GridVec>): Cell {
 		return cells.find(({position: {x, y}}) => position.x === x && position.y === y) ?? cell(position);
