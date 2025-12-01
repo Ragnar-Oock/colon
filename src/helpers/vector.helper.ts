@@ -39,3 +39,5 @@ export const toString = (
 
 export const equalsVec = <vec extends Vector2>(a: Readonly<vec>, b: Readonly<vec>): boolean =>
 	a.x === b.x && a.y === b.y
+
+export const vec2 = <kind extends Vector2>(x: number, y: number): kind => ({x, y} as kind)

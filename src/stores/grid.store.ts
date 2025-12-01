@@ -3,13 +3,15 @@ import { computed, ComputedRef, ref } from "vue";
 import { bus } from "../event.helper";
 import { CardInstance } from "../helpers/card.helper";
 import { ScoreHelpers } from "../helpers/score.helper";
-import { addVec, toString, Vector2 } from "../helpers/vector.helper";
+import { addVec, toString, vec2, Vector2 } from "../helpers/vector.helper";
 import { useBoardStore } from "./board.store";
 import { useDeckStore } from "./deck.store";
 import { useScoreStore } from "./score.store";
 
-declare const gridVec: unique symbol;
-export type GridVec = Vector2 & { [gridVec]: 'grid vec' };
+declare const $gridVec: unique symbol;
+export type GridVec = Vector2 & { [$gridVec]: 'grid vec' };
+
+export const gridVec = vec2<GridVec>;
 
 export type MaybeCard = CardInstance | undefined;
 
