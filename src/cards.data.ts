@@ -17,6 +17,7 @@ declare module './helpers/card.helper' {
 		field: T;
 		forest: T;
 		meadow: T;
+		river: T;
 	}
 }
 
@@ -125,6 +126,17 @@ export const cards = [
 			multiplier: countEmpty()
 		},
 	},
+	{
+		ponderation: .5,
+		proto: {
+			name: 'river',
+			icon: '🌊',
+			baseScore: 1,
+			multiplier: countType('river'),
+			scoreContributors: floodFetch(ofType('river')),
+			scoreContribution: 1,
+		}
+	}
 ] satisfies CardDescriptor[];
 
 /**
