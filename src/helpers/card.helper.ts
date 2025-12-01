@@ -15,6 +15,12 @@ export interface CardTypes<T = unknown> {
 
 export type CardType = keyof CardTypes;
 
+export interface CardGroups<T = unknown> {
+	// hooks declarations added by extending this interface
+}
+
+export type CardGroup = keyof CardGroups;
+
 export type ProtoCard<card extends CardInstance> = Omit<card, 'id' | 'hooks'> & Record<string, unknown>
 
 export function card<card extends CardInstance>(proto: ProtoCard<card>, hooks?: EventHandlerMap<CardHooks>): Required<card> {
@@ -56,7 +62,7 @@ export interface CardInstance {
 	/**
 	 * Compute the score value of a card from itself, and it's direct neighbors.
 	 *
-	 * Resolves to a value of 0 if not provided.
+	 * Resolves to a value of 1 if not provided.
 	 *
 	 * @param neighbors a list of all neighbors and their relative position.
 	 * @returns the value of the card given its placement on the board,
@@ -75,13 +81,19 @@ export interface CardInstance {
 	 *
 	 * @default () => 0
 	 */
-	bonus?: (type: CardType) => number;
+	bonus?: (card: CardInstance) => number;
 	/**
 	 * number of score point earned by placing this card on its own (not taking bonuses or contributors into account)
 	 *
 	 * @default 1
 	 */
-	baseScore?: number,
+	baseScore?: number;
+
+	/**
+	 * The groups the card belongs to, can be used in card methods to refer to multiple cards or abstract away a card's
+	 * type.
+	 */
+	groups?: CardGroup[]
 }
 
 export interface CardDescriptor {

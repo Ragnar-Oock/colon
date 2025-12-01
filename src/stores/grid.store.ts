@@ -110,7 +110,7 @@ export const useGridStore = defineStore('grid', () => {
 				.filter(isFilled)
 				.map(neighbor => ({
 					...neighbor,
-					bonus: neighbor.card.bonus?.(card.name) ?? 0,
+					bonus: neighbor.card.bonus?.(card) ?? 0,
 					score: 0,
 				}))
 				.filter(({bonus}) => bonus > 0)

@@ -1,10 +1,8 @@
-import { merge } from "./helpers/array.helper";
 import { CardDescriptor } from "./helpers/card.helper";
-import { combine, expectAtLeast, expectNone } from "./helpers/neighborhood-predicate.helper";
+import { atLeastOneInGroup, atLeastOneOfType, combine, noneOfType } from "./helpers/neighborhood-predicate.helper";
 import { countEmpty, countType } from "./helpers/score-multiplier.helper";
-import { ofType } from "./helpers/score-predicate";
-import { floodFetch } from "./helpers/score.helper";
-import { Cell, isEmpty } from "./stores/grid.store";
+import { ofGroup, ofType } from "./helpers/score-predicate";
+import { floodFetch, limitContribution, mergeContribution, neighborFetch } from "./helpers/score.helper";
 
 declare module './helpers/card.helper' {
 	// noinspection JSUnusedGlobalSymbols
@@ -19,6 +17,14 @@ declare module './helpers/card.helper' {
 		meadow: T;
 		river: T;
 	}
+
+	// noinspection JSUnusedGlobalSymbols
+	export interface CardGroups<T> {
+		natural: T;
+		building: T;
+		land: T;
+		agriculture: T;
+	}
 }
 
 export const cards = [
@@ -27,8 +33,12 @@ export const cards = [
 		proto: {
 			name: 'town',
 			icon: '🏘️',
-			checkPlacement: expectAtLeast('town', 'road'),
-			scoreContributors: floodFetch(ofType('town', 'bank'), 5),
+			checkPlacement: atLeastOneOfType('town', 'road'),
+			scoreContributors: mergeContribution(
+				limitContribution(floodFetch(ofType('town', 'bank'), 5), 5, 3),
+				neighborFetch(ofGroup('land')),
+			),
+			groups: ['building'],
 		},
 	},
 	{
@@ -36,12 +46,13 @@ export const cards = [
 		proto: {
 			name: 'road',
 			icon: '🛣️',
-			scoreContributors: ({floodFetch}) => {
-				const connected = floodFetch(ofType('road'))
-				const maxConnected = 5;
-				return connected.length >= maxConnected ? connected.slice(0, 2) : connected;
-			},
-			multiplier: countType('bank')
+			scoreContributors: limitContribution(
+				floodFetch(ofType('road'), 5),
+				5,
+				2
+			),
+			multiplier: countType('bank'),
+			groups: ['building'],
 		},
 	},
 	{
@@ -49,14 +60,13 @@ export const cards = [
 		proto: {
 			name: 'brickFactory',
 			icon: '🧱',
-			checkPlacement: expectAtLeast('town'),
-			scoreContributors: ({floodFetch, neighbors}) => {
-				if (!expectNone('brickFactory')(neighbors)) {
-					return [];
-				}
-				return floodFetch(ofType('town'), 5);
-			},
-			multiplier: neighbors => countType('brickFactory')(neighbors) > 0 ? 0 : 1
+			checkPlacement: combine(
+				atLeastOneInGroup('building'),
+				noneOfType('brickFactory'),
+			),
+			scoreContributors: floodFetch(ofType('town'), 5),
+			multiplier: neighbors => countType('brickFactory')(neighbors) > 0 ? 0 : 1,
+			groups: ['building'],
 		},
 	},
 	{
@@ -65,14 +75,15 @@ export const cards = [
 			name: 'bank',
 			icon: '🪙',
 			checkPlacement: combine(
-				expectAtLeast('town'),
-				expectNone('quarry', 'brickFactory'),
+				atLeastOneOfType('town'),
+				noneOfType('quarry', 'brickFactory'),
 			),
-			scoreContributors: floodFetch(ofType('town')),
+			scoreContributors: neighborFetch(ofType('town')),
 			scoreContribution: 2,
-			bonus: type => type === 'town' ? 1 : 0,
+			bonus: ({name}) => name === 'town' ? 1 : 0,
 			baseScore: 4,
 			multiplier: countType('town'),
+			groups: ['building'],
 		},
 	},
 	{
@@ -81,13 +92,13 @@ export const cards = [
 			name: 'quarry',
 			icon: '🪨',
 			checkPlacement: combine(
-				expectAtLeast('road'),
-				expectAtLeast('meadow', 'forest'),
-				expectNone('town'),
+				atLeastOneOfType('road'),
+				atLeastOneOfType('meadow', 'forest'),
+				noneOfType('town'),
 			),
-			scoreContributors: ({neighbors}) =>
-				neighbors.filter(cell => ['field', 'meadow', 'bank'].includes(cell.card?.name!)),
+			scoreContributors: neighborFetch(ofType('field', 'meadow', 'bank')),
 			baseScore: 2,
+			groups: ['building', 'land'],
 		},
 	},
 	{
@@ -96,11 +107,11 @@ export const cards = [
 			name: 'field',
 			icon: '🌾',
 			checkPlacement: combine(
-				expectNone('quarry'),
-				expectAtLeast('meadow', 'road', 'town'),
+				noneOfType('quarry'),
+				atLeastOneOfType('meadow', 'road', 'town'),
 			),
-			scoreContributors: ({neighbors}) =>
-				neighbors.filter(cell => ['field', 'meadow'].includes(cell.card?.name!))
+			scoreContributors: neighborFetch(ofType('field', 'meadow')),
+			groups: ['land', 'agriculture'],
 		},
 	},
 	{
@@ -108,8 +119,9 @@ export const cards = [
 		proto: {
 			name: 'meadow',
 			icon: '🐑',
-			checkPlacement: expectAtLeast('meadow', 'road', 'town'),
+			checkPlacement: atLeastOneOfType('meadow', 'road', 'town'),
 			scoreContributors: floodFetch(ofType('meadow', 'field')),
+			groups: ['land', 'agriculture'],
 		},
 	},
 	{
@@ -117,13 +129,13 @@ export const cards = [
 		proto: {
 			name: 'forest',
 			icon: '🌳',
-			checkPlacement: expectAtLeast('meadow', 'forest', 'field', 'road'),
-			scoreContributors: ({floodFetch, neighbors}) =>
-				merge<Cell>(
-					floodFetch(ofType('meadow', 'field')),
-					neighbors.filter(isEmpty)
-				),
-			multiplier: countEmpty()
+			checkPlacement: atLeastOneOfType('meadow', 'forest', 'field', 'road'),
+			scoreContributors: mergeContribution(
+				floodFetch(ofType('meadow', 'field')),
+				neighborFetch(neighbor => neighbor !== undefined),
+			),
+			multiplier: countEmpty(),
+			groups: ['land', 'natural'],
 		},
 	},
 	{
@@ -133,8 +145,9 @@ export const cards = [
 			icon: '🌊',
 			baseScore: 1,
 			multiplier: countType('river'),
-			scoreContributors: floodFetch(ofType('river')),
+			scoreContributors: floodFetch(ofGroup('land'), 5),
 			scoreContribution: 1,
+			groups: ['land', 'natural'],
 		}
 	}
 ] satisfies CardDescriptor[];

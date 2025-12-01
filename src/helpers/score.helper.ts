@@ -1,4 +1,5 @@
 import { Cell, FilledCell, GridVec } from "../stores/grid.store";
+import { merge } from "./array.helper";
 import { ScorePredicate } from "./score-predicate";
 
 export interface ScoreHelpers {
@@ -21,9 +22,30 @@ export interface ScoreHelpers {
 	get neighbors(): Cell[];
 }
 
+export type ContributorFinder = (helper: ScoreHelpers) => Cell[];
+
 /**
  * {@inheritDoc ScoreHelpers.floodFetch}
  */
-export const floodFetch = (predicate: ScorePredicate, limit?: number) =>
-	(helper: ScoreHelpers) =>
-		helper.floodFetch(predicate, limit);
+export const floodFetch = (predicate: ScorePredicate, limit?: number): ContributorFinder =>
+	helper => helper.floodFetch(predicate, limit);
+
+export const neighborFetch = (predicate: ScorePredicate): ContributorFinder =>
+	helper => helper
+		.neighbors
+		.filter(({card}) => predicate(card));
+
+/**
+ * Limit the number of contributors returned and optionally reduce their number if the limit is reached
+ * @param finder find the contributors
+ * @param limit discard any contributor after that many are found
+ * @param overLimit if `limit` is reached return at most that many contributors. MUST be between 0 and `limit`
+ */
+export const limitContribution = (finder: ContributorFinder, limit: number, overLimit: number = limit): ContributorFinder =>
+	helpers => {
+		const cells = finder(helpers);
+		return cells.length > limit ? cells.slice(0, Math.min(limit, overLimit)) : cells;
+	}
+
+export const mergeContribution = (...finders: ContributorFinder[]): ContributorFinder =>
+	helper => merge(...finders.map(finder => finder(helper)))

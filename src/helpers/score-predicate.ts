@@ -1,4 +1,5 @@
 import { MaybeCard } from "../stores/grid.store";
+import { CardGroup, CardType } from "./card.helper";
 
 export type ScorePredicate = (card: MaybeCard) => boolean;
 
@@ -6,5 +7,8 @@ export type ScorePredicate = (card: MaybeCard) => boolean;
  * Check
  * @param types
  */
-export const ofType = (...types: string[]): ScorePredicate =>
-	card => (types as (string | undefined)[]).includes(card?.name)
+export const ofType = (...types: CardType[]): ScorePredicate =>
+	card => types.includes(card?.name!)
+
+export const ofGroup = (...groups: CardGroup[]): ScorePredicate =>
+	card => card?.groups?.some(group => groups.includes(group)) ?? false

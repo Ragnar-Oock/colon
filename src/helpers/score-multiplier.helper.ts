@@ -1,5 +1,5 @@
 import { Cell } from "../stores/grid.store";
-import { CardType } from "./card.helper";
+import { CardInstance, CardType } from "./card.helper";
 
 export type ScoreMultiplierHelper = (neighbors: Cell[]) => number;
 
@@ -16,9 +16,9 @@ export const sumUp = (...helpers: ScoreMultiplierHelper[]): ScoreMultiplierHelpe
 			, 0
 		)
 
-export const countNeighborBonuses = (type: CardType): ScoreMultiplierHelper =>
+export const countNeighborBonuses = (card: CardInstance): ScoreMultiplierHelper =>
 	neighbors =>
-		neighbors.reduce((bonuses, neighbor) => bonuses + (neighbor.card?.bonus?.(type) ?? 0), 0)
+		neighbors.reduce((bonuses, neighbor) => bonuses + (neighbor.card?.bonus?.(card) ?? 0), 0)
 
 export const countEmpty = (): ScoreMultiplierHelper =>
 	neighbors =>
