@@ -76,10 +76,10 @@ export function saveMap(map: FilledCell[], slot: number = 0): void {
 	localStorage.setItem(getSlotKey(slot), JSON.stringify(game));
 }
 
-export function loadMap(slot = 0): FilledCell[] {
+export function loadMap(slot = 0, newMap: () => FilledCell[] = () => []): FilledCell[] {
 	const game = localStorage.getItem(getSlotKey(slot));
 	if (game === null) {
-		return [];
+		return newMap();
 	}
 	const {cells, lut} = JSON.parse(game);
 	return deserialize(cells, lut);

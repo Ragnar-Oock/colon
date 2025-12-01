@@ -1,12 +1,17 @@
 import { tryOnMounted, tryOnUnmounted } from "@vueuse/core";
 import { EffectScope, effectScope, watchEffect } from "vue";
 import { useDeckStore } from "../stores/deck.store";
-import { useGridStore } from "../stores/grid.store";
+import { FilledCell, useGridStore } from "../stores/grid.store";
 import { loadHand, saveHand } from "./save-hand.helper";
 import { loadMap, saveMap } from "./save-map.helper";
 import { currentVersion, getSaveFormatVersion, isCompatible, setSaveFormatVersion } from "./save-version.helper";
 
-export function useAutoSave(slot = 0): EffectScope {
+export type AutoSaveOptions = {
+	slot?: number,
+	newMap?: () => FilledCell[],
+}
+
+export function useAutoSave({slot = 0, newMap = () => []}: AutoSaveOptions): EffectScope {
 	const scope = effectScope();
 
 	tryOnMounted(() => {
@@ -20,7 +25,7 @@ export function useAutoSave(slot = 0): EffectScope {
 			setSaveFormatVersion(currentVersion, slot);
 
 			const grid = useGridStore();
-			grid.cells = loadMap(slot);
+			grid.cells = loadMap(slot, newMap);
 			watchEffect(() => saveMap(grid.cells, slot));
 
 			const deck = useDeckStore();

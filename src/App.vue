@@ -1,5 +1,4 @@
 <script setup lang="ts">
-	import { onMounted } from "vue";
 	import { registerAllCards } from "./cards.data";
 	import BoardView from "./components/board-view.vue";
 	import DraggedItem from "./components/dragged-item.vue";
@@ -10,7 +9,7 @@
 	import { forgetHand } from "./helpers/save-hand.helper";
 	import { forgetMap } from "./helpers/save-map.helper";
 	import { useDeckStore } from "./stores/deck.store";
-	import { GridVec, useGridStore } from "./stores/grid.store";
+	import { cell, gridVec, GridVec, useGridStore } from "./stores/grid.store";
 	import { useScoreStore } from "./stores/score.store";
 
 	const deckStore = useDeckStore();
@@ -40,8 +39,15 @@
 		window.location.reload();
 	}
 
-	onMounted(() => {
-		useAutoSave(0);
+	const townProto = deckStore.registry.get('town')?.proto;
+	if (townProto === undefined) {
+		throw new Error('Default tile type not available. Did you fuck up the load order ?');
+	}
+	useAutoSave({
+		slot: 0,
+		newMap: () => [
+			cell(gridVec(0, 0), card(townProto)),
+		],
 	});
 
 </script>
