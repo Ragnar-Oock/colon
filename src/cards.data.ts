@@ -132,7 +132,7 @@ export const cards = [
 			checkPlacement: atLeastOneOfType('meadow', 'forest', 'field', 'road'),
 			scoreContributors: mergeContribution(
 				floodFetch(ofType('meadow', 'field')),
-				neighborFetch(neighbor => neighbor !== undefined),
+				neighborFetch(neighbor => neighbor === undefined),
 			),
 			multiplier: countEmpty(),
 			groups: ['land', 'natural'],
