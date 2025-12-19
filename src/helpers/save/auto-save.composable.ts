@@ -1,7 +1,7 @@
 import { tryOnMounted, tryOnUnmounted } from "@vueuse/core";
 import { EffectScope, effectScope, watchEffect } from "vue";
-import { useDeckStore } from "../stores/deck.store";
-import { FilledCell, useGridStore } from "../stores/grid.store";
+import { useDeckStore } from "../../stores/deck.store";
+import { FilledCell, useGridStore } from "../../stores/grid.store";
 import { loadHand, saveHand } from "./save-hand.helper";
 import { loadMap, saveMap } from "./save-map.helper";
 import { currentVersion, getSaveFormatVersion, isCompatible, setSaveFormatVersion } from "./save-version.helper";

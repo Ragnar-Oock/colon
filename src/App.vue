@@ -3,11 +3,11 @@
 	import BoardView from "./components/board-view.vue";
 	import DraggedItem from "./components/dragged-item.vue";
 	import HandDisplay from "./components/hand-display.vue";
-	import { useAutoSave } from "./helpers/auto-save.composable";
 	import { card } from "./helpers/card.helper";
 	import { iter } from "./helpers/iterator.helper";
-	import { forgetHand } from "./helpers/save-hand.helper";
-	import { forgetMap } from "./helpers/save-map.helper";
+	import { useAutoSave } from "./helpers/save/auto-save.composable";
+	import { forgetHand } from "./helpers/save/save-hand.helper";
+	import { forgetMap } from "./helpers/save/save-map.helper";
 	import { useDeckStore } from "./stores/deck.store";
 	import { cell, gridVec, GridVec, useGridStore } from "./stores/grid.store";
 	import { useScoreStore } from "./stores/score.store";
