@@ -7,7 +7,6 @@ labels:
   - triage
 assignees:
   - Ragnar-Oock
-type: bug
 body:
   - type: markdown
     attributes:
