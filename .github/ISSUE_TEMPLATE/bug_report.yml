@@ -1,5 +1,13 @@
 name: "\U0001F41E Bug report"
 description: Report something broken
+projects:
+  - "Ragnar-Oock/2"
+labels:
+  - bug
+  - triage
+assignees:
+  - Ragnar-Oock
+type: bug
 body:
   - type: markdown
     attributes:
@@ -40,7 +48,7 @@ body:
     id: system-info
     attributes:
       label: Browser used
-      description: Some bugs only happen in specific browsers, list those you reproduced the bug with,
+      description: Some bugs only happen in specific browsers, list those you reproduced the bug with and it's version
       render: shell
       placeholder: Chrome 143.0.7499.169, Firefox 146.0
   - type: textarea
