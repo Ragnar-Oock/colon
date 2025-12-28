@@ -19,6 +19,8 @@
 		grid-area: v-bind('cell.visiblePosition.y') / v-bind('cell.visiblePosition.x');
 		user-select: none;
 		position: relative;
+		display: grid;		
+		place-content: center;
 
 		.icon {
 			font-size: 5em;
