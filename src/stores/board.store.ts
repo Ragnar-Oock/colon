@@ -45,7 +45,15 @@ export const useBoardStore = defineStore('board', () => {
 	/**
 	 * visible position of the grid in pixel, used for display and mapping from screen space to grid space
 	 */
-	const gridPosition = reactive({x: 0, y: 0} as ScreenVec);
+	
+	// center grid
+	let negative_offset_y_multiplier = 0.058; 	// 1 = window height
+	const board_center_x = (window.innerWidth * 0.5) - ((tileWidth + gap) * 0.5);
+	const board_center_y = (window.innerHeight * 0.5) - ((tileHeight + gap) * 0.5);
+	const offset = tileHeight + gap + (window.innerHeight * negative_offset_y_multiplier);
+	const startingPosition = {x: board_center_x, y: board_center_y - offset};
+
+	const gridPosition = reactive(startingPosition as ScreenVec);
 
 	const gridWindow = computed(() => ({
 		x: (Math.trunc(gridPosition.x / (tileWidth + gap)) + 1) * -1,
