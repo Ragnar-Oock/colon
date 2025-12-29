@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 	import { computed } from "vue";
 	import { useBoardStore } from "../stores/board.store";
-	import type { FilledCell, GridVec } from "../stores/grid.store";
-	import { useGridStore } from "../stores/grid.store";
+	import { FilledCell, GridVec, useGridStore } from "../stores/grid.store";
 	import GridCell from "./grid-cell.vue";
 
 	const {filterCells} = useGridStore();

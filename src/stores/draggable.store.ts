@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
-import type { Component } from 'vue';
-import { computed, reactive, ref, watchEffect } from 'vue';
+import { type Component, computed, reactive, ref, watchEffect } from "vue";
 
 export type DraggedElement = {
 	type: 'component';
@@ -20,8 +19,8 @@ export type DragOptions = {
 }
 
 export const useDraggableStore = defineStore('draggable', () => {
-	const dragged = ref<DraggedElement | null>(undefined);
-	let cancel;
+	const dragged = ref<DraggedElement | null>(null);
+	let cancel: VoidFunction | null = null;
 
 	function start(element: DraggedElement, options?: DragOptions): () => void {
 		dragged.value = element;
@@ -40,21 +39,21 @@ export const useDraggableStore = defineStore('draggable', () => {
 		});
 
 		cancel = () => {
-			cancel = undefined;
+			cancel = null;
 
 			if (hasChanged) {
 				return;
 			}
 
 			options?.onCancel?.();
-			dragged.value = undefined;
+			dragged.value = null;
 		};
 
 		return cancel;
 	}
 
 	function end() {
-		dragged.value = undefined;
+		dragged.value = null;
 	}
 
 	return {

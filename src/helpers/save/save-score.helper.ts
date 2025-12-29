@@ -11,5 +11,5 @@ export function saveScore(score: number, slot = 0): void {
 }
 
 export function loadScore(slot = 0): number {
-	return Number.parseInt(JSON.parse(localStorage.getItem(getSlotKey(slot)) ?? "0"), scoreSaveRadix);
+	return parseInt(JSON.parse(localStorage.getItem(getSlotKey(slot)) ?? "0"), scoreSaveRadix);
 }

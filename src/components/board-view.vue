@@ -3,8 +3,7 @@
 	import { useElementBounding, useElementSize } from "@vueuse/core";
 	import { reactive, ref, useTemplateRef, watchEffect } from "vue";
 	import { addVec, setVec, subtractVec } from "../helpers/vector.helper";
-	import type { ScreenVec } from "../stores/board.store";
-	import { useBoardStore } from "../stores/board.store";
+	import { ScreenVec, useBoardStore } from "../stores/board.store";
 	import GridDisplay from "./grid-display.vue";
 	import { gap, tileHeight, tileWidth } from "./grid.config";
 

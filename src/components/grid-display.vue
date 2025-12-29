@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 	import { useElementBounding } from "@vueuse/core";
 	import { useTemplateRef } from "vue";
-	import type { ScreenVec } from "../stores/board.store";
-	import { useBoardStore } from "../stores/board.store";
+	import { ScreenVec, useBoardStore } from "../stores/board.store";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
 	import { useGridStore } from "../stores/grid.store";

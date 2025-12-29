@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { reactive } from "vue";
-import type { CardInstance } from "../helpers/card.helper";
-import type { FilledCell } from "./grid.store";
-import { useGridStore } from "./grid.store";
+import { CardInstance } from "../helpers/card.helper";
+import { FilledCell, useGridStore } from "./grid.store";
 
 
 export interface Resource {

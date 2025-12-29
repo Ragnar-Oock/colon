@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-	import type { FilledCell, GridVec } from "../stores/grid.store";
+	import { FilledCell, GridVec } from "../stores/grid.store";
 
 	const {
 		cell
@@ -19,7 +19,7 @@
 		grid-area: v-bind('cell.visiblePosition.y') / v-bind('cell.visiblePosition.x');
 		user-select: none;
 		position: relative;
-		display: grid;
+		display: grid;		
 		place-content: center;
 
 		.icon {

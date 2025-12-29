@@ -1,4 +1,4 @@
-import type { CardDescriptor } from "./helpers/card.helper";
+import { CardDescriptor } from "./helpers/card.helper";
 import { atLeastOneInGroup, atLeastOneOfType, combine, noneOfType } from "./helpers/neighborhood-predicate.helper";
 import { countEmpty, countType } from "./helpers/score-multiplier.helper";
 import { ofGroup, ofType } from "./helpers/score-predicate";

@@ -1,36 +1,32 @@
 <script setup lang="ts">
 
-	import { computed, ref, useId, watch } from "vue";
-	import type { ResourceType } from "../stores/resource.store";
-	import { resourceTypes, useResourceStore } from "../stores/resource.store";
+import { computed, ref, useId, watch } from "vue";
+import { ResourceType, resourceTypes, useResourceStore } from "../stores/resource.store";
 
-	const resourceStore = useResourceStore();
+const resourceStore = useResourceStore();
 
-	const typeId = useId();
-	const amountId = useId();
+const typeId = useId();
+const amountId = useId();
 
-	const type = ref<ResourceType | undefined>(undefined);
-	const amount = ref<number>(0);
+const type = ref<ResourceType|undefined>(undefined);
+const amount = ref<number>(0);
 
-	const available = computed<number>(() => type.value ? resourceStore.resources[type.value] : 0)
+const available = computed<number>(() => type.value ? resourceStore.resources[type.value] : 0)
 
-	function consume() {
-		if (!type.value || !amount.value) {
-			return;
-		}
+function consume() {
+	if (!type.value || !amount.value) return;
 
-		resourceStore.consume({
-			type: type.value,
-			amount: amount.value
-		});
+	resourceStore.consume({
+		type: type.value,
+		amount: amount.value
+	});
 
+}
+watch(available, () => {
+	if (available.value < amount.value) {
+		amount.value = available.value;
 	}
-
-	watch(available, () => {
-		if (available.value < amount.value) {
-			amount.value = available.value;
-		}
-	})
+})
 
 </script>
 
@@ -39,15 +35,14 @@
 		<label :for="typeId">type</label>
 		<select name="type" :id="typeId" v-model="type">
 			<option
-				v-for="resourceType in resourceTypes"
-				:key="resourceType"
-				:value="resourceType">{{ resourceType }}
-			</option>
+					v-for="resourceType in resourceTypes"
+					:key="resourceType"
+					:value="resourceType">{{resourceType}}</option>
 		</select>
 
 		<label :for="amountId">amount</label>
 		<input type="range" :id="amountId" step="1" min="0" :max="available" v-model="amount">
-		<output>{{ amount }} / {{ available }}</output>
+		<output>{{amount}} / {{available}}</output>
 
 		<button type="submit">consume</button>
 

@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { gap, tileHeight, tileWidth } from "../components/grid.config";
-import type { Vector2 } from "../helpers/vector.helper";
-import { equalsVec } from "../helpers/vector.helper";
+import { equalsVec, Vector2 } from "../helpers/vector.helper";
 import type { GridVec } from "./grid.store";
 
 export type ScreenVec = Vector2 & { __brand: 'screen vec' };
@@ -16,11 +15,11 @@ export const useBoardStore = defineStore('board', () => {
 	 */
 	const boardSize = reactive<ScreenVec>({x: 0, y: 0} as ScreenVec);
 	const isPanning = ref(false);
-	const pointerPosition = ref<ScreenVec | null>(undefined);
+	const pointerPosition = ref<ScreenVec | null>(null);
 
 	const hoveredCell = computed<GridVec | null>((old) => {
 		if (pointerPosition.value === null) {
-			return
+			return null
 		}
 		const newValue = ({
 			x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) + gridWindow.value.x,

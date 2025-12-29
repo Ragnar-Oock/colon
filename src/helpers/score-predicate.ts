@@ -1,5 +1,5 @@
-import type { MaybeCard } from "../stores/grid.store";
-import type { CardGroup, CardType } from "./card.helper";
+import { MaybeCard } from "../stores/grid.store";
+import { CardGroup, CardType } from "./card.helper";
 
 export type ScorePredicate = (card: MaybeCard) => boolean;
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import type { CardInstance } from "../helpers/card.helper";
+	import { CardInstance } from "../helpers/card.helper";
 	import HandCard from "./hand-card.vue";
 
 	defineProps<{

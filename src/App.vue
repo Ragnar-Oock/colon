@@ -9,8 +9,7 @@
 	import { forgetHand } from "./helpers/save/save-hand.helper";
 	import { forgetMap } from "./helpers/save/save-map.helper";
 	import { useDeckStore } from "./stores/deck.store";
-	import type { GridVec } from "./stores/grid.store";
-	import { cell, gridVec, useGridStore } from "./stores/grid.store";
+	import { cell, gridVec, GridVec, useGridStore } from "./stores/grid.store";
 	import { useScoreStore } from "./stores/score.store";
 
 	const deckStore = useDeckStore();
