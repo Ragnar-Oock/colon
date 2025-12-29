@@ -1,5 +1,5 @@
-import { Cell } from "../stores/grid.store";
-import { CardInstance, CardType } from "./card.helper";
+import type { Cell } from "../stores/grid.store";
+import type { CardInstance, CardType } from "./card.helper";
 
 export type ScoreMultiplierHelper = (neighbors: Cell[]) => number;
 

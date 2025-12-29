@@ -1,6 +1,7 @@
 import { useDeckStore } from "../../stores/deck.store";
-import { Cell, FilledCell, GridVec } from "../../stores/grid.store";
-import { card, CardType } from "../card.helper";
+import type { Cell, FilledCell, GridVec } from "../../stores/grid.store";
+import type { CardType } from "../card.helper";
+import { card } from "../card.helper";
 import { entitySeparator, integerRadix, propertySeparator, slotKeyBuilder } from "./save-format.helper";
 
 
@@ -55,11 +56,14 @@ function deserialize(cells: string, types: string): FilledCell[] {
 
 			let position = {x: 0, y: 0} as GridVec;
 			try {
-				position.x = parseInt(x, integerRadix);
-				position.y = parseInt(y, integerRadix);
+				position.x = Number.parseInt(x, integerRadix);
+				position.y = Number.parseInt(y, integerRadix);
 			}
-			catch (cause) {
-				throw new TypeError(`unable to parse coordinates at index ${ index } : x = ${ x }, y = ${ y }`, {cause});
+			catch (error) {
+				throw new TypeError(`unable to parse coordinates at index ${ index } : x = ${ x }, y = ${ y }`, {
+					error,
+					cause: error
+				});
 			}
 			return {
 				card: card(descriptor.proto),

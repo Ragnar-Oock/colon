@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { bus } from "../event.helper";
-import { card, CardDescriptor, CardInstance } from "../helpers/card.helper";
+import type { CardDescriptor, CardInstance } from "../helpers/card.helper";
+import { card } from "../helpers/card.helper";
 
 export const useDeckStore = defineStore('deck', () => {
 	const hand = ref<CardInstance[]>([]);
-	const active = ref<CardInstance | null>(null);
+	const active = ref<CardInstance | null>(undefined);
 
 	/**
 	 * List the cards in hand minus the active one.
@@ -88,7 +89,7 @@ export const useDeckStore = defineStore('deck', () => {
 
 		hand.value = hand.value.filter(cardInHand => cardInHand !== card);
 		if (active.value === card) {
-			active.value = null;
+			active.value = undefined;
 		}
 	}
 

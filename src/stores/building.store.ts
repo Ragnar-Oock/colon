@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { reactive } from "vue";
-import { Cost, ResourceType, useResourceStore } from "./resource.store";
+import type { Cost } from "./resource.store";
+import { useResourceStore } from "./resource.store";
 
 
 export type BuildingName = string;
@@ -10,6 +11,7 @@ export interface BuildingType {
 	cost: Cost[];
 	icon: string;
 }
+
 export interface BuildingSlot {
 	content: Building | undefined;
 }
@@ -20,7 +22,7 @@ export interface Building {
 	id: number;
 }
 
-let ids=0;
+let ids = 0;
 
 export const useBuildingStore = defineStore('building', () => {
 	const buildings = reactive<Building[]>([]);

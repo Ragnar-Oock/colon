@@ -1,9 +1,11 @@
 import { defineStore } from "pinia";
-import { computed, ComputedRef, ref } from "vue";
+import type { ComputedRef } from "vue";
+import { computed, ref } from "vue";
 import { bus } from "../event.helper";
-import { CardInstance } from "../helpers/card.helper";
-import { ScoreHelpers } from "../helpers/score.helper";
-import { addVec, toString, vec2, Vector2 } from "../helpers/vector.helper";
+import type { CardInstance } from "../helpers/card.helper";
+import type { ScoreHelpers } from "../helpers/score.helper";
+import type { Vector2 } from "../helpers/vector.helper";
+import { addVec, toString, vec2 } from "../helpers/vector.helper";
 import { useBoardStore } from "./board.store";
 import { useDeckStore } from "./deck.store";
 import { useScoreStore } from "./score.store";
@@ -57,15 +59,15 @@ export const useGridStore = defineStore('grid', () => {
 	const cells = ref<FilledCell[]>([]);
 
 
-	function getCellAt(cells: ReadonlyArray<FilledCell>, position: Readonly<GridVec>): Cell {
+	function getCellAt(cells: readonly FilledCell[], position: Readonly<GridVec>): Cell {
 		return cells.find(({position: {x, y}}) => position.x === x && position.y === y) ?? cell(position);
 	}
 
-	function getCardAt(cells: ReadonlyArray<FilledCell>, position: Readonly<GridVec>): CardInstance | undefined {
+	function getCardAt(cells: readonly FilledCell[], position: Readonly<GridVec>): CardInstance | undefined {
 		return getCard(cells, position.x, position.y);
 	}
 
-	function getCard(cells: ReadonlyArray<FilledCell>, X: number, Y: number): CardInstance | undefined {
+	function getCard(cells: readonly FilledCell[], X: number, Y: number): CardInstance | undefined {
 		return cells.find(({position: {x, y}}) => X === x && Y === y)?.card;
 	}
 
@@ -144,12 +146,12 @@ export const useGridStore = defineStore('grid', () => {
 		const card = deck.active;
 		const position = board.hoveredCell;
 		if (card === null || position === null || !canPlace(cells.value, card, position)) {
-			return null;
+			return;
 		}
 
 		const contributors = getScoreContributors(card, position, cells.value);
 
-		return contributors.length === 0 ? null : contributors;
+		return contributors.length === 0 ? undefined : contributors;
 	})
 
 	const placementScore = computed(() =>
@@ -217,7 +219,7 @@ export const useGridStore = defineStore('grid', () => {
 	 * @param card
 	 * @param at
 	 */
-	function canPlace(cells: ReadonlyArray<FilledCell>, card: Readonly<CardInstance>, at: Readonly<GridVec>): boolean {
+	function canPlace(cells: readonly FilledCell[], card: Readonly<CardInstance>, at: Readonly<GridVec>): boolean {
 		// at the start everywhere is a valid placement
 		if (cells.length === 0) {
 			return true;
@@ -240,11 +242,11 @@ export const useGridStore = defineStore('grid', () => {
 		return card.checkPlacement?.(neighboringCells) ?? true
 	}
 
-	function getNeighbors(cells: ReadonlyArray<FilledCell>, at: GridVec): Cell[] {
+	function getNeighbors(cells: readonly FilledCell[], at: GridVec): Cell[] {
 		return neighbors.map(neighbor => getCellAt(cells, addVec(at, neighbor)))
 	}
 
-	function floodFetch(cells: ReadonlyArray<FilledCell>, start: GridVec, predicate: (card: MaybeCard) => boolean, limit = MAX_FLOOD_SIZE): FilledCell[] {
+	function floodFetch(cells: readonly FilledCell[], start: GridVec, predicate: (card: MaybeCard) => boolean, limit = MAX_FLOOD_SIZE): FilledCell[] {
 		const queue = [
 			addVec(start, {x: 1, y: 0} as GridVec),
 			addVec(start, {x: -1, y: 0} as GridVec),
