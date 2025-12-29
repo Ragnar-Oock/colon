@@ -8,9 +8,14 @@
 	const {filterCells} = useGridStore();
 	const board = useBoardStore();
 
+	const halfSize = computed(() => ({
+		width: Math.trunc(board.gridSize.width / 2),
+		height: Math.trunc(board.gridSize.height / 2),
+	}))
+
 	const visibleCells = filterCells(({position: {x, y}}) =>
-		board.gridWindow.x < x + 1 && x + 1 < (board.visibleGridSize.width + board.gridWindow.x)
-		&& board.gridWindow.y < y + 1 && y + 1 < (board.visibleGridSize.height + board.gridWindow.y)
+		board.gridWindow.x - halfSize.value.width < x + 1 && x + 1 < (halfSize.value.width + board.gridWindow.x)
+		&& board.gridWindow.y - halfSize.value.height < y + 1 && y + 1 < (halfSize.value.height + board.gridWindow.y)
 	);
 
 	const visibleFilledCells = computed(() => (visibleCells.value as FilledCell[])
@@ -18,8 +23,8 @@
 			card,
 			position,
 			visiblePosition: {
-				x: position.x - board.gridWindow.x + 1,
-				y: position.y - board.gridWindow.y + 1,
+				x: position.x - board.gridWindow.x + 1 + halfSize.value.width,
+				y: position.y - board.gridWindow.y + 1 + halfSize.value.height,
 			} as GridVec
 		})));
 </script>

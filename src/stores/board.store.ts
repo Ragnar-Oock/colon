@@ -10,7 +10,14 @@ export const useBoardStore = defineStore('board', () => {
 	/**
 	 * maximum number of tiles visible in each axis
 	 */
-	const visibleGridSize = reactive({width: 0, height: 0});
+	const gridSize = reactive({width: 0, height: 0});
+	/**
+	 * maximum number of tiles visible on each axis + a one tile buffer on each side
+	 */
+	const visibleGridSize = computed(() => ({
+		width: gridSize.width + 2,
+		height: gridSize.height + 2,
+	}));
 	/**
 	 * size of the board element in pixels
 	 */
@@ -57,8 +64,8 @@ export const useBoardStore = defineStore('board', () => {
 	 * offset of the css grid relative to the map, both x and y are between -1 tile size + gap and 0
 	 */
 	const visibleGridOffset = computed(() => ({
-		x: gridPosition.x % (tileWidth + gap) - (tileWidth + gap),
-		y: gridPosition.y % (tileHeight + gap) - (tileHeight + gap),
+		x: (gridPosition.x - Math.trunc(gridSize.width / 2)) % (tileWidth + gap) - (tileWidth + gap),
+		y: (gridPosition.y - Math.trunc(gridSize.height / 2)) % (tileHeight + gap) - (tileHeight + gap),
 	} as ScreenVec));
 
 	/**
@@ -75,6 +82,7 @@ export const useBoardStore = defineStore('board', () => {
 	return {
 		gridPosition,
 		gridWindow,
+		gridSize,
 		visibleGridOffset,
 		visibleGridSize,
 		boardSize,

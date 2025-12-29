@@ -14,8 +14,8 @@
 	const {width, height} = useElementBounding(boardRef);
 
 	watchEffect(() => {
-		board.visibleGridSize.width = Math.ceil(width.value / (tileWidth + gap)) + 2;
-		board.visibleGridSize.height = Math.ceil(height.value / (tileHeight + gap)) + 2;
+		board.gridSize.width = Math.ceil(width.value / (tileWidth + gap));
+		board.gridSize.height = Math.ceil(height.value / (tileHeight + gap));
 	})
 	const pressed = ref(false);
 
