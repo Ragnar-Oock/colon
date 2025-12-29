@@ -1,6 +1,7 @@
-import emitter, { Emitter, EventHandlerMap } from "mitt";
-import { Cell } from "../stores/grid.store";
-import { ScoreHelpers } from "./score.helper";
+import type { Emitter, EventHandlerMap } from "mitt";
+import emitter from "mitt";
+import type { Cell } from "../stores/grid.store";
+import type { ScoreHelpers } from "./score.helper";
 
 export type CardHook = (...args: unknown[]) => void;
 

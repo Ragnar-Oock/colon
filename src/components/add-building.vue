@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import { BuildingType, useBuildingStore } from "../stores/building.store";
-import { getResourceIcon, useResourceStore } from "../stores/resource.store";
-import CostDisplay from "./cost-display.vue";
+	import { computed } from "vue";
+	import type { BuildingType } from "../stores/building.store";
+	import { useBuildingStore } from "../stores/building.store";
+	import { useResourceStore } from "../stores/resource.store";
+	import CostDisplay from "./cost-display.vue";
 
-const buildingStore = useBuildingStore();
+	const buildingStore = useBuildingStore();
 const resourceStore = useResourceStore();
 
 const {buildingType} = defineProps<{

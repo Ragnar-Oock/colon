@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-import { Building } from "../../stores/building.store";
+	import type { Building } from "../../stores/building.store";
 
-const {building} = defineProps<{
+	const {building} = defineProps<{
 	building: Building
 }>()
 </script>

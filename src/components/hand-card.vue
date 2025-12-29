@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 	import { computed, ref } from "vue";
-	import { CardInstance } from "../helpers/card.helper";
+	import type { CardInstance } from "../helpers/card.helper";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
 	import { useResourceStore } from "../stores/resource.store";
@@ -31,8 +31,7 @@
 			height: 120,
 			width: 120
 		}, {
-			onCancel: () => {
-			},
+			onCancel: () => {},
 			onEnd() {
 				deckStore.active = null
 			},

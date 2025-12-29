@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
-import { computed, useId } from "vue";
-import { Resource, RESOURCE_MAX, typeIcons } from "../../stores/resource.store";
+	import { computed, useId } from "vue";
+	import type { Resource } from "../../stores/resource.store";
+	import { RESOURCE_MAX, typeIcons } from "../../stores/resource.store";
 
-const id = useId();
+	const id = useId();
 const {resource} = defineProps<{
 	resource: Resource;
 }>()

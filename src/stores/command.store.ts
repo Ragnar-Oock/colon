@@ -11,9 +11,7 @@ export interface CommandCollection {
 /**
  * Run a command and apply the transaction if appropriate.
  */
-export interface Invoker {
-	(): boolean;
-}
+export type Invoker = () => boolean;
 
 export type SingleCommand = {
 	readonly [name in keyof CommandCollection as CommandCollection[name] extends never ? never : name]: Invoker;
@@ -62,19 +60,15 @@ export interface Commander {
 	register: (name: keyof NonNever<CommandCollection>, command: CommandConstructor) => this;
 }
 
-export interface Command {
-	/**
+/**
 	 * Add the steps implementing the command's action to the given transaction
 	 * @param transaction the transaction to add steps to
 	 * @param dispatch
 	 * @returns can the command be played in the current context ?
 	 */
-	(transaction: Transaction, dispatch?: (transaction: Transaction) => void): boolean;
-}
+export type Command = (transaction: Transaction, dispatch?: (transaction: Transaction) => void) => boolean;
 
-export interface CommandConstructor {
-	(): Command;
-}
+export type CommandConstructor = () => Command;
 
 export interface Step {
 	/**
@@ -157,7 +151,7 @@ class BaseTransaction implements Transaction {
 		
 		// rollback on fail
 
-		for (const step of playedSteps.reverse()) {
+		for (const step of playedSteps.toReversed()) {
 			try {
 				step.remove();
 			}
@@ -188,7 +182,9 @@ export class CommandService implements Commander {
 	private readonly _commands: _Commands = {} as _Commands;
 
 	register(name: keyof NonNever<CommandCollection>, command: CommandConstructor): this {
-		if (!(name in this._commands)) return this;
+		if (!(name in this._commands)) {
+			return this;
+		}
 		
 		this._commands[name] = command;
 		
@@ -207,7 +203,9 @@ export class CommandService implements Commander {
 
 				// @ts-expect-error property can't index _commands
 				const commandConstructor = this._commands[property] as CommandConstructor | undefined;
-				if (!commandConstructor) return undefined;
+				if (!commandConstructor) {
+					return undefined;
+				}
 
 				return () => commandConstructor()(transaction, dispatch) && transaction.apply();
 			}
@@ -233,7 +231,9 @@ export class CommandService implements Commander {
 			get: (_, property): Invoker | undefined => {
 				// @ts-expect-error property can't index _commands
 				const commandConstructor = this._commands[property] as CommandConstructor | undefined;
-				if (!commandConstructor) return undefined;
+				if (!commandConstructor) {
+					return undefined;
+				}
 
 				return () => commandConstructor()(transaction, dispatch) && transaction.apply()
 			}
@@ -258,7 +258,9 @@ export class CommandService implements Commander {
 				const commandConstructor = this._commands[property] as CommandConstructor | undefined;
 
 				// no command exists with the name held by property
-				if (!commandConstructor) return undefined;
+				if (!commandConstructor) {
+					return undefined;
+				}
 
 				// add a command in the chain
 				return () => {
@@ -278,6 +280,4 @@ export interface CommandCollection {
 	hi: () => void
 }
 
-commander.register('hi', () => (tr, dispatch) => {
-
-})
+commander.register('hi', () => (tr, dispatch) => {})

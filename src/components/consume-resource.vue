@@ -1,9 +1,10 @@
 <script setup lang="ts">
 
-import { computed, ref, useId, watch } from "vue";
-import { ResourceType, resourceTypes, useResourceStore } from "../stores/resource.store";
+	import { computed, ref, useId, watch } from "vue";
+	import type { ResourceType } from "../stores/resource.store";
+	import { resourceTypes, useResourceStore } from "../stores/resource.store";
 
-const resourceStore = useResourceStore();
+	const resourceStore = useResourceStore();
 
 const typeId = useId();
 const amountId = useId();
@@ -14,7 +15,9 @@ const amount = ref<number>(0);
 const available = computed<number>(() => type.value ? resourceStore.resources[type.value] : 0)
 
 function consume() {
-	if (!type.value || !amount.value) return;
+	if (!type.value || !amount.value) {
+		return;
+	}
 
 	resourceStore.consume({
 		type: type.value,

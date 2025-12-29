@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { reactive } from "vue";
-import { Cost, ResourceType, useResourceStore } from "./resource.store";
+import type { Cost } from "./resource.store";
+import { useResourceStore } from "./resource.store";
 
 
 export type BuildingName = string;

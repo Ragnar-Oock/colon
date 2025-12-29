@@ -1,10 +1,11 @@
 <script setup lang="ts">
 
-import { pick } from "../math.helper";
-import { ResourceTrigger, resourceTriggers, ResourceType, resourceTypes, useResourceStore } from "../stores/resource.store";
-import { ref, useId } from "vue";
+	import { ref, useId } from "vue";
+	import { pick } from "../math.helper";
+	import type { ResourceTrigger, ResourceType } from "../stores/resource.store";
+	import { resourceTriggers, resourceTypes, useResourceStore } from "../stores/resource.store";
 
-const typeId = useId();
+	const typeId = useId();
 const triggerId = useId();
 
 const type = ref<ResourceType|undefined>(undefined);
@@ -13,7 +14,9 @@ const trigger = ref<ResourceTrigger|undefined>(undefined);
 const resourceStore = useResourceStore();
 
 function addResource() {
-	if (!type.value || !trigger.value) return;
+	if (!type.value || !trigger.value) {
+		return;
+	}
 
 	resourceStore.add(type.value, trigger.value);
 	type.value = undefined;

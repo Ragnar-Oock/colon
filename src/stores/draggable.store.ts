@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { type Component, computed, reactive, ref, watchEffect } from "vue";
+import type { Component } from 'vue';
+import { computed, reactive, ref, watchEffect } from 'vue';
 
 export type DraggedElement = {
 	type: 'component';

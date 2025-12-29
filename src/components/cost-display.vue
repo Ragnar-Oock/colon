@@ -1,8 +1,9 @@
 <script setup lang="ts">
 
-import { Cost, getResourceIcon, useResourceStore } from "../stores/resource.store";
+	import type { Cost } from "../stores/resource.store";
+	import { getResourceIcon, useResourceStore } from "../stores/resource.store";
 
-defineProps<{
+	defineProps<{
 	cost: Cost[],
 }>();
 

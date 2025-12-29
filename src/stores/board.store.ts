@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { gap, tileHeight, tileWidth } from "../components/grid.config";
-import { equalsVec, Vector2 } from "../helpers/vector.helper";
+import type { Vector2 } from "../helpers/vector.helper";
+import { equalsVec } from "../helpers/vector.helper";
 import type { GridVec } from "./grid.store";
 
 export type ScreenVec = Vector2 & { __brand: 'screen vec' };
