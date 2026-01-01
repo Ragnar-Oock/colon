@@ -234,6 +234,8 @@
 		"switch-case-braces": "error",
 		"throw-new-error": "error",
 		"no-import-node-test": "error",
+		"no-immediate-mutation": "error",
+		"require-module-attributes": "error",
 		"consistent-type-imports": [
 			"error",
 			{
@@ -242,7 +244,74 @@
 				"disallowTypeAnnotations": true
 			}
 		],
-		"import/consistent-type-specifier-style": "error"
+		"consistent-type-specifier-style": "error",
+		"no-inline-comments": "warn",
+		"no-sequences": "error",
+		"oxc/no-this-in-exported-function": "error",
+		"accessor-pairs": "error",
+		"no-loop-func": "error",
+		"no-promise-executor-return": "error",
+		"no-implicit-coercion": "error",
+		"no-useless-return": "error",
+		"prefer-response-static-json": "warn",
+		"no-useless-collection-argument": "warn",
+		"branches-sharing-code": "warn",
+		"vue/no-import-compiler-macros": "warn",
+		"vue/no-export-in-script-setup": "error",
+		"vue/prefer-import-from-vue": "error",
+		"no-param-reassign": "error",
+		"no-useless-error-capture-stack-trace": "error",
+		"require-module-specifiers": "error",
+		"no-unnecessary-array-splice-count": "error",
+		"prefer-top-level-await": "error",
+		"prefer-class-fields": "error",
+		"prefer-classlist-toggle": "warn",
+		"vue/define-props-destructuring": "error",
+		"preserve-caught-error": "error",
+		"vue/no-required-prop-with-default": "error",
+		"vue/require-typed-ref": "error",
+		"no-misleading-character-class": "error",
+		"class-methods-use-this": "error",
+		"no-useless-computed-key": "warn",
+		"vue/valid-define-props": "error",
+		"vue/no-multiple-slot-args": "error",
+		"vue/define-emits-declaration": [
+			"warn",
+			"type-based"
+		],
+		"promise/always-return": "error",
+		"no-array-delete": "error",
+		"no-unassigned-vars": "error",
+		"explicit-module-boundary-types": "error",
+		"prefer-set-has": "error",
+		"prefer-array-find": "error",
+		"no-accumulating-spread": "error",
+		"no-useless-call": "error",
+		"no-await-in-loop": "error",
+		"arrow-body-style": [
+			"warn",
+			"as-needed"
+		],
+		"id-length": [
+			"warn",
+			{
+				"exceptions": [
+					"id"
+				],
+				"min": "3"
+			}
+		],
+		"import/extensions": [
+			"error",
+			"always",
+			{
+				"extensions": {
+					"ts": "never"
+				},
+				"ignorePackages": true
+			}
+		],
+		"no-extra-bind": "error"
 	},
 	"overrides": [
 		{
