@@ -4,7 +4,6 @@
 	import DraggedItem from "./components/dragged-item.vue";
 	import HandDisplay from "./components/hand-display.vue";
 	import { card } from "./helpers/card.helper";
-	import { iter } from "./helpers/iterator.helper";
 	import { useAutoSave } from "./helpers/save/auto-save.composable";
 	import { forgetHand } from "./helpers/save/save-hand.helper";
 	import { forgetMap } from "./helpers/save/save-map.helper";
@@ -18,7 +17,12 @@
 	const score = useScoreStore();
 	const grid = useGridStore();
 
-	function initialiseGridAtRandom(size: number) {
+	/**
+	 * Initialize a square `size` by `size` large were all cells are filed at random from the deck, placement checks are not performed.
+	 * Used for debug purpose only, DO NOT use for any other purpose.
+	 * @param size how large of an initialization area we want.
+	 */
+	function initialiseGridAtRandom(size: number): void {
 		for (let x = 0; x < size; x++) {
 			for (let y = 0; y < size; y++) {
 				grid.setCell({
@@ -29,12 +33,10 @@
 		}
 	}
 
-	function initializeHandAtRandom(amount: number) {
-		iter(amount)
-			.forEach(() => deckStore.draw())
-	}
-
-	function newGame() {
+	/**
+	 * Reset the map and reload the game.
+	 */
+	function newGame(): void {
 		forgetMap(0);
 		forgetHand(0);
 		window.location.reload();

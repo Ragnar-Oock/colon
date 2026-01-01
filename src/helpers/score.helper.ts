@@ -11,6 +11,7 @@ export interface ScoreHelpers {
 	/**
 	 * Fetch all the filled cells connected to the start position and matching the `predicate`
 	 * @param predicate check if a cells should be included in the fetched collection
+	 * @param limit stop searching when we find that many elements or when all the map has been explored
 	 */
 	floodFetch: (predicate: ScorePredicate, limit?: number) => FilledCell[];
 
@@ -25,9 +26,14 @@ export interface ScoreHelpers {
 export type ContributorFinder = (helper: ScoreHelpers) => Cell[];
 
 /**
- * {@inheritDoc ScoreHelpers.floodFetch}
+ * Fetch all the filled cells connected to the start position and matching the `predicate`
+ * @param predicate check if a cells should be included in the fetched collection
+ * @param limit stop searching when we find that many elements or when all the map has been explored
  */
 export const floodFetch = (predicate: ScorePredicate, limit?: number): ContributorFinder =>
+	/**
+	 * @param helper the score helper object provided by the store invoking this function
+	 */
 	helper => helper.floodFetch(predicate, limit);
 
 export const neighborFetch = (predicate: ScorePredicate): ContributorFinder =>
@@ -40,6 +46,7 @@ export const neighborFetch = (predicate: ScorePredicate): ContributorFinder =>
  * @param finder find the contributors
  * @param limit discard any contributor after that many are found
  * @param overLimit if `limit` is reached return at most that many contributors. MUST be between 0 and `limit`
+ * @composite
  */
 export const limitContribution = (finder: ContributorFinder, limit: number, overLimit: number = limit): ContributorFinder =>
 	helpers => {

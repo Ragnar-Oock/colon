@@ -60,7 +60,7 @@ function deserialize(cells: string, types: string): FilledCell[] {
 				position.y = Number.parseInt(y, integerRadix);
 			}
 			catch (error) {
-				throw new TypeError(`unable to parse coordinates at index ${ index } : x = ${ x }, y = ${ y }`, {error, cause: error});
+				throw new TypeError(`unable to parse coordinates at index ${ index } : x = ${ x }, y = ${ y }`, {cause: error});
 			}
 			return {
 				card: card(descriptor.proto),
@@ -72,7 +72,7 @@ function deserialize(cells: string, types: string): FilledCell[] {
 const getSlotKey = slotKeyBuilder('game');
 
 
-export function saveMap(map: FilledCell[], slot: number = 0): void {
+export function saveMap(map: FilledCell[], slot = 0): void {
 	const game = serializeMap(map);
 	localStorage.setItem(getSlotKey(slot), JSON.stringify(game));
 }

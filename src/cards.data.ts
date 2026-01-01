@@ -65,7 +65,7 @@ export const cards = [
 				noneOfType('brickFactory'),
 			),
 			scoreContributors: floodFetch(ofType('town'), 5),
-			multiplier: neighbors => countType('brickFactory')(neighbors) > 0 ? 0 : 1,
+			multiplier: (neighbors): number => countType('brickFactory')(neighbors) > 0 ? 0 : 1,
 			groups: ['building'],
 		},
 	},
@@ -80,7 +80,7 @@ export const cards = [
 			),
 			scoreContributors: neighborFetch(ofType('town')),
 			scoreContribution: 2,
-			bonus: ({name}) => name === 'town' ? 1 : 0,
+			bonus: ({name}): number => name === 'town' ? 1 : 0,
 			baseScore: 4,
 			multiplier: countType('town'),
 			groups: ['building'],
@@ -154,8 +154,8 @@ export const cards = [
 
 /**
  * Register all the predefined cards
- * @param register
+ * @param register the register function to use for each card
  */
-export function registerAllCards(register: (card: CardDescriptor) => void) {
+export function registerAllCards(register: (card: CardDescriptor) => void): void {
 	cards.forEach(card => register(card));
 }

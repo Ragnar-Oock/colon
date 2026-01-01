@@ -25,12 +25,12 @@
 
 	const deltaThreshold = 2;
 
-	function move(event: PointerEvent) {
+	function move(event: PointerEvent): void {
 		pointer.x = event.clientX;
 		pointer.y = event.clientY;
 	}
 
-	function release() {
+	function release(): void {
 		pressed.value = false;
 		board.isPanning = false;
 	}

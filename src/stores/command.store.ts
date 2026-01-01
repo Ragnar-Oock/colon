@@ -1,3 +1,10 @@
+// oxlint-disable-next-line no-abusive-eslint-disable
+// oxlint-disable
+// this contains experiments that needs to be refined and moved somewhere else, we'll ignore linting/formating for it
+// until it's worked on again
+
+import { noOp } from "../helpers/no-op";
+
 export interface CommandCollection {
 	// commands will be added here with module augmentation
 	undo: () => void;
@@ -221,12 +228,12 @@ export class CommandService implements Commander {
 	}
 
 	get chain(): ChainedCommand {
-		return this.getChain(this.transaction, () => void 0);
+		return this.getChain(this.transaction, noOp);
 	}
 
 	get commands(): SingleCommand {
 		const transaction = this.transaction;
-		const dispatch = () => void 0;
+		const dispatch = noOp;
 		return new Proxy({} as SingleCommand, {
 			get: (_, property): Invoker | undefined => {
 				// @ts-expect-error property can't index _commands

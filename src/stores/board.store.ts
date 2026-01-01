@@ -62,8 +62,7 @@ export const useBoardStore = defineStore('board', () => {
 	} as ScreenVec));
 
 	/**
-	 * Convert a map position into a css grid position
-	 * @param vec
+	 * @param vec a map coordinate to convert into a css grid coordinate
 	 */
 	function toDisplayGrid(vec: GridVec): GridVec {
 		return {

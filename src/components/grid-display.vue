@@ -22,7 +22,7 @@
 	const grid = useTemplateRef<HTMLDivElement>('grid');
 	const {top, left} = useElementBounding(grid);
 
-	function setTile() {
+	function setTile(): void {
 		if (deck.active === null || board.hoveredCell === null) {
 			return;
 		}
@@ -31,7 +31,7 @@
 		}
 	}
 
-	function interactCell() {
+	function interactCell(): void {
 		if (board.isPanning) {
 			board.isPanning = false;
 			return;
@@ -43,14 +43,14 @@
 		return `${ value.toString(10) }px`;
 	}
 
-	function dragOver(event: DragEvent) {
+	function dragOver(event: DragEvent): void {
 		if (!event.dataTransfer) {
 			return;
 		}
 		pointerMove(event)
 	}
 
-	function drop() {
+	function drop(): void {
 		try {
 			setTile();
 		}

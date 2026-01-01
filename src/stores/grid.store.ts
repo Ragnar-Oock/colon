@@ -53,6 +53,10 @@ export function cell(position: Readonly<GridVec>, card?: CardInstance): Cell {
 	}
 }
 
+function getCard(cells: readonly FilledCell[], X: number, Y: number): CardInstance | undefined {
+	return cells.find(({position: {x, y}}) => X === x && Y === y)?.card;
+}
+
 export const useGridStore = defineStore('grid', () => {
 	const score = useScoreStore();
 
@@ -67,9 +71,6 @@ export const useGridStore = defineStore('grid', () => {
 		return getCard(cells, position.x, position.y);
 	}
 
-	function getCard(cells: readonly FilledCell[], X: number, Y: number): CardInstance | undefined {
-		return cells.find(({position: {x, y}}) => X === x && Y === y)?.card;
-	}
 
 	function setCell(cell: Cell): Cell {
 		if (!isFilled(cell)) {
@@ -110,6 +111,7 @@ export const useGridStore = defineStore('grid', () => {
 		const bonuses = new Map(
 			getNeighbors(cells.value, position)
 				.filter(isFilled)
+				// oxlint-disable-next-line no-map-spread
 				.map(neighbor => ({
 					...neighbor,
 					bonus: neighbor.card.bonus?.(card) ?? 0,
@@ -121,6 +123,7 @@ export const useGridStore = defineStore('grid', () => {
 		const contributors = new Map(
 			card
 				.scoreContributors?.(helpers)
+				// oxlint-disable-next-line no-map-spread
 				.map(contributor => ({
 					...contributor,
 					score: (contributor.card?.scoreContribution ?? 1) * Math.max(contributor.card?.multiplier?.(getNeighbors(effectiveCells, contributor.position)) ?? 1, 1),
@@ -205,7 +208,7 @@ export const useGridStore = defineStore('grid', () => {
 
 	function filterCells<target extends FilledCell>(predicate: (cell: FilledCell, index: number) => cell is target): ComputedRef<target[]>;
 	function filterCells(predicate: (cell: FilledCell, index: number) => boolean): ComputedRef<FilledCell[]>;
-	function filterCells(predicate: (cell: FilledCell, index: number) => boolean) {
+	function filterCells(predicate: (cell: FilledCell, index: number) => boolean): ComputedRef<FilledCell[]> {
 		return computed(() => cells
 			.value
 			.filter(predicate)
@@ -215,9 +218,9 @@ export const useGridStore = defineStore('grid', () => {
 	/**
 	 * Check if a card can be placed somewhere. A card can only be placed near another one (unless it's the first) and it
 	 * all of it's to be nei
-	 * @param cells
-	 * @param card
-	 * @param at
+	 * @param cells the cells making up the map to use for the placement check
+	 * @param card the card to check the placement of
+	 * @param at where to check the placement of the `card` on the map of `cells`
 	 */
 	function canPlace(cells: readonly FilledCell[], card: Readonly<CardInstance>, at: Readonly<GridVec>): boolean {
 		// at the start everywhere is a valid placement
@@ -278,14 +281,14 @@ export const useGridStore = defineStore('grid', () => {
 
 	return {
 		cells,
-		getCellAt: (position: Readonly<GridVec>) => getCellAt(cells.value, position),
-		getCardAt: (position: Readonly<GridVec>) => getCardAt(cells.value, position),
-		getCard: (x: number, y: number) => getCard(cells.value, x, y),
+		getCellAt: (position: Readonly<GridVec>): Cell => getCellAt(cells.value, position),
+		getCardAt: (position: Readonly<GridVec>): CardInstance | undefined => getCardAt(cells.value, position),
+		getCard: (x: number, y: number): CardInstance | undefined => getCard(cells.value, x, y),
 		bounds,
 		setCell,
 		place,
 		filterCells,
-		canPlace: (card: CardInstance, at: Readonly<GridVec>) => canPlace(cells.value, card, at),
+		canPlace: (card: CardInstance, at: Readonly<GridVec>): boolean => canPlace(cells.value, card, at),
 		scoreContributors,
 		placementScore
 	}

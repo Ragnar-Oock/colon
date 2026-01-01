@@ -33,7 +33,7 @@ export const useDeckStore = defineStore('deck', () => {
 	)
 
 	/**
-	 * @debug
+	 * for debug purposes only
 	 */
 	const distribution = computed(() =>
 		Object.fromEntries(
@@ -58,7 +58,7 @@ export const useDeckStore = defineStore('deck', () => {
 	/**
 	 * pick a card from all the available cards taking the ponderation into account.
 	 */
-	function pick() {
+	function pick(): CardDescriptor {
 		const drawIndex = Math.random() * totalPonderation.value;
 
 		// is that default useful and sensible ?
@@ -67,7 +67,7 @@ export const useDeckStore = defineStore('deck', () => {
 		let pick: CardDescriptor | undefined;
 		do {
 			pick = deck.at(deckIndex);
-			visitedPonderation += pick!.ponderation;
+			visitedPonderation += pick?.ponderation ?? 0;
 			deckIndex++;
 		} while (visitedPonderation < drawIndex)
 
@@ -80,7 +80,7 @@ export const useDeckStore = defineStore('deck', () => {
 	/**
 	 * Remove a card from the hand (to be used, discarded or anything else)
 	 * If the card is active it will be unmarked as such.
-	 * @param card
+	 * @param card the card to remove from the player's hand
 	 */
 	function remove(card: CardInstance): void {
 		if (!hand.value.includes(card)) {
@@ -106,7 +106,9 @@ export const useDeckStore = defineStore('deck', () => {
 		registry,
 		hand: computed({
 			get: () => hand.value.sort((a, b) => a.name.localeCompare(b.name)),
-			set: newHand => hand.value = newHand,
+			set: newHand => {
+				hand.value = newHand
+			},
 		}),
 		active,
 		idleHand,
