@@ -53,8 +53,8 @@ export function cell(position: Readonly<GridVec>, card?: CardInstance): Cell {
 	}
 }
 
-function getCard(cells: readonly FilledCell[], X: number, Y: number): CardInstance | undefined {
-	return cells.find(({position: {x, y}}) => X === x && Y === y)?.card;
+function getCard(cells: readonly FilledCell[], x: number, y: number): CardInstance | undefined {
+	return cells.find(({position}) => x === position.x && y === position.y)?.card;
 }
 
 export const useGridStore = defineStore('grid', () => {
@@ -130,7 +130,7 @@ export const useGridStore = defineStore('grid', () => {
 					bonus: 0
 				}))
 				.map(contributor => [toString(contributor.position), contributor])
-			?? []);
+		);
 
 		bonuses.forEach((bonus, position) => {
 			const contributor = contributors.get(position);

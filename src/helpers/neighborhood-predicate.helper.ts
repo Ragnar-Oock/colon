@@ -58,7 +58,7 @@ export const atLeastOneInGroup = (...groups: CardGroup[]): NeighborhoodPredicate
 /**
  * Combine multiple {@link NeighborhoodPredicate} into a single one, all of which should match. Similar to a logical
  * AND.
- * @param predicates the predicate functions whose results need to be aggregated * @composite
+ * @param predicates the predicate functions whose results need to be aggregated
  * @composite
  */
 export const combine = (...predicates: NeighborhoodPredicate[]): NeighborhoodPredicate =>

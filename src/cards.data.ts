@@ -27,7 +27,7 @@ declare module './helpers/card.helper' {
 	}
 }
 
-export const cards = [
+const cards = [
 	{
 		ponderation: 1,
 		proto: {

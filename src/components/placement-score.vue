@@ -20,8 +20,6 @@
 			const {x, y} = board.toDisplayGrid(placement);
 			return `${ y } / ${ x }`;
 		}
-			return;
-
 	});
 	const showHighlight = computed(() => (score > 0 || bonus > 0));
 	const delay = `${ Math.ceil(Math.random() * 5) * 16 * 2 }ms`

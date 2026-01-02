@@ -43,9 +43,7 @@
 			.filter(({position}) => grid.canPlace(active, position))
 	})
 
-	const isVisible = computed(() => {
-		return draggable.dragged !== null
-	})
+	const isVisible = computed(() => draggable.dragged !== null)
 
 </script>
 

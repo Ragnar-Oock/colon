@@ -15,7 +15,7 @@ export const useDeckStore = defineStore('deck', () => {
 		hand
 			.value
 			.filter(card => reactive(card) !== active.value)
-			.sort((a, b) => a.name.localeCompare(b.name))
+			.sort((before, after) => before.name.localeCompare(after.name))
 	);
 	/**
 	 * All possible cards that can be drawn into a deck
@@ -105,7 +105,7 @@ export const useDeckStore = defineStore('deck', () => {
 		deck,
 		registry,
 		hand: computed({
-			get: () => hand.value.sort((a, b) => a.name.localeCompare(b.name)),
+			get: () => hand.value.sort((before, after) => before.name.localeCompare(after.name)),
 			set: newHand => {
 				hand.value = newHand
 			},
