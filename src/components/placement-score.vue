@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 	import { computed } from "vue";
 	import { useBoardStore } from "../stores/board.store";
-	import { GridVec } from "../stores/grid.store";
+	import type { GridVec } from "../stores/grid.store";
 
 	const {bonus = 0, main = false, score, placement} = defineProps<{
 		score: number,
@@ -19,9 +19,6 @@
 		if (placement) {
 			const {x, y} = board.toDisplayGrid(placement);
 			return `${ y } / ${ x }`;
-		}
-		else {
-			return undefined;
 		}
 	});
 	const showHighlight = computed(() => (score > 0 || bonus > 0));

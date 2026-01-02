@@ -17,12 +17,14 @@
 		}
 	});
 
-	const increaseHandSize = () => setTimeout(() => {
-		maxDisplayed.value++;
-		if (maxDisplayed.value < deckStore.hand.length) {
-			increaseHandSize();
-		}
-	}, 200);
+	const increaseHandSize = (): void => {
+		setTimeout(() => {
+			maxDisplayed.value++;
+			if (maxDisplayed.value < deckStore.hand.length) {
+				increaseHandSize();
+			}
+		}, 200)
+	};
 
 	onMounted(() => {
 		increaseHandSize();

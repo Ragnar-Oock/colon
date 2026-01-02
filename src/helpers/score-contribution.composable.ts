@@ -1,5 +1,7 @@
-import { computed, ComputedRef, MaybeRefOrGetter, readonly, toValue } from "vue";
-import { GridVec, useGridStore } from "../stores/grid.store";
+import type { ComputedRef, MaybeRefOrGetter } from "vue";
+import { computed, readonly, toValue } from "vue";
+import type { GridVec } from "../stores/grid.store";
+import { useGridStore } from "../stores/grid.store";
 import { equalsVec } from "./vector.helper";
 
 export type ScoreContribution = {

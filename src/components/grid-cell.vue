@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-	import { FilledCell, GridVec } from "../stores/grid.store";
+	import type { FilledCell, GridVec } from "../stores/grid.store";
 
 	const {
 		cell

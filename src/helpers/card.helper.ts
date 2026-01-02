@@ -1,20 +1,24 @@
-import emitter, { Emitter, EventHandlerMap } from "mitt";
-import { Cell } from "../stores/grid.store";
-import { ScoreHelpers } from "./score.helper";
+import type { Emitter, EventHandlerMap } from "mitt";
+import emitter from "mitt";
+import type { Cell } from "../stores/grid.store";
+import type { ScoreHelpers } from "./score.helper";
 
 export type CardHook = (...args: unknown[]) => void;
 
 export interface CardHooks {
-	// hooks declarations added by extending this interface
+	// hooks declarations added by extending this interface which prevents the use of a record
+	// oxlint-disable-next-line consistent-indexed-object-style
 	[x: string | symbol]: CardHook;
 }
 
+// oxlint-disable-next-line no-empty-interface, no-unused-vars, no-empty-object-type
 export interface CardTypes<T = unknown> {
 	// types will need to be added by augmentation
 }
 
 export type CardType = keyof CardTypes;
 
+// oxlint-disable-next-line no-empty-interface, no-unused-vars, no-empty-object-type
 export interface CardGroups<T = unknown> {
 	// hooks declarations added by extending this interface
 }

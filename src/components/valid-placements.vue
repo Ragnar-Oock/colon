@@ -4,7 +4,8 @@
 	import { useBoardStore } from "../stores/board.store";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
-	import { GridVec, useGridStore } from "../stores/grid.store";
+	import type { GridVec } from "../stores/grid.store";
+	import { useGridStore } from "../stores/grid.store";
 
 	const board = useBoardStore();
 	const grid = useGridStore();
@@ -42,9 +43,7 @@
 			.filter(({position}) => grid.canPlace(active, position))
 	})
 
-	const isVisible = computed(() => {
-		return draggable.dragged !== null
-	})
+	const isVisible = computed(() => draggable.dragged !== null)
 
 </script>
 

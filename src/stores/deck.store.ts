@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { bus } from "../event.helper";
-import { card, CardDescriptor, CardInstance } from "../helpers/card.helper";
+import type { CardDescriptor, CardInstance } from "../helpers/card.helper";
+import { card } from "../helpers/card.helper";
 
 export const useDeckStore = defineStore('deck', () => {
 	const hand = ref<CardInstance[]>([]);
@@ -14,7 +15,7 @@ export const useDeckStore = defineStore('deck', () => {
 		hand
 			.value
 			.filter(card => reactive(card) !== active.value)
-			.sort((a, b) => a.name.localeCompare(b.name))
+			.sort((before, after) => before.name.localeCompare(after.name))
 	);
 	/**
 	 * All possible cards that can be drawn into a deck
@@ -32,7 +33,7 @@ export const useDeckStore = defineStore('deck', () => {
 	)
 
 	/**
-	 * @debug
+	 * for debug purposes only
 	 */
 	const distribution = computed(() =>
 		Object.fromEntries(
@@ -57,7 +58,7 @@ export const useDeckStore = defineStore('deck', () => {
 	/**
 	 * pick a card from all the available cards taking the ponderation into account.
 	 */
-	function pick() {
+	function pick(): CardDescriptor {
 		const drawIndex = Math.random() * totalPonderation.value;
 
 		// is that default useful and sensible ?
@@ -66,7 +67,7 @@ export const useDeckStore = defineStore('deck', () => {
 		let pick: CardDescriptor | undefined;
 		do {
 			pick = deck.at(deckIndex);
-			visitedPonderation += pick!.ponderation;
+			visitedPonderation += pick?.ponderation ?? 0;
 			deckIndex++;
 		} while (visitedPonderation < drawIndex)
 
@@ -79,7 +80,7 @@ export const useDeckStore = defineStore('deck', () => {
 	/**
 	 * Remove a card from the hand (to be used, discarded or anything else)
 	 * If the card is active it will be unmarked as such.
-	 * @param card
+	 * @param card the card to remove from the player's hand
 	 */
 	function remove(card: CardInstance): void {
 		if (!hand.value.includes(card)) {
@@ -104,8 +105,10 @@ export const useDeckStore = defineStore('deck', () => {
 		deck,
 		registry,
 		hand: computed({
-			get: () => hand.value.sort((a, b) => a.name.localeCompare(b.name)),
-			set: newHand => hand.value = newHand,
+			get: () => hand.value.sort((before, after) => before.name.localeCompare(after.name)),
+			set: newHand => {
+				hand.value = newHand
+			},
 		}),
 		active,
 		idleHand,
