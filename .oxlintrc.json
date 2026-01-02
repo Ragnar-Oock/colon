@@ -91,16 +91,6 @@
 				"min": "3"
 			}
 		],
-		"import/extensions": [
-			"error",
-			"always",
-			{
-				"extensions": {
-					"ts": "never"
-				},
-				"ignorePackages": true
-			}
-		],
 		"import/first": "error",
 		"max-classes-per-file": "warn",
 		"misrefactored-assign-op": "warn",
