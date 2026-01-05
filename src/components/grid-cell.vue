@@ -1,11 +1,14 @@
 <script lang="ts" setup>
-	import type { FilledCell, GridVec } from "../stores/grid.store";
+	import type { FilledCell } from "../domains/cell/cell";
+	import { useVisibleCellPosition } from "../domains/cell/cell-position.composable";
 
 	const {
 		cell
 	} = defineProps<{
-		cell: FilledCell & { visiblePosition: GridVec }
+		cell: FilledCell
 	}>();
+
+	const position = useVisibleCellPosition(cell.position)
 </script>
 
 <template>
@@ -16,7 +19,7 @@
 
 <style scoped>
 	.board-card {
-		grid-area: v-bind('cell.visiblePosition.y') / v-bind('cell.visiblePosition.x');
+		grid-area: v-bind('position.y') / v-bind('position.x');
 		user-select: none;
 		position: relative;
 		display: grid;		

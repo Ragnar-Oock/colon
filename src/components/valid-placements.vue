@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-	import { computed, toValue } from "vue";
+	import { computed } from "vue";
+	import { isEmpty } from "../domains/cell/cell";
+	import { useMapCellPosition } from "../domains/cell/cell-position.composable";
 	import { iter } from "../helpers/iterator.helper";
 	import { useBoardStore } from "../stores/board.store";
 	import { useDeckStore } from "../stores/deck.store";
@@ -14,11 +16,9 @@
 
 	const visibleCells = computed(() => {
 		const active = deck.active;
-		if (active === null) {
+		if (active === undefined) {
 			return iter(0);
 		}
-		const gridWindow = toValue(board.gridWindow);
-
 		return iter()
 			.drop(1)
 			.take(board.visibleGridSize.height)
@@ -27,10 +27,7 @@
 					.drop(1)
 					.take(board.visibleGridSize.width)
 					.map(x => {
-						const position = {
-							x: x + gridWindow.x - 1,
-							y: y + gridWindow.y - 1
-						} as GridVec;
+						const position = useMapCellPosition({x, y} as GridVec, false);
 
 						return ({
 							card: grid.getCardAt(position),
@@ -39,18 +36,19 @@
 						});
 					})
 			)
-			.filter(({card}) => card === undefined)
-			.filter(({position}) => grid.canPlace(active, position))
+			.filter(isEmpty)
+			.filter(({position}) => grid.canPlace(active, position));
 	})
 
 	const isVisible = computed(() => draggable.dragged !== null)
-
 </script>
 
 <template>
 	<div v-if="isVisible" class="valid-placements d-content">
-		<div v-for="({renderPosition: {x, y}}) in visibleCells" :style="{'--x': x, '--y': y}"
-				 class="valid-placement"
+		<div
+			v-for="({renderPosition: {x, y}}) in visibleCells"
+			:style="{'--x': x, '--y': y}"
+			class="valid-placement"
 		/>
 	</div>
 </template>

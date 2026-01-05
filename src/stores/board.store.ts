@@ -11,6 +11,14 @@ export const useBoardStore = defineStore('board', () => {
 	 * maximum number of tiles visible in each axis
 	 */
 	const gridSize = reactive({width: 0, height: 0});
+
+	/**
+	 * The distance from the center to the edge, useful for bounding box computation and coordinate mapping.
+	 */
+	const halfSize = computed(() => ({
+		width: Math.trunc(gridSize.width / 2),
+		height: Math.trunc(gridSize.height / 2),
+	}))
 	/**
 	 * maximum number of tiles visible on each axis + a one tile buffer on each side
 	 */
@@ -90,6 +98,7 @@ export const useBoardStore = defineStore('board', () => {
 		pointerPosition,
 		hoveredCell,
 		visuallyHoveredCell,
-		toDisplayGrid
+		toDisplayGrid,
+		halfSize
 	}
 })
