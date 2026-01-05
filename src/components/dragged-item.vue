@@ -54,6 +54,8 @@
 	const top = computed(() => `${ y.value }px`);
 	const offsetX = computed(() => `${ -(dragged.value?.height ?? 0) / 2 }px`);
 	const offsetY = computed(() => `${ -(dragged.value?.height ?? 0) / 2 }px`);
+	const width = computed(() => `${dragged.value?.width}px`);
+	const height = computed(() => `${dragged.value?.height}px`);
 
 	const angles = computed(() => ({
 		x: `${ Math.tan(previousResults.reduce((acc, {x}) => acc + x, 0) / (previousResults.length * 50)) }rad`,
@@ -69,8 +71,9 @@
 	<div v-if="isDragging" class="dragging-viewport">
 		<div class="dragged">
 			<Component :is="dragged.component" v-if="dragged?.type === 'component'"/>
-			<img v-if="dragged?.type === 'image'" :height="dragged.height" :src="dragged.src" :width="dragged.width"
-					 alt="drop image" aria-hidden="true">
+			<span v-if="dragged?.type === 'emoji'" class="emoji">
+				{{ dragged.char }}	
+			</span>
 		</div>
 	</div>
 </template>
@@ -92,6 +95,14 @@
 		left: v-bind(offsetX);
 		transform: rotateZ(v-bind(angles.x)) rotateX(v-bind(angles.y));
 		transition: rotate linear 100ms;
+		width: v-bind(width);
+		height: v-bind(height);
+		display: grid;
+		place-content: center;
+	}
+
+	.emoji {
+		font-size: 5rem;
 	}
 
 </style>

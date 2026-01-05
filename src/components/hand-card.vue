@@ -26,8 +26,8 @@
 
 	function dragStart(event: DragEvent): void {
 		draggable.start({
-			type: 'image',
-			src: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%22-0.06em%22 y=%221em%22 font-size=%2278%22>${ card.icon }</text></svg>`,
+			type: 'emoji',
+			char: card.icon,
 			height: 120,
 			width: 120
 		}, {
