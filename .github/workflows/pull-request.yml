@@ -1,0 +1,34 @@
+name: Linting
+
+on:
+  pull_request:
+  push:
+    branches: [ 'master' ]
+    paths-ignore:
+      - .github
+
+permissions:
+  pull-requests: write
+  checks: write
+
+concurrency:
+  group: 'code-quality'
+  cancel-in-progress: false
+
+jobs:
+  oxlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up corepack
+        run: corepack enable
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn --immutable
+      - name: lint
+        run: yarn run ci:lint
