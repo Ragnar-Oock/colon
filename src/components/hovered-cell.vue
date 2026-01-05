@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 	import { computed } from "vue";
+	import { usePlacementScore } from "../domains/score/placement-score.composable";
 	import { toString } from "../helpers/vector.helper";
 	import { useBoardStore } from "../stores/board.store";
 	import { useDeckStore } from "../stores/deck.store";
@@ -16,8 +17,8 @@
 	const canPlace = computed(() => {
 		if (
 			draggable.dragged === null
-			|| deck.active === null
-			|| board.hoveredCell === null
+			|| deck.active === undefined
+			|| board.hoveredCell === undefined
 		) {
 			return false;
 		}
@@ -27,7 +28,8 @@
 		);
 	});
 
-	const score = computed(() => canPlace.value ? gridStore.placementScore : 0);
+	const placementScore = usePlacementScore();
+	const score = computed(() => canPlace.value ? placementScore.value : 0);
 </script>
 
 <template>

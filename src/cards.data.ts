@@ -1,10 +1,10 @@
-import type { CardDescriptor } from "./helpers/card.helper";
+import type { CardDescriptor } from "./domains/card/card.helper";
+import { countEmpty, countType } from "./domains/score/score-multiplier.helper";
+import { ofGroup, ofType } from "./domains/score/score-predicate";
+import { floodFetch, limitContribution, mergeContribution, neighborFetch } from "./domains/score/score.helper";
 import { atLeastOneInGroup, atLeastOneOfType, combine, noneOfType } from "./helpers/neighborhood-predicate.helper";
-import { countEmpty, countType } from "./helpers/score-multiplier.helper";
-import { ofGroup, ofType } from "./helpers/score-predicate";
-import { floodFetch, limitContribution, mergeContribution, neighborFetch } from "./helpers/score.helper";
 
-declare module './helpers/card.helper' {
+declare module './domains/card/card.helper' {
 	// noinspection JSUnusedGlobalSymbols
 	export interface CardTypes<T> {
 		town: T;

@@ -1,6 +1,6 @@
+import type { CardInstance, CardType } from "../../domains/card/card.helper";
+import { card } from "../../domains/card/card.helper";
 import { useDeckStore } from "../../stores/deck.store";
-import type { CardInstance, CardType } from "../card.helper";
-import { card } from "../card.helper";
 import { iter } from "../iterator.helper";
 import { entitySeparator, slotKeyBuilder } from "./save-format.helper";
 

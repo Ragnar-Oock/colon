@@ -3,14 +3,15 @@
 	import BoardView from "./components/board-view.vue";
 	import DraggedItem from "./components/dragged-item.vue";
 	import HandDisplay from "./components/hand-display.vue";
-	import { card } from "./helpers/card.helper";
+	import { card } from "./domains/card/card.helper";
+	import { cell } from "./domains/cell/cell";
+	import { useScoreStore } from "./domains/score/score.store";
 	import { useAutoSave } from "./helpers/save/auto-save.composable";
 	import { forgetHand } from "./helpers/save/save-hand.helper";
 	import { forgetMap } from "./helpers/save/save-map.helper";
 	import { useDeckStore } from "./stores/deck.store";
 	import type { GridVec } from "./stores/grid.store";
-	import { cell, gridVec, useGridStore } from "./stores/grid.store";
-	import { useScoreStore } from "./stores/score.store";
+	import { gridVec, useGridStore } from "./stores/grid.store";
 
 	const deckStore = useDeckStore();
 	registerAllCards(deckStore.register);

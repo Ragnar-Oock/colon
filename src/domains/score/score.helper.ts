@@ -1,5 +1,6 @@
-import type { Cell, FilledCell, GridVec } from "../stores/grid.store";
-import { merge } from "./array.helper";
+import { merge } from "../../helpers/array.helper";
+import type { GridVec } from "../../stores/grid.store";
+import type { Cell, FilledCell } from "../cell/cell";
 import type { ScorePredicate } from "./score-predicate";
 
 export interface ScoreHelpers {
