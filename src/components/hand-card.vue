@@ -1,17 +1,15 @@
 <script setup lang="ts">
 
 	import { computed, ref } from "vue";
-	import { CardInstance } from "../helpers/card.helper";
+	import type { CardInstance } from "../helpers/card.helper";
+	import { noOp } from "../helpers/no-op";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";
-	import { useResourceStore } from "../stores/resource.store";
-
 
 	const {card} = defineProps<{
 		card: CardInstance,
 	}>()
 
-	const resourceStore = useResourceStore();
 	const deckStore = useDeckStore();
 	const draggable = useDraggableStore();
 	const index = computed(() => deckStore.idleHand.indexOf(card))
@@ -20,25 +18,30 @@
 
 	const seed = ref(0);
 	const hoverAngle = computed(() => `${ (seed.value - .5) * 15 }deg`)
-	const hover = () => seed.value = Math.random();
+	const hover = (): void => {
+		seed.value = Math.random()
+	};
 
 	const parameter = computed(() => (index.value / (deckStore.idleHand.length - 1)) - 0.5);
 
-	function dragStart(event: DragEvent) {
+	function dragStart(event: DragEvent): void {
 		draggable.start({
 			type: 'image',
 			src: `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%22-0.06em%22 y=%221em%22 font-size=%2278%22>${ card.icon }</text></svg>`,
 			height: 120,
 			width: 120
 		}, {
-			onCancel: () => {
-			},
+			onCancel: noOp,
 			onEnd() {
 				deckStore.active = null
 			},
 		})
 
-		const dataTransfer = event.dataTransfer!;
+		if (event.dataTransfer === null) {
+			return;
+		}
+
+		const dataTransfer = event.dataTransfer;
 
 		dataTransfer.setDragImage(new Image(), 0, 0);
 		dataTransfer.setData('text/card-id', card.id);

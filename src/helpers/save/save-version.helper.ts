@@ -12,7 +12,7 @@ export function getSaveFormatVersion(slot = 0): versionNumber {
 	}
 	return version
 		.split('.')
-		.map(segment => parseInt(segment, 10)) as versionNumber;
+		.map(segment => Number.parseInt(segment, 10)) as versionNumber;
 }
 
 export function setSaveFormatVersion(version: versionNumber, slot = 0): void {
