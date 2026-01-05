@@ -25,9 +25,9 @@ export const useBoardStore = defineStore('board', () => {
 	const isPanning = ref(false);
 	const pointerPosition = ref<ScreenVec | null>(null);
 
-	const hoveredCell = computed<GridVec | null>((old) => {
+	const hoveredCell = computed<GridVec | undefined>((old) => {
 		if (pointerPosition.value === null) {
-			return null
+			return;
 		}
 		const newValue = ({
 			x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) + gridWindow.value.x,

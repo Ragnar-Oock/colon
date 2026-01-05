@@ -1,10 +1,10 @@
 import { tryOnMounted, tryOnUnmounted } from "@vueuse/core";
 import type { EffectScope } from "vue";
 import { effectScope, watchEffect } from "vue";
+import type { FilledCell } from "../../domains/cell/cell";
+import { useScoreStore } from "../../domains/score/score.store";
 import { useDeckStore } from "../../stores/deck.store";
-import type { FilledCell } from "../../stores/grid.store";
 import { useGridStore } from "../../stores/grid.store";
-import { useScoreStore } from "../../stores/score.store";
 import { loadHand, saveHand } from "./save-hand.helper";
 import { loadMap, saveMap } from "./save-map.helper";
 import { loadScore, saveScore } from "./save-score.helper";

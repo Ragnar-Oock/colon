@@ -1,5 +1,5 @@
-import type { Cell } from "../stores/grid.store";
-import type { CardGroup, CardType } from "./card.helper";
+import type { CardGroup, CardType } from "../domains/card/card.helper";
+import type { Cell } from "../domains/cell/cell";
 
 /**
  * Check if the cells surrounding a placement are suitable for the card we are trying to place
