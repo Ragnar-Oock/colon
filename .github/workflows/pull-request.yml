@@ -21,14 +21,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-      - name: Set up corepack
-        run: corepack enable
-      - name: Set up Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: lts/*
-          cache: 'yarn'
-      - name: Install dependencies
-        run: yarn --immutable
+      - name: Download oxlint
+        run: ./script/download-oxlint.script.sh
       - name: lint
-        run: yarn run ci:lint
+        run: ./oxlint --format=github ./src
