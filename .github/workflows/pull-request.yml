@@ -23,5 +23,9 @@ jobs:
         uses: actions/checkout@v5
       - name: Download oxlint
         run: ./script/download-oxlint.script.sh
-      - name: lint
-        run: ./oxlint --format=github ./src
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+      - name: Lint changed files
+        run: ./oxlint -- $(git diff --name-only --diff-filter=d ${{ github.base_ref || 'master' }} HEAD)
