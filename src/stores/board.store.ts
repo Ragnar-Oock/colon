@@ -33,13 +33,24 @@ export const useBoardStore = defineStore('board', () => {
 	const isPanning = ref(false);
 	const pointerPosition = ref<ScreenVec | null>(null);
 
+
+	const visuallyHoveredCell = computed<GridVec>(() => {
+		if (pointerPosition.value) {
+			return {
+				x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) + 1,
+				y: Math.trunc(((pointerPosition.value.y) + (.5 * gap)) / (tileHeight + gap)) + 1,
+			} as GridVec;
+		}
+		return {x: 0, y: 0} as GridVec;
+	})
+
 	const hoveredCell = computed<GridVec | undefined>((old) => {
 		if (pointerPosition.value === null) {
 			return;
 		}
 		const newValue = ({
-			x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) + gridWindow.value.x,
-			y: Math.trunc(((pointerPosition.value.y) + (.5 * gap)) / (tileHeight + gap)) + gridWindow.value.y,
+			x: visuallyHoveredCell.value.x + gridWindow.value.x - halfSize.value.width - 1,
+			y: visuallyHoveredCell.value.y + gridWindow.value.y - halfSize.value.height - 1,
 		} as GridVec);
 
 		if (old && equalsVec(old, newValue)) {
@@ -47,16 +58,6 @@ export const useBoardStore = defineStore('board', () => {
 		}
 		return newValue
 	});
-
-	const visuallyHoveredCell = computed(() => {
-		if (hoveredCell.value) {
-			return {
-				x: hoveredCell.value.x - gridWindow.value.x + 1,
-				y: hoveredCell.value.y - gridWindow.value.y + 1,
-			} as GridVec;
-		}
-		return {x: 0, y: 0} as GridVec;
-	})
 
 	/**
 	 * visible position of the grid in pixel, used for display and mapping from screen space to grid space
@@ -72,8 +73,8 @@ export const useBoardStore = defineStore('board', () => {
 	 * offset of the css grid relative to the map, both x and y are between -1 tile size + gap and 0
 	 */
 	const visibleGridOffset = computed(() => ({
-		x: (gridPosition.x - Math.trunc(gridSize.width / 2)) % (tileWidth + gap) - (tileWidth + gap),
-		y: (gridPosition.y - Math.trunc(gridSize.height / 2)) % (tileHeight + gap) - (tileHeight + gap),
+		x: gridPosition.x % (tileWidth + gap) - (tileWidth + gap),
+		y: gridPosition.y % (tileHeight + gap) - (tileHeight + gap),
 	} as ScreenVec));
 
 	/**
