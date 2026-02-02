@@ -22,6 +22,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
+        # TODO : put all the download stuff in a single step
+
         # get the oxlint version requested by the package json file
       - name: Get oxlint version
         run: echo "oxlintVersion=$(jq --raw-output .devDependencies.oxlint ./package.json | sed --regexp-extended 's/\^//')" >> $GITHUB_OUTPUT
