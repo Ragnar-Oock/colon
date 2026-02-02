@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { gap, tileHeight, tileWidth } from "../components/grid.config";
 import type { Vector2 } from "../helpers/vector.helper";
-import { equalsVec } from "../helpers/vector.helper";
+import { suppressedComputed, suppressUpdate } from "../helpers/vector.helper";
 import type { GridVec } from "./grid.store";
 
 export type ScreenVec = Vector2 & { __brand: 'screen vec' };
@@ -34,7 +34,7 @@ export const useBoardStore = defineStore('board', () => {
 	const pointerPosition = ref<ScreenVec | null>(null);
 
 
-	const visuallyHoveredCell = computed<GridVec>(() => {
+	const visuallyHoveredCell = suppressedComputed<GridVec>(() => {
 		if (pointerPosition.value) {
 			return {
 				x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) + 1,
@@ -48,15 +48,10 @@ export const useBoardStore = defineStore('board', () => {
 		if (pointerPosition.value === null) {
 			return;
 		}
-		const newValue = ({
+		return suppressUpdate(old, {
 			x: visuallyHoveredCell.value.x + gridWindow.value.x - halfSize.value.width - 1,
 			y: visuallyHoveredCell.value.y + gridWindow.value.y - halfSize.value.height - 1,
-		} as GridVec);
-
-		if (old && equalsVec(old, newValue)) {
-			return old;
-		}
-		return newValue
+		} as GridVec)
 	});
 
 	/**
@@ -72,7 +67,7 @@ export const useBoardStore = defineStore('board', () => {
 	/**
 	 * offset of the css grid relative to the map, both x and y are between -1 tile size + gap and 0
 	 */
-	const visibleGridOffset = computed(() => ({
+	const visibleGridOffset = suppressedComputed(() => ({
 		x: gridPosition.x % (tileWidth + gap) - (tileWidth + gap),
 		y: gridPosition.y % (tileHeight + gap) - (tileHeight + gap),
 	} as ScreenVec));
