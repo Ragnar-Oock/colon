@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, reactive, ref } from "vue";
 import { gap, tileHeight, tileWidth } from "../components/grid.config";
 import type { Vector2 } from "../helpers/vector.helper";
-import { equalsVec } from "../helpers/vector.helper";
+import { suppressedComputed, suppressUpdate } from "../helpers/vector.helper";
 import type { GridVec } from "./grid.store";
 
 export type ScreenVec = Vector2 & { __brand: 'screen vec' };
@@ -10,7 +10,22 @@ export const useBoardStore = defineStore('board', () => {
 	/**
 	 * maximum number of tiles visible in each axis
 	 */
-	const visibleGridSize = reactive({width: 0, height: 0});
+	const gridSize = reactive({width: 0, height: 0});
+
+	/**
+	 * The distance from the center to the edge, useful for bounding box computation and coordinate mapping.
+	 */
+	const halfSize = computed(() => ({
+		width: Math.trunc(gridSize.width / 2),
+		height: Math.trunc(gridSize.height / 2),
+	}))
+	/**
+	 * maximum number of tiles visible on each axis + a one tile buffer on each side
+	 */
+	const visibleGridSize = computed(() => ({
+		width: gridSize.width + 2,
+		height: gridSize.height + 2,
+	}));
 	/**
 	 * size of the board element in pixels
 	 */
@@ -18,30 +33,26 @@ export const useBoardStore = defineStore('board', () => {
 	const isPanning = ref(false);
 	const pointerPosition = ref<ScreenVec | null>(null);
 
-	const hoveredCell = computed<GridVec | null>((old) => {
-		if (pointerPosition.value === null) {
-			return null
-		}
-		const newValue = ({
-			x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) + gridWindow.value.x,
-			y: Math.trunc(((pointerPosition.value.y) + (.5 * gap)) / (tileHeight + gap)) + gridWindow.value.y,
-		} as GridVec);
 
-		if (old && equalsVec(old, newValue)) {
-			return old;
-		}
-		return newValue
-	});
-
-	const visuallyHoveredCell = computed(() => {
-		if (hoveredCell.value) {
+	const visuallyHoveredCell = suppressedComputed<GridVec>(() => {
+		if (pointerPosition.value) {
 			return {
-				x: hoveredCell.value.x - gridWindow.value.x + 1,
-				y: hoveredCell.value.y - gridWindow.value.y + 1,
+				x: Math.trunc(((pointerPosition.value.x) + (.5 * gap)) / (tileWidth + gap)) + 1,
+				y: Math.trunc(((pointerPosition.value.y) + (.5 * gap)) / (tileHeight + gap)) + 1,
 			} as GridVec;
 		}
 		return {x: 0, y: 0} as GridVec;
 	})
+
+	const hoveredCell = computed<GridVec | undefined>((old) => {
+		if (pointerPosition.value === null) {
+			return;
+		}
+		return suppressUpdate(old, {
+			x: visuallyHoveredCell.value.x + gridWindow.value.x - halfSize.value.width - 1,
+			y: visuallyHoveredCell.value.y + gridWindow.value.y - halfSize.value.height - 1,
+		} as GridVec)
+	});
 
 	/**
 	 * visible position of the grid in pixel, used for display and mapping from screen space to grid space
@@ -56,7 +67,7 @@ export const useBoardStore = defineStore('board', () => {
 	/**
 	 * offset of the css grid relative to the map, both x and y are between -1 tile size + gap and 0
 	 */
-	const visibleGridOffset = computed(() => ({
+	const visibleGridOffset = suppressedComputed(() => ({
 		x: gridPosition.x % (tileWidth + gap) - (tileWidth + gap),
 		y: gridPosition.y % (tileHeight + gap) - (tileHeight + gap),
 	} as ScreenVec));
@@ -75,6 +86,7 @@ export const useBoardStore = defineStore('board', () => {
 	return {
 		gridPosition,
 		gridWindow,
+		gridSize,
 		visibleGridOffset,
 		visibleGridSize,
 		boardSize,
@@ -82,6 +94,7 @@ export const useBoardStore = defineStore('board', () => {
 		pointerPosition,
 		hoveredCell,
 		visuallyHoveredCell,
-		toDisplayGrid
+		toDisplayGrid,
+		halfSize
 	}
 })

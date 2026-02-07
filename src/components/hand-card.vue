@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 	import { computed, ref } from "vue";
-	import type { CardInstance } from "../helpers/card.helper";
+	import type { CardInstance } from "../domains/card/card.helper";
 	import { noOp } from "../helpers/no-op";
 	import { useDeckStore } from "../stores/deck.store";
 	import { useDraggableStore } from "../stores/draggable.store";

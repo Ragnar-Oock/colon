@@ -23,7 +23,7 @@
 	const {top, left} = useElementBounding(grid);
 
 	function setTile(): void {
-		if (deck.active === null || board.hoveredCell === null) {
+		if (deck.active === undefined || board.hoveredCell === undefined) {
 			return;
 		}
 		if (gridStore.place(deck.active, board.hoveredCell)) {

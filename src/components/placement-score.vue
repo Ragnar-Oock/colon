@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 	import { computed } from "vue";
-	import { useBoardStore } from "../stores/board.store";
+	import { useVisibleCellPosition } from "../domains/cell/cell-position.composable";
 	import type { GridVec } from "../stores/grid.store";
 
 	const {bonus = 0, main = false, score, placement} = defineProps<{
@@ -10,24 +10,17 @@
 		/**
 		 * position of the score on the map
 		 */
-		placement?: GridVec,
+		placement: GridVec,
 	}>();
 
-	const board = useBoardStore();
+	const position = useVisibleCellPosition(placement)
 
-	const gridArea = computed(() => {
-		if (placement) {
-			const {x, y} = board.toDisplayGrid(placement);
-			return `${ y } / ${ x }`;
-		}
-	});
 	const showHighlight = computed(() => (score > 0 || bonus > 0));
 	const delay = `${ Math.ceil(Math.random() * 5) * 16 * 2 }ms`
 </script>
 
 <template>
 	<div
-		:style="{ gridArea }"
 		class="placement-score"
 	>
 		<Transition appear>
@@ -76,7 +69,7 @@
 	.placement-score {
 		user-select: none;
 		position: relative;
-		inset: 0;
+		grid-area: v-bind('position.y') / v-bind('position.x');
 	}
 
 	.highlight {
