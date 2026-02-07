@@ -7,7 +7,7 @@ import type { Cell, FilledCell } from "../domains/cell/cell";
 import { cell, isFilled } from "../domains/cell/cell";
 import { bus } from "../event.helper";
 import type { Vector2 } from "../helpers/vector.helper";
-import { addVec, vec2 } from "../helpers/vector.helper";
+import { addVec, equalsVec, vec2 } from "../helpers/vector.helper";
 
 declare const $gridVec: unique symbol;
 export type GridVec = Vector2 & { [$gridVec]: 'grid vec' };
@@ -53,20 +53,20 @@ export const useGridStore = defineStore('grid', () => {
 			return cell;
 		}
 
-		if (!cells.value.includes(cell)) {
+		if (!cells.value.some(({position}) => equalsVec(position, cell.position))) {
 			cells.value.push(cell);
 		}
 
 		return cell
 	}
 
-	function place(card: CardInstance, at: GridVec): boolean {
-		if (!canPlace(card, at)) {
+	function place(card: CardInstance, at: GridVec, force = false): boolean {
+		if (!canPlace(card, at) && !force) {
 			return false;
 		}
 		setCell(cell(at, card));
 
-		bus.emit('placed', {card, at});
+		bus.emit('placed', {card, at, forced: force});
 		return true;
 	}
 

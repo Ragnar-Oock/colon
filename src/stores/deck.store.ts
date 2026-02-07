@@ -7,6 +7,7 @@ import { bus } from "../event.helper";
 export const useDeckStore = defineStore('deck', () => {
 	const hand = ref<CardInstance[]>([]);
 	const active = ref<CardInstance | undefined>(undefined);
+	const isCreativeEnabled = ref(false);
 
 	/**
 	 * List the cards in hand minus the active one.
@@ -99,7 +100,7 @@ export const useDeckStore = defineStore('deck', () => {
 
 	const totalPonderation = computed(() => deck.reduce((acc, {ponderation}) => acc + ponderation, 0));
 
-	bus.on('placed', () => draw())
+	bus.on('placed', ({forced}) => !forced ? draw() : '')
 
 	return {
 		deck,
@@ -116,6 +117,7 @@ export const useDeckStore = defineStore('deck', () => {
 		register,
 		pick,
 		remove,
-		distribution
+		distribution,
+		isCreativeEnabled
 	}
 })

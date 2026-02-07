@@ -104,7 +104,11 @@ export const useScoreStore = defineStore('score', () => {
 		})
 	}
 
-	function updateScore({card, at}: { card: CardInstance, at: Readonly<GridVec> }): void {
+	function updateScore({card, at, forced}: { card: CardInstance, at: Readonly<GridVec>, forced: boolean }): void {
+		if (forced) {
+			return
+		}
+
 		const baseScore = card.baseScore ?? 1;
 		const placementScore =
 			getScoreContributors(card, at)

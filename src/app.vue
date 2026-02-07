@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	import { registerAllCards } from "./cards.data";
 	import BoardView from "./components/board-view.vue";
+	import CreativeMenu from "./components/creative-menu.vue";
 	import DraggedItem from "./components/dragged-item.vue";
 	import HandDisplay from "./components/hand-display.vue";
 	import { card } from "./domains/card/card.helper";
@@ -9,6 +10,7 @@
 	import { useAutoSave } from "./helpers/save/auto-save.composable";
 	import { forgetHand } from "./helpers/save/save-hand.helper";
 	import { forgetMap } from "./helpers/save/save-map.helper";
+	import { forgetScore } from "./helpers/save/save-score.helper";
 	import { useDeckStore } from "./stores/deck.store";
 	import type { GridVec } from "./stores/grid.store";
 	import { gridVec, useGridStore } from "./stores/grid.store";
@@ -40,6 +42,7 @@
 	function newGame(): void {
 		forgetMap(0);
 		forgetHand(0);
+		forgetScore(0);
 		window.location.reload();
 	}
 
@@ -63,7 +66,10 @@
 
 		<!--		<harvest-resources/>-->
 		<button @click="newGame">new game</button>
-		<hand-display/>
+		<label for="creative">toggle creative</label>
+		<input type="checkbox" name="creative" id="creative" v-model="deckStore.isCreativeEnabled">
+		<hand-display v-if="!deckStore.isCreativeEnabled"/>
+		<creative-menu v-else/>
 	</div>
 	<dragged-item/>
 

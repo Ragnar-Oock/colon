@@ -13,3 +13,7 @@ export function saveScore(score: number, slot = 0): void {
 export function loadScore(slot = 0): number {
 	return Number.parseInt(JSON.parse(localStorage.getItem(getSlotKey(slot)) ?? "0"), scoreSaveRadix);
 }
+
+export function forgetScore(slot = 0): void {
+	localStorage.removeItem(getSlotKey(slot))
+}
