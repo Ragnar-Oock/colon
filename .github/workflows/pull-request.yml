@@ -21,14 +21,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-      - name: Set up corepack
-        run: corepack enable
-      - name: Set up Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: lts/*
-          cache: 'yarn'
-      - name: Install dependencies
-        run: yarn --immutable
-      - name: lint
-        run: yarn run ci:lint
+
+        # get the oxlint version requested by the package json file
+      - name: Get oxlint version
+        run: echo "oxlintVersion=$(jq --raw-output .devDependencies.oxlint ./package.json | sed --regexp-extended 's/\^//')" >> $GITHUB_OUTPUT
+        id: oxlintVersion
+
+        # get the release info for the tag corresponding to the oxlint version listed in the package.json
+      - name: Get release info
+        run: |
+          echo "release=$(curl --location \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/oxc-project/oxc/releases/tags/apps_v${{ steps.oxlintVersion.outputs.oxlintVersion }}")" >> $GITHUB_OUTPUT
+        id: release
+
+        # find the 'browser_download_url' property of the object in the 'assets' array that has a 'name' property that contains 'oxlint-linux-x64-gnu'
+      - name: Get download link
+        run: |
+          echo "downloadUrl=$(echo "${{ steps.release.outputs.release }}" | jq --raw-output '.assets | map(select(.name | contains("oxlint-linux-x64-gnu")))[0] | .browser_download_url')" >> $GITHUB_OUTPUT
+        id: downloadUrl
+
+      - name: Download oxlint
+        run: |
+          curl --fail --silent --location "${{ steps.downloadUrl.outputs.downloadUrl }}" |
+            tar --extract --ungzip ||
+              { echo "Download or extraction of oxlint failed"; exit 1; } &&
+              mv oxlint-linux-x64-gnu oxlint
+
+      - name: Lint changed files
+        run: ./oxlint -- $(git diff --name-only --diff-filter=d ${{ github.base_ref || 'master' }} HEAD)
