@@ -5,6 +5,7 @@
 	import { addVec, setVec, subtractVec } from "../helpers/vector.helper";
 	import type { ScreenVec } from "../stores/board.store";
 	import { useBoardStore } from "../stores/board.store";
+	import DualGridDisplay from "./dual-grid-display.vue";
 	import GridDisplay from "./grid-display.vue";
 	import { gap, tileHeight, tileWidth } from "./grid.config";
 
@@ -77,6 +78,7 @@
 		@pointerup="release"
 	>
 		<grid-display/>
+		<dual-grid-display/>
 	</div>
 </template>
 
