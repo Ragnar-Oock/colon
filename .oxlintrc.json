@@ -307,7 +307,13 @@
 		"vue/prefer-import-from-vue": "error",
 		"vue/require-typed-ref": "error",
 		"vue/valid-define-props": "error",
-		"yoda": "error"
+		"yoda": [
+			"error",
+			"never",
+			{
+				"exceptRange": true
+			}
+		]
 	},
 	"overrides": [
 		{
