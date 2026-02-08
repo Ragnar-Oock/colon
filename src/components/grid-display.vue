@@ -26,7 +26,8 @@
 		if (deck.active === undefined || board.hoveredCell === undefined) {
 			return;
 		}
-		if (gridStore.place(deck.active, board.hoveredCell, deck.isCreativeEnabled)) {
+		const placed = gridStore.place(deck.active, board.hoveredCell, deck.isCreativeEnabled);
+		if (placed && !deck.isCreativeEnabled) {
 			deck.remove(deck.active);
 		}
 	}
