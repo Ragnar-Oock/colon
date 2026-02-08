@@ -19,7 +19,7 @@ export const isFilled = (cell: Cell): cell is FilledCell => cell.card !== undefi
 export const isEmpty = (cell: Cell): cell is EmptyCell => cell.card === undefined
 
 export function cell(position: Readonly<GridVec>, card?: undefined): EmptyCell;
-export function cell<instance extends CardInstance>(position: Readonly<GridVec>, card: instance): FilledCell<instance>;
+export function cell<instance extends CardInstance>(position: Readonly<GridVec>, card?: instance): FilledCell<instance>;
 export function cell(position: Readonly<GridVec>, card?: CardInstance): Cell {
 	return {
 		card,

@@ -3,11 +3,11 @@ import { computed } from "vue";
 
 export interface Vector2 {
 	/**
-	 * a signed integer designating a row of the grid
+	 * a signed integer designating a position along the horizontal axis of the grid
 	 */
 	x: number;
 	/**
-	 * a signed integer designating a column of the grid
+	 * a signed integer designating a position along the vertical axis of the grid
 	 */
 	y: number;
 }

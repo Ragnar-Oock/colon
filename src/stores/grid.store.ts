@@ -7,7 +7,7 @@ import type { Cell, FilledCell } from "../domains/cell/cell";
 import { cell, isFilled } from "../domains/cell/cell";
 import { bus } from "../event.helper";
 import type { Vector2 } from "../helpers/vector.helper";
-import { addVec, equalsVec, vec2 } from "../helpers/vector.helper";
+import { addVec, vec2 } from "../helpers/vector.helper";
 
 declare const $gridVec: unique symbol;
 export type GridVec = Vector2 & { [$gridVec]: 'grid vec' };
@@ -20,21 +20,50 @@ const neighbors = [
 	{x: -1, y: 1}, {x: 0, y: 1}, {x: 1, y: 1},
 ] as GridVec[];
 
+export const topLeft = 0;
+export const top = 1;
+export const topRight = 2;
+export const left = 3;
+export const right = 4;
+export const bottomLeft = 5;
+export const bottom = 6;
+export const bottomRight = 7;
+
+export type NeighBors = [
+	topLeft: Cell, top: Cell, topRight: Cell,
+	left: Cell, right: Cell,
+	bottomLeft: Cell, bottom: Cell, bottomRight: Cell
+]
+
 /**
  * Limit the number of cells the flood fill algorithm is allowed to return
  */
 const MAX_FLOOD_SIZE = 100;
 
+/**
+ * A column major Map of the placed cells.
+ *
+ * To access a cell do `<CellMap>.get(x)?.get(y)`.
+ */
+export type CellMap = Map<number, Map<number, FilledCell>>;
 
 export const useGridStore = defineStore('grid', () => {
-	const cells = ref<FilledCell[]>([]);
+	const cells = ref<CellMap>(new Map());
 
+
+	function hasCellAt(position: Readonly<GridVec>): boolean {
+		return getCard(position.x, position.y) !== undefined;
+	}
 
 	function getCellAt(position: Readonly<GridVec>): Cell {
+		return getCell(position.x, position.y) ?? cell(position)
+	}
+
+	function getCell(x: number, y: number): FilledCell | undefined {
 		return cells
-				.value
-				.find(({position: {x, y}}) => position.x === x && position.y === y)
-			?? cell(position);
+			.value
+			.get(x)
+			?.get(y)
 	}
 
 	function getCardAt(position: Readonly<GridVec>): CardInstance | undefined {
@@ -44,7 +73,8 @@ export const useGridStore = defineStore('grid', () => {
 	function getCard(x: number, y: number): CardInstance | undefined {
 		return cells
 			.value
-			.find(({position}) => x === position.x && y === position.y)
+			.get(x)
+			?.get(y)
 			?.card;
 	}
 
@@ -52,10 +82,14 @@ export const useGridStore = defineStore('grid', () => {
 		if (!isFilled(cell)) {
 			return cell;
 		}
+		let column = cells.value.get(cell.position.x)
 
-		if (!cells.value.some(({position}) => equalsVec(position, cell.position))) {
-			cells.value.push(cell);
+		if (column === undefined) {
+			column = new Map();
+			cells.value.set(cell.position.x, column);
 		}
+		column.set(cell.position.y, cell);
+		updateBounds(cell.position)
 
 		return cell
 	}
@@ -70,31 +104,34 @@ export const useGridStore = defineStore('grid', () => {
 		return true;
 	}
 
-	const bounds = computed(() =>
-		cells
-			.value
-			.reduce(
-				({bottom, left, right, top}, {position: {x, y}}) => ({
-					left: left < x ? left : x,
-					top: top < y ? top : y,
-					right: right < x ? x : right,
-					bottom: bottom < y ? y : bottom,
-				}),
-				{
-					left: 0,
-					top: 0,
-					right: 0,
-					bottom: 0,
-				}
-			)
-	);
+	const bounds = ref({
+		left: 0,
+		top: 0,
+		right: 0,
+		bottom: 0,
+	});
 
-	function filterCells<target extends FilledCell>(predicate: (cell: FilledCell, index: number) => cell is target): ComputedRef<target[]>;
-	function filterCells(predicate: (cell: FilledCell, index: number) => boolean): ComputedRef<FilledCell[]>;
-	function filterCells(predicate: (cell: FilledCell, index: number) => boolean): ComputedRef<FilledCell[]> {
-		return computed(() => cells
-			.value
-			.filter(predicate)
+	function updateBounds({x, y}: { x: number, y: number }): void {
+		const _bounds = bounds.value;
+		_bounds.left = Math.min(x, _bounds.left);
+		_bounds.right = Math.max(x, _bounds.right);
+		_bounds.top = Math.min(y, _bounds.top);
+		_bounds.bottom = Math.max(y, _bounds.bottom);
+
+	}
+
+	function filterCells<target extends FilledCell>(predicate: (cell: FilledCell) => cell is target): ComputedRef<target[]>;
+	function filterCells(predicate: (cell: FilledCell) => boolean): ComputedRef<FilledCell[]>;
+	function filterCells(predicate: (cell: FilledCell) => boolean): ComputedRef<FilledCell[]> {
+		return computed(() =>
+			Iterator
+				.from(cells.value.values())
+				.flatMap(column =>
+					Iterator
+						.from(column.values())
+						.filter(predicate)
+				)
+				.toArray()
 		)
 	}
 
@@ -106,10 +143,6 @@ export const useGridStore = defineStore('grid', () => {
 	 * @param at where to check the placement of the `card` on the map of `cells`
 	 */
 	function canPlace(card: Readonly<CardInstance>, at: Readonly<GridVec>): boolean {
-		// at the start everywhere is a valid placement
-		if (cells.value.length === 0) {
-			return true;
-		}
 
 		// can't place on an existing tile (yet ?)
 		const cellAt = getCellAt(at);
@@ -124,6 +157,11 @@ export const useGridStore = defineStore('grid', () => {
 			return false;
 		}
 
+		if (card === null) {
+			// oxlint-disable-next-line no-debugger
+			debugger;
+		}
+
 		// check if the card is ok with all of it's to be neighbors
 		return card.checkPlacement?.(neighboringCells) ?? true
 	}
@@ -132,8 +170,8 @@ export const useGridStore = defineStore('grid', () => {
 	 * Get the cells around a position given a Moor neighborhood.
 	 * @param at the position around which the cells should be taken.
 	 */
-	function getNeighbors(at: GridVec): Cell[] {
-		return neighbors.map(neighbor => getCellAt(addVec(at, neighbor)))
+	function getNeighbors(at: GridVec): NeighBors {
+		return neighbors.map(neighbor => getCellAt(addVec(at, neighbor))) as NeighBors
 	}
 
 	function floodFetch(start: GridVec, predicate: (card: MaybeCard) => boolean, limit = MAX_FLOOD_SIZE): FilledCell[] {
@@ -169,6 +207,8 @@ export const useGridStore = defineStore('grid', () => {
 	return {
 		cells,
 		getCellAt,
+		getCell,
+		hasCellAt,
 		getCardAt,
 		getCard,
 		bounds,

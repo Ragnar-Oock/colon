@@ -1,9 +1,9 @@
 import { tryOnMounted, tryOnUnmounted } from "@vueuse/core";
 import type { EffectScope } from "vue";
 import { effectScope, watchEffect } from "vue";
-import type { FilledCell } from "../../domains/cell/cell";
 import { useScoreStore } from "../../domains/score/score.store";
 import { useDeckStore } from "../../stores/deck.store";
+import type { CellMap } from "../../stores/grid.store";
 import { useGridStore } from "../../stores/grid.store";
 import { loadHand, saveHand } from "./save-hand.helper";
 import { loadMap, saveMap } from "./save-map.helper";
@@ -12,10 +12,10 @@ import { currentVersion, getSaveFormatVersion, isCompatible, setSaveFormatVersio
 
 export type AutoSaveOptions = {
 	slot?: number,
-	newMap?: () => FilledCell[],
+	newMap?: () => CellMap,
 }
 
-export function useAutoSave({slot = 0, newMap = () => []}: AutoSaveOptions): EffectScope {
+export function useAutoSave({slot = 0, newMap}: AutoSaveOptions): EffectScope {
 	const scope = effectScope();
 
 	tryOnMounted(() => {

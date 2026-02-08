@@ -1,15 +1,34 @@
 <script lang="ts" setup>
+	import { computed } from "vue";
+	import type { FilledCell } from "../domains/cell/cell";
 	import { useBoardStore } from "../stores/board.store";
 	import { useGridStore } from "../stores/grid.store";
 	import GridCell from "./grid-cell.vue";
 
-	const {filterCells} = useGridStore();
+	const grid = useGridStore();
 	const board = useBoardStore();
 
-	const visibleCells = filterCells(({position: {x, y}}) =>
-		board.gridWindow.x - board.halfSize.width < x + 1 && x + 1 < (board.halfSize.width + board.gridWindow.x)
-		&& board.gridWindow.y - board.halfSize.height < y + 1 && y + 1 < (board.halfSize.height + board.gridWindow.y)
-	);
+	const visibleCells = computed<FilledCell[]>(() => {
+		const cells = []
+		for (let x = 0; x < board.visibleGridSize.width; x++) {
+			const mapX = x + board.gridWindow.x - 1 - board.halfSize.width;
+			const nbCellsAtX = grid.cells.get(mapX)?.size ?? 0
+			if (nbCellsAtX === 0) {
+				continue;
+			}
+
+			for (let y = 0; y < board.visibleGridSize.height; y++) {
+				const cell = grid.getCell(
+					mapX,
+					y + board.gridWindow.y - 1 - board.halfSize.height,
+				);
+				if (cell) {
+					cells.push(cell);
+				}
+			}
+		}
+		return cells;
+	})
 
 </script>
 

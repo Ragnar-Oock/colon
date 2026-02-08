@@ -5,6 +5,7 @@
 	import DraggedItem from "./components/dragged-item.vue";
 	import HandDisplay from "./components/hand-display.vue";
 	import { card } from "./domains/card/card.helper";
+	import type { FilledCell } from "./domains/cell/cell";
 	import { cell } from "./domains/cell/cell";
 	import { useScoreStore } from "./domains/score/score.store";
 	import { useAutoSave } from "./helpers/save/auto-save.composable";
@@ -52,9 +53,13 @@
 	}
 	useAutoSave({
 		slot: 0,
-		newMap: () => [
-			cell(gridVec(0, 0), card(townProto)),
-		],
+		newMap: () => new Map<number, Map<number, FilledCell>>([[
+			0,
+			new Map([[
+				0,
+				cell(gridVec(0, 0), card(townProto))
+			]])
+		]]),
 	});
 
 </script>
