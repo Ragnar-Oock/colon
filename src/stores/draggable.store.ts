@@ -13,6 +13,11 @@ export type DraggedElement = {
 	src: string,
 	width: number,
 	height: number,
+} | {
+	type: 'emoji'
+	char: string,
+	width: number,
+	height: number,
 }
 
 export type DragOptions = {
