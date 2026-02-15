@@ -104,20 +104,23 @@
 		height: calc(v-bind('board.visibleGridSize.height') * (var(--tileHeight) + var(--gap)));
 		width: calc(v-bind('board.visibleGridSize.width') * (var(--tileWidth) + var(--gap)));
 		max-width: 300%;
-		--bgc1: #333;
-		--bgc2: #3d3d3d;
-		background-image: conic-gradient(
-			at v-bind('px(tileWidth)') v-bind('px(tileHeight)'),
-			var(--bgc1) 0deg, var(--bgc1) 270deg,
-			var(--bgc2) 270deg, var(--bgc2) 360deg
-		);
-		background-size: v-bind('px(tileWidth+gap)') v-bind('px(tileHeight+gap)');
 		position: absolute;
 		top: 0;
 		left: 0;
 
 		&.is-dragging {
 			cursor: grabbing;
+		}
+
+		&.show-grid {
+			--bgc1: rgba(255, 255, 255, 0.07);
+			--bgc2: transparent;
+			background-image: conic-gradient(
+				at v-bind('px(tileWidth)') v-bind('px(tileHeight)'),
+				var(--bgc1) 0deg, var(--bgc1) 270deg,
+				var(--bgc2) 270deg, var(--bgc2) 360deg
+			);
+			background-size: v-bind('px(tileWidth+gap)') v-bind('px(tileHeight+gap)');
 		}
 	}
 </style>
