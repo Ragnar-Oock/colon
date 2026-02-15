@@ -10,14 +10,14 @@
 
 	const visibleCells = computed<FilledCell[]>(() => {
 		const cells = []
-		for (let x = 0; x < board.visibleGridSize.width; x++) {
+		for (let x = 1; x < board.visibleGridSize.width + 1; x++) {
 			const mapX = x + board.gridWindow.x - 1 - board.halfSize.width;
 			const nbCellsAtX = grid.cells.get(mapX)?.size ?? 0
 			if (nbCellsAtX === 0) {
 				continue;
 			}
 
-			for (let y = 0; y < board.visibleGridSize.height; y++) {
+			for (let y = 1; y < board.visibleGridSize.height + 1; y++) {
 				const cell = grid.getCell(
 					mapX,
 					y + board.gridWindow.y - 1 - board.halfSize.height,
