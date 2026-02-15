@@ -4,6 +4,7 @@
 	import { useBoardStore } from "../stores/board.store";
 	import type { GridVec } from "../stores/grid.store";
 	import { useGridStore } from "../stores/grid.store";
+	import DualCell from "./dual-cell.vue";
 	import { gap, tileHeight, tileWidth } from "./grid.config";
 
 	const grid = useGridStore();
@@ -13,8 +14,8 @@
 		return `${ value.toString(10) }px`;
 	}
 
-	const offsetX = (tileWidth + gap) / 2;
-	const offsetY = (tileHeight + gap) / 2;
+	const offsetX = gap + tileWidth / 2;
+	const offsetY = gap + tileHeight / 2;
 
 	const dualOffsets = [
 		{x: 0, y: 0},
@@ -23,7 +24,7 @@
 		{x: -1, y: -1},
 	] as GridVec[];
 
-	type DualTile = {
+	export type DualTile = {
 		x: number,
 		y: number,
 		style: string,
@@ -31,7 +32,7 @@
 
 	const filledDualTiles = computed<DualTile[]>(() => {
 		const cells = []
-		for (let x = 0; x < board.visibleGridSize.width; x++) {
+		for (let x = 1; x < board.visibleGridSize.width + 1; x++) {
 			const mapX = x + board.gridWindow.x - 1 - board.halfSize.width;
 			const nbCellsAtXLeft = grid.cells.get(mapX - 1)?.size ?? 0;
 			const nbCellsAtXRight = grid.cells.get(mapX)?.size ?? 0;
@@ -39,7 +40,7 @@
 				continue;
 			}
 
-			for (let y = 0; y < board.visibleGridSize.height; y++) {
+			for (let y = 1; y < board.visibleGridSize.height + 1; y++) {
 				const position = {
 					x: mapX,
 					y: y + board.gridWindow.y - 1 - board.halfSize.height
@@ -64,17 +65,17 @@
 
 <template>
 	<div class="dual-grid">
-		<div
-			class="background" v-for="(background, index) in filledDualTiles"
-			:key="background.style"
-			:style="background.style"
-		>{{ background.x }} {{ background.y }}
-		</div>
+		<dual-cell
+			v-for="tile in filledDualTiles"
+			:key="tile.style"
+			:tile
+		/>
 	</div>
 </template>
 
 <style scoped>
 	.dual-grid {
+		--gap: v-bind('px(gap)');
 		--tileWidth: v-bind('px(tileWidth+gap)');
 		--tileHeight: v-bind('px(tileHeight+gap)');
 
@@ -87,10 +88,9 @@
 
 		pointer-events: none;
 
-		.background {
-			grid-area: var(--y) / var(--x);
+		image-rendering: pixelated;
+		background-image: url("../assets/textures/dirt/dirt.png");
+		background-size: 110px;
 
-			outline: 1px solid white;
-		}
 	}
 </style>
