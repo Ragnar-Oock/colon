@@ -77,8 +77,8 @@
 		@pointermove="move"
 		@pointerup="release"
 	>
-		<grid-display/>
 		<dual-grid-display/>
+		<grid-display/>
 	</div>
 </template>
 
