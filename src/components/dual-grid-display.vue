@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import { computed } from "vue";
-	import { addVec } from "../helpers/vector.helper";
+	import { addVec, toString } from "../helpers/vector.helper";
 	import { useBoardStore } from "../stores/board.store";
 	import type { GridVec } from "../stores/grid.store";
 	import { useGridStore } from "../stores/grid.store";
@@ -28,10 +28,11 @@
 		x: number,
 		y: number,
 		style: string,
+		position: GridVec,
 	}
 
 	const filledDualTiles = computed<DualTile[]>(() => {
-		const cells = []
+		const cells: DualTile[] = []
 		for (let x = 1; x < board.visibleGridSize.width + 1; x++) {
 			const mapX = x + board.gridWindow.x - 1 - board.halfSize.width;
 			const nbCellsAtXLeft = grid.cells.get(mapX - 1)?.size ?? 0;
@@ -49,8 +50,9 @@
 					cells.push({
 						x,
 						y,
-						style: `--x:${ x };--y:${ y }`
-					} as DualTile);
+						style: `--x:${ x };--y:${ y }`,
+						position
+					});
 				}
 			}
 		}
@@ -67,7 +69,7 @@
 	<div class="dual-grid">
 		<dual-cell
 			v-for="tile in filledDualTiles"
-			:key="tile.style"
+			:key="toString(tile.position)"
 			:tile
 		/>
 	</div>

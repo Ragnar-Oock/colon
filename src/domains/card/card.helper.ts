@@ -97,7 +97,20 @@ export interface CardInstance {
 	 * The groups the card belongs to, can be used in card methods to refer to multiple cards or abstract away a card's
 	 * type.
 	 */
-	groups?: CardGroup[]
+	groups?: CardGroup[];
+
+	color?: string;
+
+	index?: number;
+	/**
+	 * The texture info used to display the card when it is placed on the board
+	 */
+	tile: TextureData;
+}
+
+export interface TextureData {
+	url: string;
+	display: 'connected' | 'single';
 }
 
 export interface CardDescriptor {

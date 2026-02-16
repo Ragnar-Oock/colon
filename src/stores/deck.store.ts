@@ -95,6 +95,7 @@ export const useDeckStore = defineStore('deck', () => {
 	}
 
 	function register(descriptor: CardDescriptor): void {
+		descriptor.proto.index = deck.length;
 		deck.push(descriptor);
 	}
 

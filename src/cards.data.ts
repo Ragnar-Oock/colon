@@ -1,4 +1,9 @@
-import type { CardDescriptor } from "./domains/card/card.helper";
+import cobblestoneUrl from './assets/textures/cobblestone.png';
+import grassUrl from './assets/textures/grass.png';
+import roadUrl from './assets/textures/road.png';
+import waterUrl from './assets/textures/water.png';
+
+import type { CardDescriptor, TextureData } from "./domains/card/card.helper";
 import { countEmpty, countType } from "./domains/score/score-multiplier.helper";
 import { ofGroup, ofType } from "./domains/score/score-predicate";
 import { floodFetch, limitContribution, mergeContribution, neighborFetch } from "./domains/score/score.helper";
@@ -27,20 +32,22 @@ declare module './domains/card/card.helper' {
 	}
 }
 
+const grassTexture = {
+	url: grassUrl,
+	display: "connected",
+} as const satisfies TextureData;
+
+const roadTexture = {
+	url: roadUrl,
+	display: "connected",
+} as const satisfies TextureData;
+
+const cobblestoreTexture = {
+	url: cobblestoneUrl,
+	display: "connected"
+} as const satisfies TextureData
+
 const cards = [
-	{
-		ponderation: 1,
-		proto: {
-			name: 'town',
-			icon: '🏘️',
-			checkPlacement: atLeastOneOfType('town', 'road'),
-			scoreContributors: mergeContribution(
-				limitContribution(floodFetch(ofType('town', 'bank'), 5), 5, 3),
-				neighborFetch(ofGroup('land')),
-			),
-			groups: ['building'],
-		},
-	},
 	{
 		ponderation: 1,
 		proto: {
@@ -53,6 +60,83 @@ const cards = [
 			),
 			multiplier: countType('bank'),
 			groups: ['building'],
+			color: '#4e6c65',
+			tile: roadTexture,
+		},
+	},
+	{
+		ponderation: .5,
+		proto: {
+			name: 'field',
+			icon: '🌾',
+			checkPlacement: combine(
+				noneOfType('quarry'),
+				atLeastOneOfType('meadow', 'road', 'town'),
+			),
+			scoreContributors: neighborFetch(ofType('field', 'meadow')),
+			groups: ['land', 'agriculture'],
+			color: '#a4a65b',
+			tile: grassTexture,
+		},
+	},
+	{
+		ponderation: .5,
+		proto: {
+			name: 'meadow',
+			icon: '🐑',
+			checkPlacement: atLeastOneOfType('meadow', 'road', 'town'),
+			scoreContributors: floodFetch(ofType('meadow', 'field')),
+			groups: ['land', 'agriculture'],
+			color: '#42c56c',
+			tile: grassTexture,
+		},
+	},
+	{
+		ponderation: 1,
+		proto: {
+			name: 'forest',
+			icon: '🌳',
+			checkPlacement: atLeastOneOfType('meadow', 'forest', 'field', 'road'),
+			scoreContributors: mergeContribution(
+				floodFetch(ofType('meadow', 'field')),
+				neighborFetch(neighbor => neighbor === undefined),
+			),
+			multiplier: countEmpty(),
+			groups: ['land', 'natural'],
+			color: '#11672d',
+			tile: grassTexture,
+		},
+	},
+	{
+		ponderation: .5,
+		proto: {
+			name: 'quarry',
+			icon: '🪨',
+			checkPlacement: combine(
+				atLeastOneOfType('road'),
+				atLeastOneOfType('meadow', 'forest'),
+				noneOfType('town'),
+			),
+			scoreContributors: neighborFetch(ofType('field', 'meadow', 'bank')),
+			baseScore: 2,
+			groups: ['building', 'land'],
+			color: '#5a7175',
+			tile: grassTexture,
+		},
+	},
+	{
+		ponderation: 1,
+		proto: {
+			name: 'town',
+			icon: '🏘️',
+			checkPlacement: atLeastOneOfType('town', 'road'),
+			scoreContributors: mergeContribution(
+				limitContribution(floodFetch(ofType('town', 'bank'), 5), 5, 3),
+				neighborFetch(ofGroup('land')),
+			),
+			groups: ['building'],
+			color: '#876625',
+			tile: cobblestoreTexture,
 		},
 	},
 	{
@@ -67,6 +151,8 @@ const cards = [
 			scoreContributors: floodFetch(ofType('town'), 5),
 			multiplier: (neighbors): number => countType('brickFactory')(neighbors) > 0 ? 0 : 1,
 			groups: ['building'],
+			color: '#8a5f34',
+			tile: cobblestoreTexture,
 		},
 	},
 	{
@@ -84,58 +170,8 @@ const cards = [
 			baseScore: 4,
 			multiplier: countType('town'),
 			groups: ['building'],
-		},
-	},
-	{
-		ponderation: .5,
-		proto: {
-			name: 'quarry',
-			icon: '🪨',
-			checkPlacement: combine(
-				atLeastOneOfType('road'),
-				atLeastOneOfType('meadow', 'forest'),
-				noneOfType('town'),
-			),
-			scoreContributors: neighborFetch(ofType('field', 'meadow', 'bank')),
-			baseScore: 2,
-			groups: ['building', 'land'],
-		},
-	},
-	{
-		ponderation: .5,
-		proto: {
-			name: 'field',
-			icon: '🌾',
-			checkPlacement: combine(
-				noneOfType('quarry'),
-				atLeastOneOfType('meadow', 'road', 'town'),
-			),
-			scoreContributors: neighborFetch(ofType('field', 'meadow')),
-			groups: ['land', 'agriculture'],
-		},
-	},
-	{
-		ponderation: .5,
-		proto: {
-			name: 'meadow',
-			icon: '🐑',
-			checkPlacement: atLeastOneOfType('meadow', 'road', 'town'),
-			scoreContributors: floodFetch(ofType('meadow', 'field')),
-			groups: ['land', 'agriculture'],
-		},
-	},
-	{
-		ponderation: 1,
-		proto: {
-			name: 'forest',
-			icon: '🌳',
-			checkPlacement: atLeastOneOfType('meadow', 'forest', 'field', 'road'),
-			scoreContributors: mergeContribution(
-				floodFetch(ofType('meadow', 'field')),
-				neighborFetch(neighbor => neighbor === undefined),
-			),
-			multiplier: countEmpty(),
-			groups: ['land', 'natural'],
+			color: '#a5af5e',
+			tile: cobblestoreTexture,
 		},
 	},
 	{
@@ -148,8 +184,13 @@ const cards = [
 			scoreContributors: floodFetch(ofGroup('land'), 5),
 			scoreContribution: 1,
 			groups: ['land', 'natural'],
+			color: '#369ad1',
+			tile: {
+				url: waterUrl,
+				display: "connected",
+			},
 		}
-	}
+	},
 ] satisfies CardDescriptor[];
 
 /**
