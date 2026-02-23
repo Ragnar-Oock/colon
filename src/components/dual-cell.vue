@@ -83,7 +83,7 @@
 		--bg-offset-x: 0px;
 		--texture-offset-x: -3;
 		--texture-offset-y: -3;
-		--tile: calc(var(--gap) + var(--tileWidth));
+		--tile: calc(var(--tileWidth));
 
 		image-rendering: crisp-edges;
 		background: v-bind(textures);
