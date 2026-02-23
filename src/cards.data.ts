@@ -42,7 +42,7 @@ const roadTexture = {
 	display: "connected",
 } as const satisfies TextureData;
 
-const cobblestoreTexture = {
+const cobblestoneTexture = {
 	url: cobblestoneUrl,
 	display: "connected"
 } as const satisfies TextureData
@@ -125,6 +125,23 @@ const cards = [
 		},
 	},
 	{
+		ponderation: .5,
+		proto: {
+			name: 'river',
+			icon: '🌊',
+			baseScore: 1,
+			multiplier: countType('river'),
+			scoreContributors: floodFetch(ofGroup('land'), 5),
+			scoreContribution: 1,
+			groups: ['land', 'natural'],
+			color: '#369ad1',
+			tile: {
+				url: waterUrl,
+				display: "connected",
+			},
+		}
+	},
+	{
 		ponderation: 1,
 		proto: {
 			name: 'town',
@@ -136,7 +153,7 @@ const cards = [
 			),
 			groups: ['building'],
 			color: '#876625',
-			tile: cobblestoreTexture,
+			tile: cobblestoneTexture,
 		},
 	},
 	{
@@ -152,7 +169,7 @@ const cards = [
 			multiplier: (neighbors): number => countType('brickFactory')(neighbors) > 0 ? 0 : 1,
 			groups: ['building'],
 			color: '#8a5f34',
-			tile: cobblestoreTexture,
+			tile: cobblestoneTexture,
 		},
 	},
 	{
@@ -171,25 +188,8 @@ const cards = [
 			multiplier: countType('town'),
 			groups: ['building'],
 			color: '#a5af5e',
-			tile: cobblestoreTexture,
+			tile: cobblestoneTexture,
 		},
-	},
-	{
-		ponderation: .5,
-		proto: {
-			name: 'river',
-			icon: '🌊',
-			baseScore: 1,
-			multiplier: countType('river'),
-			scoreContributors: floodFetch(ofGroup('land'), 5),
-			scoreContribution: 1,
-			groups: ['land', 'natural'],
-			color: '#369ad1',
-			tile: {
-				url: waterUrl,
-				display: "connected",
-			},
-		}
 	},
 ] satisfies CardDescriptor[];
 

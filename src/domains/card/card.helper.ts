@@ -109,7 +109,16 @@ export interface CardInstance {
 }
 
 export interface TextureData {
+	/**
+	 * the url of the image to use for rendering the tile
+	 */
 	url: string;
+	/**
+	 * how the image linked in `url` should be used :
+	 * - `connected` will check the neighboring tiles to find which subsection of the given texture should be used for
+	 * the current tile
+	 * - `single` will set the whole image as the tile texture
+	 */
 	display: 'connected' | 'single';
 }
 
