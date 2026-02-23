@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import { computed } from "vue";
+	import { useValidPlacements } from "../domains/card/valid-placement.composable";
 	import { addVec, toString } from "../helpers/vector.helper";
 	import { useBoardStore } from "../stores/board.store";
 	import type { GridVec } from "../stores/grid.store";
@@ -30,23 +31,33 @@
 		style: string,
 		position: GridVec,
 	}
+	const toMapX = (x: number): number => (x + board.gridWindow.x - 1 - board.halfSize.width);
+	const toMapY = (y: number): number => (y + board.gridWindow.y - 1 - board.halfSize.height);
+
+	const validPlacements = useValidPlacements();
 
 	const filledDualTiles = computed<DualTile[]>(() => {
-		const cells: DualTile[] = []
+		const cells: DualTile[] = [];
 		for (let x = 1; x < board.visibleGridSize.width + 1; x++) {
-			const mapX = x + board.gridWindow.x - 1 - board.halfSize.width;
-			const nbCellsAtXLeft = grid.cells.get(mapX - 1)?.size ?? 0;
-			const nbCellsAtXRight = grid.cells.get(mapX)?.size ?? 0;
-			if (nbCellsAtXLeft === 0 && nbCellsAtXRight === 0) {
-				continue;
-			}
+			const mapX = toMapX(x);
 
 			for (let y = 1; y < board.visibleGridSize.height + 1; y++) {
 				const position = {
 					x: mapX,
-					y: y + board.gridWindow.y - 1 - board.halfSize.height
+					y: toMapY(y),
 				} as GridVec;
-				if (dualOffsets.some(offset => grid.hasCellAt(addVec(offset, position)))) {
+
+				const isFiledDual = dualOffsets.some(offset => {
+					const coordinate = addVec(offset, position);
+					return (
+						// cell background
+						grid.hasCellAt(coordinate)
+						// placement hints
+						|| validPlacements.value.some(({x, y}) => toMapX(x) === coordinate.x && toMapY(y) === coordinate.y)
+					);
+				});
+
+				if (isFiledDual) {
 					cells.push({
 						x,
 						y,
