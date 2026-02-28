@@ -1,0 +1,131 @@
+import { defineStore } from "pinia";
+import { computed, reactive, ref } from "vue";
+import { bus } from "../../event.helper";
+import type { CardDescriptor, CardInstance, CardType } from "./card.helper";
+import { card } from "./card.helper";
+
+export type DeckStore = {
+	readonly deck: CardDescriptor[];
+	readonly registry: Map<CardType, CardDescriptor>;
+	hand: CardInstance[];
+	readonly idleHand: CardInstance[];
+	active: CardInstance | undefined;
+	register(descriptor: CardDescriptor): void;
+	pick(): CardDescriptor;
+	remove(card: CardInstance): void;
+}
+
+export const useDeckStore = defineStore<'deck', DeckStore>('deck', () => {
+	const hand = ref<CardInstance[]>([]);
+	const active = ref<CardInstance | undefined>(undefined);
+
+	/**
+	 * List the cards in hand minus the active one.
+	 */
+	const idleHand = computed(() =>
+		hand
+			.value
+			.filter(card => reactive(card) !== active.value)
+			.sort((before, after) => before.name.localeCompare(after.name))
+	);
+	/**
+	 * All possible cards that can be drawn into a deck
+	 */
+	const deck = reactive<CardDescriptor[]>([]);
+
+	const registry = computed(() =>
+		new Map<CardType, CardDescriptor>(
+			deck
+				.map(descriptor => [
+					descriptor.proto.name,
+					descriptor
+				] as const)
+		)
+	)
+
+	/**
+	 * for debug purposes only
+	 */
+	const distribution = computed(() =>
+		Object.fromEntries(
+			registry
+				.value
+				.values()
+				.map((descriptor) => [
+					descriptor.proto.name,
+					descriptor.ponderation / totalPonderation.value,
+				])
+		)
+	)
+
+
+	/**
+	 * create a new card and put it in the hand
+	 */
+	function draw(): void {
+		hand.value.push(card(pick().proto))
+	}
+
+	/**
+	 * pick a card from all the available cards taking the ponderation into account.
+	 */
+	function pick(): CardDescriptor {
+		const drawIndex = Math.random() * totalPonderation.value;
+
+		// is that default useful and sensible ?
+		let visitedPonderation = 0;
+		let deckIndex = 0;
+		let pick: CardDescriptor | undefined;
+		do {
+			pick = deck.at(deckIndex);
+			visitedPonderation += pick?.ponderation ?? 0;
+			deckIndex++;
+		} while (visitedPonderation < drawIndex)
+
+		if (pick === undefined) {
+			throw new Error('No card available to draw.');
+		}
+		return pick
+	}
+
+	/**
+	 * Remove a card from the hand (to be used, discarded or anything else)
+	 * If the card is active it will be unmarked as such.
+	 * @param card the card to remove from the player's hand
+	 */
+	function remove(card: CardInstance): void {
+		if (!hand.value.includes(card)) {
+			throw new Error("I don't know that card sir");
+		}
+
+		hand.value = hand.value.filter(cardInHand => cardInHand !== card);
+		if (active.value === card) {
+			active.value = undefined;
+		}
+	}
+
+	function register(descriptor: CardDescriptor): void {
+		deck.push(descriptor);
+	}
+
+	const totalPonderation = computed(() => deck.reduce((acc, {ponderation}) => acc + ponderation, 0));
+
+	bus.on('placed', () => draw())
+
+	return {
+		deck,
+		registry,
+		hand: computed({
+			get: () => hand.value.sort((before, after) => before.name.localeCompare(after.name)),
+			set: newHand => {
+				hand.value = newHand
+			},
+		}),
+		active,
+		idleHand,
+		register,
+		pick,
+		remove,
+		distribution
+	}
+})

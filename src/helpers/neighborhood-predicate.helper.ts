@@ -1,5 +1,5 @@
-import type { CardGroup, CardType } from "../domains/card/card.helper";
-import type { Cell } from "../domains/cell/cell";
+import type { CardGroup, CardType } from "../plugins/deck/card.helper";
+import type { Cell } from "../plugins/grid/cell";
 
 /**
  * Check if the cells surrounding a placement are suitable for the card we are trying to place

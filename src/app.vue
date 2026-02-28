@@ -1,17 +1,17 @@
 <script setup lang="ts">
-	import { registerAllCards } from "./cards.data";
-	import BoardView from "./components/board-view.vue";
-	import DraggedItem from "./components/dragged-item.vue";
-	import HandDisplay from "./components/hand-display.vue";
-	import { card } from "./domains/card/card.helper";
-	import { cell } from "./domains/cell/cell";
 	import { useScoreStore } from "./domains/score/score.store";
-	import { useAutoSave } from "./helpers/save/auto-save.composable";
-	import { forgetHand } from "./helpers/save/save-hand.helper";
-	import { forgetMap } from "./helpers/save/save-map.helper";
-	import { useDeckStore } from "./stores/deck.store";
-	import type { GridVec } from "./stores/grid.store";
-	import { gridVec, useGridStore } from "./stores/grid.store";
+	import { registerAllCards } from "./plugins/basic-cards/cards.data";
+	import BoardView from "./plugins/board/board-view.vue";
+	import { card } from "./plugins/deck/card.helper";
+	import { useDeckStore } from "./plugins/deck/deck.store";
+	import DraggedItem from "./plugins/dragged/dragged-item.vue";
+	import { cell } from "./plugins/grid/cell";
+	import type { GridVec } from "./plugins/grid/grid.store";
+	import { gridVec, useGridStore } from "./plugins/grid/grid.store";
+	import HandDisplay from "./plugins/hand/hand-display.vue";
+	import { useAutoSave } from "./plugins/save/auto-save.composable";
+	import { forgetHand } from "./plugins/save/save-hand.helper";
+	import { forgetMap } from "./plugins/save/save-map.helper";
 
 	const deckStore = useDeckStore();
 	registerAllCards(deckStore.register);

@@ -3,12 +3,12 @@ import type { ComputedRef, MaybeRefOrGetter } from "vue";
 import { computed, ref, toValue } from "vue";
 import { bus } from "../../event.helper";
 import { toString } from "../../helpers/vector.helper";
-import type { GridVec } from "../../stores/grid.store";
-import { useGridStore } from "../../stores/grid.store";
-import type { CardInstance } from "../card/card.helper";
-import type { MaybeCard } from "../card/card.type";
-import type { Cell } from "../cell/cell";
-import { isFilled } from "../cell/cell";
+import type { CardInstance } from "../../plugins/deck/card.helper";
+import type { MaybeCard } from "../../plugins/deck/card.type";
+import type { Cell } from "../../plugins/grid/cell";
+import { isFilled } from "../../plugins/grid/cell";
+import type { GridVec } from "../../plugins/grid/grid.store";
+import { useGridStore } from "../../plugins/grid/grid.store";
 import type { ScoreHelpers } from "./score.helper";
 
 
