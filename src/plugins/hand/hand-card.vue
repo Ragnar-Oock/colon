@@ -17,7 +17,7 @@
 	const isActive = computed(() => index.value === -1);
 
 	const seed = ref(0);
-	const hoverAngle = computed(() => `${ (seed.value - .5) * 15 }deg`)
+	const hoverAngle = computed(() => `${ ((seed.value - .5) * 15).toFixed(2) }deg`)
 	const hover = (): void => {
 		seed.value = Math.random()
 	};
@@ -91,6 +91,9 @@
 		--card-accent-1: oklch(0.508 0.043 110.214);
 		--card-accent-2: oklch(0.833 0.076 109.607);
 
+		width: 15ch;
+		height: 20ch;
+
 		background-color: var(--bgc);
 		/*@formatter:off*/
 		background:
@@ -129,6 +132,7 @@
 
 		/*@formatter:off*/
 		transform:
+			translateY(-100%)
 			translateX(var(--x))
 			translateY(var(--y))
 			rotate(var(--idle-angle))
@@ -166,10 +170,9 @@
 		&::before {
 			content: '';
 			display: block;
-			width: 100%;
-			aspect-ratio: 1;
-			top: 100%;
 			position: absolute;
+			width: 120%;
+			inset: -10% 10% -30% -10%;
 		}
 	}
 

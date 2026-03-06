@@ -51,6 +51,7 @@
 		grid: 100% / auto-flow 25ch;
 		gap: .25em;
 		margin-inline: auto;
-		width: min-content;
+		width: 0;
+		height: 0;
 	}
 </style>
