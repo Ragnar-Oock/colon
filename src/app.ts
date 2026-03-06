@@ -7,6 +7,7 @@ import { deckPlugin } from "./plugins/deck/deck.plugin";
 import { draggedPlugin } from "./plugins/dragged/dragged.plugin";
 import { gridPlugin } from "./plugins/grid/grid.plugin";
 import { handPlugin } from "./plugins/hand/hand.plugin";
+import { savePlugin } from "./plugins/save/save.plugin";
 import { vuePlugin } from "./plugins/vue/vue.plugin";
 
 
@@ -19,7 +20,8 @@ export const start = (): Application =>
 		deckPlugin,
 		handPlugin,
 		basicCardsPlugin,
-		draggedPlugin
+		draggedPlugin,
+		savePlugin,
 	], {
 		id: 'colon'
 	})
