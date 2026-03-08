@@ -17,8 +17,8 @@
 		"@xoram/core": "^0.1.1",
 		"@xoram/plugin-panoramique": "^0.1.3",
     "mitt": "^3.0.1",
-		"oxlint": "^1.50.0",
-    "pinia": "^3.0.3",
+		"oxlint": "^1.51.0",
+		"pinia": "^3.0.4",
     "typescript": "^5.9.3",
 		"vue": "^3.5.29"
   },
@@ -26,12 +26,13 @@
 		"@vitejs/plugin-vue": "^6.0.4",
 		"sass-embedded": "^1.97.3",
 		"vite": "^7.3.1",
-		"vite-plugin-vue-devtools": "^8.0.6"
+		"vite-plugin-vue-devtools": "^8.0.7"
 	},
 	"resolutions": {
 		"@xoram/core": "portal:/home/ragnar/dev/xoram/packages/core",
 		"@xoram/utils": "portal:/home/ragnar/dev/xoram/packages/utils",
-		"@xoram/plugin-panoramique": "portal:/home/ragnar/dev/xoram/plugins/panoramique"
+		"@xoram/plugin-panoramique": "portal:/home/ragnar/dev/xoram/plugins/panoramique",
+		"pinia": "3.0.4"
   },
   "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c"
 }
