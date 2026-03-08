@@ -1,6 +1,6 @@
-import type { CardInstance, CardType } from "../../plugins/deck/card.helper";
+import type { CardInstance, CardType } from "../deck/card.helper";
 
-import type { Cell } from "../../plugins/grid/cell";
+import type { Cell } from "../grid/cell";
 
 export type ScoreMultiplierHelper = (neighbors: Cell[]) => number;
 

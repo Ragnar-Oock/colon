@@ -1,8 +1,8 @@
-import { countEmpty, countType } from "../../domains/score/score-multiplier.helper";
-import { ofGroup, ofType } from "../../domains/score/score-predicate";
-import { floodFetch, limitContribution, mergeContribution, neighborFetch } from "../../domains/score/score.helper";
 import { atLeastOneInGroup, atLeastOneOfType, combine, noneOfType } from "../../helpers/neighborhood-predicate.helper";
 import type { CardDescriptor } from "../deck/card.helper";
+import { countEmpty, countType } from "../score/score-multiplier.helper";
+import { ofGroup, ofType } from "../score/score-predicate";
+import { floodFetch, limitContribution, mergeContribution, neighborFetch } from "../score/score.helper";
 
 declare module '../deck/card.helper' {
 	// noinspection JSUnusedGlobalSymbols

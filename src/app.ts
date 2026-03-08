@@ -8,6 +8,7 @@ import { draggedPlugin } from "./plugins/dragged/dragged.plugin";
 import { gridPlugin } from "./plugins/grid/grid.plugin";
 import { handPlugin } from "./plugins/hand/hand.plugin";
 import { savePlugin } from "./plugins/save/save.plugin";
+import { scorePlugin } from "./plugins/score/score.plugin";
 import { vuePlugin } from "./plugins/vue/vue.plugin";
 
 
@@ -22,6 +23,7 @@ export const start = (): Application =>
 		basicCardsPlugin,
 		draggedPlugin,
 		savePlugin,
+		scorePlugin,
 	], {
 		id: 'colon'
 	})

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-	import { usePotentialScoreContributors } from "../../domains/score/potential-score-contributors.composable";
 	import { toString } from "../../helpers/vector.helper";
+	import { usePotentialScoreContributors } from "../score/potential-score-contributors.composable";
 	import PlacementScore from "./placement-score.vue";
 
 	const scoreContributors = usePotentialScoreContributors();

@@ -1,5 +1,5 @@
-import type { CardGroup, CardType } from "../../plugins/deck/card.helper";
-import type { MaybeCard } from "../../plugins/deck/card.type";
+import type { CardGroup, CardType } from "../deck/card.helper";
+import type { MaybeCard } from "../deck/card.type";
 
 export type ScorePredicate = (card: MaybeCard) => boolean;
 

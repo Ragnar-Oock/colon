@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 	import { computed } from "vue";
-	import { usePlacementScore } from "../../domains/score/placement-score.composable";
 	import { toString } from "../../helpers/vector.helper";
-	import { useDraggableStore } from "../../stores/draggable.store";
 	import { useDeckStore } from "../deck/deck.store";
+	import { useDraggableStore } from "../dragged/draggable.store";
 	import { useGridStore } from "../grid/grid.store";
+	import { usePlacementScore } from "../score/placement-score.composable";
 	import { useBoardStore } from "./board.store";
 	import PlacementScore from "./placement-score.vue";
 

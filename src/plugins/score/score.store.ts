@@ -3,12 +3,12 @@ import type { ComputedRef, MaybeRefOrGetter } from "vue";
 import { computed, ref, toValue } from "vue";
 import { bus } from "../../event.helper";
 import { toString } from "../../helpers/vector.helper";
-import type { CardInstance } from "../../plugins/deck/card.helper";
-import type { MaybeCard } from "../../plugins/deck/card.type";
-import type { Cell } from "../../plugins/grid/cell";
-import { isFilled } from "../../plugins/grid/cell";
-import type { GridVec } from "../../plugins/grid/grid.store";
-import { useGridStore } from "../../plugins/grid/grid.store";
+import type { CardInstance } from "../deck/card.helper";
+import type { MaybeCard } from "../deck/card.type";
+import type { Cell } from "../grid/cell";
+import { isFilled } from "../grid/cell";
+import type { GridVec } from "../grid/grid.store";
+import { useGridStore } from "../grid/grid.store";
 import type { ScoreHelpers } from "./score.helper";
 
 
@@ -19,6 +19,13 @@ export interface ScoreContributor extends Cell {
 
 const emptyArray = Object.freeze([]);
 
+export interface ScoreStore {
+	score: number;
+
+	up(amount: number): void;
+
+	getContributors(card: MaybeRefOrGetter<MaybeCard>, at: MaybeRefOrGetter<GridVec | undefined>): ComputedRef<readonly ScoreContributor[]>;
+}
 
 export const useScoreStore = defineStore('score', () => {
 	const score = ref(0);
@@ -117,6 +124,9 @@ export const useScoreStore = defineStore('score', () => {
 
 	return {
 		score,
+		up: (amount): void => {
+			score.value += amount
+		},
 		getContributors,
 		$dispose: (): void => {
 			bus.off('placed', updateScore)
