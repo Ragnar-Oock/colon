@@ -33,7 +33,7 @@
 		}, {
 			onCancel: noOp,
 			onEnd() {
-				deckStore.active = null
+				deckStore.active = undefined
 			},
 		})
 
