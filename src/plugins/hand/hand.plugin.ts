@@ -12,7 +12,7 @@ import { basicCardsPlugin } from "../basic-cards/basic-cards.plugin";
 import type { CardInstance, CardType } from "../deck/card.helper";
 import { card } from "../deck/card.helper";
 import { deckPlugin } from "../deck/deck.plugin";
-import { entitySeparator } from "../save/save-format.helper";
+import { entitySeparator } from "../save/save-format.const";
 import { savePlugin } from "../save/save.plugin";
 import HandDisplay from "./hand-display.vue";
 
