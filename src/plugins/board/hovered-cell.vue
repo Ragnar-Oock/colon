@@ -2,7 +2,7 @@
 	import { computed } from "vue";
 	import { toString } from "../../helpers/vector.helper";
 	import { useDeckStore } from "../deck/deck.store";
-	import { useDraggableStore } from "../dragged/draggable.store";
+	import { useDraggableStore } from "../draggable/draggable.store";
 	import { useGridStore } from "../grid/grid.store";
 	import { usePlacementScore } from "../score/placement-score.composable";
 	import { useBoardStore } from "./board.store";

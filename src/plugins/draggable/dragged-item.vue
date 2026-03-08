@@ -3,7 +3,7 @@
 	import { storeToRefs } from "pinia";
 	import { computed, reactive, watchEffect } from "vue";
 	import { clamp } from "../../helpers/math.helper";
-	import { useDraggableStore } from "../../stores/draggable.store";
+	import { useDraggableStore } from "./draggable.store";
 
 	const {dragged} = storeToRefs(useDraggableStore());
 

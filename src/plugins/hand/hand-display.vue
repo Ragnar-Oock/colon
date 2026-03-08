@@ -1,8 +1,8 @@
 <script setup lang="ts">
 	import { useEventListener } from "@vueuse/core";
 	import { computed, onMounted, ref } from "vue";
-	import { useDraggableStore } from "../../stores/draggable.store";
 	import { useDeckStore } from "../deck/deck.store";
+	import { useDraggableStore } from "../draggable/draggable.store";
 	import HandCard from "./hand-card.vue";
 
 	const deckStore = useDeckStore();

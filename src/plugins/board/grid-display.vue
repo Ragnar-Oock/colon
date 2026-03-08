@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 	import { useElementBounding } from "@vueuse/core";
 	import { useTemplateRef } from "vue";
-	import { useDraggableStore } from "../../stores/draggable.store";
 	import { useDeckStore } from "../deck/deck.store";
+	import { useDraggableStore } from "../draggable/draggable.store";
 	// noinspection ES6UnusedImports
 	import { gap, tileHeight, tileWidth } from "../grid/grid.config";
 	import { useGridStore } from "../grid/grid.store";

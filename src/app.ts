@@ -4,7 +4,7 @@ import { panoramiquePlugin } from "@xoram/plugin-panoramique";
 import { basicCardsPlugin } from "./plugins/basic-cards/basic-cards.plugin";
 import { boardPlugin } from "./plugins/board/board.plugin";
 import { deckPlugin } from "./plugins/deck/deck.plugin";
-import { draggedPlugin } from "./plugins/dragged/dragged.plugin";
+import { draggablePlugin } from "./plugins/draggable/draggable.plugin";
 import { gridPlugin } from "./plugins/grid/grid.plugin";
 import { handPlugin } from "./plugins/hand/hand.plugin";
 import { savePlugin } from "./plugins/save/save.plugin";
@@ -21,7 +21,7 @@ export const start = (): Application =>
 		deckPlugin,
 		handPlugin,
 		basicCardsPlugin,
-		draggedPlugin,
+		draggablePlugin,
 		savePlugin,
 		scorePlugin,
 	], {

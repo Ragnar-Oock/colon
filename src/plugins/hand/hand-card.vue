@@ -2,9 +2,9 @@
 
 	import { computed, ref } from "vue";
 	import { noOp } from "../../helpers/no-op";
-	import { useDraggableStore } from "../../stores/draggable.store";
 	import type { CardInstance } from "../deck/card.helper";
 	import { useDeckStore } from "../deck/deck.store";
+	import { useDraggableStore } from "../draggable/draggable.store";
 
 	const {card} = defineProps<{
 		card: CardInstance,

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 	import { computed } from "vue";
 	import { iter } from "../../helpers/iterator.helper";
-	import { useDraggableStore } from "../../stores/draggable.store";
 	import { useDeckStore } from "../deck/deck.store";
+	import { useDraggableStore } from "../draggable/draggable.store";
 	import { isEmpty } from "../grid/cell";
 	import { useMapCellPosition } from "../grid/cell-position.composable";
 	import type { GridVec } from "../grid/grid.store";
