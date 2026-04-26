@@ -1,5 +1,3 @@
-// oxlint-disable-next-line no-abusive-eslint-disable
-// oxlint-disable
 // this contains experiments that needs to be refined and moved somewhere else, we'll ignore linting/formating for it
 // until it's worked on again
 
